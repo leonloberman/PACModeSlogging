@@ -1,0 +1,3 @@
+﻿------ Rebuild All started: Project: PACModeSLogging, Configuration: Release Any CPU ------
+  PACModeSLogging -> C:\Dropbox\Visual Studio 2012\Projects\PACModeSLogging\PACModeSLogging\bin\X86\Release\1.3.2\PACModeSLogging.exe
+========== Rebuild All: 1 succeeded, 0 failed, 0 skipped ==========
