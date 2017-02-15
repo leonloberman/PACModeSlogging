@@ -1,7 +1,7 @@
 # PACModeSLogging
 Auto log into GFIA database from PlanePlotter
 
-Application runs alongside PlanePlotter using VB.Net code to retrieve alist of aircraft from the Aircraft table in basestation.sqb which have a UserTag string containing RQ or Ps 
+Application runs alongside PlanePlotter using VB.Net code to retrieve a list of aircraft from the Aircraft table in basestation.sqb which have a UserTag string containing RQ or Ps 
 
 This adds to a dropdown list which the user can click on any of the items to automatically log (after a confirmation prompt) into the logllp table in privatelogs.mdb.  For military aircraft additional data is logged into loglls table in privatelogs.mdb
 
