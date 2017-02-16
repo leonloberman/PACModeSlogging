@@ -338,12 +338,13 @@ EmptyStep:
             'Update BaseStation UserTag
             BS_Con.Open()
             Dim CheckBusy As Boolean = False
-UpdBS:      BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+UpdBS:      CheckBusy = False
+            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
             BS_SQL = "SELECT * FROM sqlite_master"
             Try
                 BS_Cmd.ExecuteNonQuery()
             Catch SQLiteexception As Exception
-                If SQLiteErrorCode.Busy Then
+                If SQLiteErrorCode.Locked Then
                     CheckBusy = True
                 Else
                     CheckBusy = False
@@ -359,7 +360,7 @@ UpdBS:      BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
                     BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
                 Catch SQLITEexception As Exception
-                    If SQLiteErrorCode.Busy Then
+                    If SQLiteErrorCode.Locked Then
                         CheckBusy = True
                         GoTo UpdBS
                     Else
