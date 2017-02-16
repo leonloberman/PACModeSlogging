@@ -11,14 +11,14 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyTitle("PACModeSLogging")> 
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("PACModeSLogging")> 
-<Assembly: AssemblyCopyright("Copyright ©  2015")> 
+<Assembly: AssemblyProduct("PACModeSLogging")>
+<Assembly: AssemblyCopyright("Copyright Leon Loberman ©  2017")>
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("DF149D12-CA7C-4CEE-A803-9C34CF17CB02")> 
+<Assembly: Guid("DF149D12-CA7C-4CEE-A803-9C34CF17CB02")>
 
 ' Version information for an assembly consists of the following four values:
 '
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.3.4.0")> 
-<Assembly: AssemblyFileVersion("1.3.4.0")> 
+<Assembly: AssemblyVersion("1.3.5.0")>
+<Assembly: AssemblyFileVersion("1.3.5.0")>

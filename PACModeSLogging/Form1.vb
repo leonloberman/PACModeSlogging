@@ -271,9 +271,6 @@ EmptyStep:
         Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
         Dim logged_cmd As New OleDbCommand
 
-        
-        BS_Con = New SQLiteConnection
-        BS_Con.ConnectionString = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
 
         dtset_con = New OleDbConnection
         dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
@@ -298,11 +295,18 @@ EmptyStep:
             dtset_rdr.Close()
             dtset_con.Close()
             dtset_con.Dispose()
+
+            Dim BSstr As String = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+            Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
+            Dim BS_Con As New SQLiteConnection(BS_Con_cs)
+            Dim BS_Cmd As New SQLiteCommand(BS_Con)
+            Dim BS_rdr As SQLiteDataReader
             BS_Con.Open()
-            BS_SQL = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-            BS_Cmd.ExecuteNonQuery()
-            Dim BS_rdr As SQLiteDataReader = BS_Cmd.ExecuteReader()
+
+            BS_Cmd.Connection = BS_Con
+            BS_Cmd.CommandText = BSstr
+            BS_rdr = BS_Cmd.ExecuteReader()
+            BS_rdr.Read()
             ToLogType = BS_rdr(0)
             BS_rdr.Close()
             BS_Con.Close()
@@ -349,9 +353,10 @@ UpdBS:      BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
                 GoTo UpdBS
             Else
                 Try
-                    BS_SQL = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," & _
+                    Dim BS_SQL2 As String
+                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
                     Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                    BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
                 Catch SQLITEexception As Exception
                     If SQLiteErrorCode.Busy Then
