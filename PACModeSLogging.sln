@@ -1,18 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PACModeSLogging", "PACModeSLogging\PACModeSLogging.vbproj", "{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Debug|x86.ActiveCfg = Debug|x86
+		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Debug|x86.Build.0 = Debug|x86
 		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Release|x86.ActiveCfg = Release|x86
+		{FC8E42B8-4DA6-43CD-BCB9-6364D7FC5721}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
