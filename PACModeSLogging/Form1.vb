@@ -379,10 +379,10 @@ UpdBS:      CheckBusy = False
                 AppActivate(ObjProcess.Id)
                 SendKeys.SendWait("{F5}")
             Next
-            'For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter")
-            '    AppActivate(ObjProcess.Id)
-            '    SendKeys.SendWait("{F12}")
-            'Next
+            For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter")
+                AppActivate(ObjProcess.Id)
+                SendKeys.SendWait("^+{Q}")
+            Next
         End If
 
     End Sub
