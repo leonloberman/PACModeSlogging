@@ -374,14 +374,14 @@ UpdBS:      CheckBusy = False
             End If
         End If
         Timer1.Start()
-        If Process.GetProcessesByName("Basestation").Length >= 1 Then
-            For Each ObjProcess As Process In Process.GetProcessesByName("Basestation")
+        If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
+            For Each ObjProcess As Process In Process.GetProcessesByName("BaseStation.exe")
                 AppActivate(ObjProcess.Id)
                 SendKeys.SendWait("{F5}")
             Next
-            For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter")
+            For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter.exe")
                 AppActivate(ObjProcess.Id)
-                SendKeys.SendWait("^+{Q}")
+                SendKeys.Send("^(Q)")
             Next
         End If
 
