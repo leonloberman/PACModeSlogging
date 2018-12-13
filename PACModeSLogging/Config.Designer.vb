@@ -34,6 +34,7 @@ Partial Class Config
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TextBox2 = New System.Windows.Forms.TextBox()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
+        Me.RadioButton3 = New System.Windows.Forms.RadioButton()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -62,7 +63,7 @@ Partial Class Config
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(27, 170)
+        Me.Label1.Location = New System.Drawing.Point(27, 189)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(70, 13)
         Me.Label1.TabIndex = 28
@@ -70,7 +71,7 @@ Partial Class Config
         '
         'TextBox1
         '
-        Me.TextBox1.Location = New System.Drawing.Point(135, 120)
+        Me.TextBox1.Location = New System.Drawing.Point(135, 139)
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(113, 20)
         Me.TextBox1.TabIndex = 29
@@ -78,7 +79,7 @@ Partial Class Config
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(27, 124)
+        Me.Label2.Location = New System.Drawing.Point(27, 143)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(89, 13)
         Me.Label2.TabIndex = 30
@@ -87,7 +88,7 @@ Partial Class Config
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(27, 252)
+        Me.Label3.Location = New System.Drawing.Point(27, 271)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(82, 13)
         Me.Label3.TabIndex = 31
@@ -96,14 +97,14 @@ Partial Class Config
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(132, 252)
+        Me.Label4.Location = New System.Drawing.Point(132, 271)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(0, 13)
         Me.Label4.TabIndex = 32
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(222, 282)
+        Me.Button1.Location = New System.Drawing.Point(222, 301)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(50, 23)
         Me.Button1.TabIndex = 33
@@ -113,7 +114,7 @@ Partial Class Config
         'CheckBox1
         '
         Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Location = New System.Drawing.Point(93, 219)
+        Me.CheckBox1.Location = New System.Drawing.Point(93, 238)
         Me.CheckBox1.Name = "CheckBox1"
         Me.CheckBox1.Size = New System.Drawing.Size(98, 17)
         Me.CheckBox1.TabIndex = 36
@@ -140,7 +141,7 @@ Partial Class Config
         '
         Me.NumericUpDown1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Global.PACModeSLogging.My.MySettings.Default, "SampleRate", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
         Me.NumericUpDown1.Increment = New Decimal(New Integer() {5, 0, 0, 0})
-        Me.NumericUpDown1.Location = New System.Drawing.Point(135, 170)
+        Me.NumericUpDown1.Location = New System.Drawing.Point(135, 189)
         Me.NumericUpDown1.Maximum = New Decimal(New Integer() {60, 0, 0, 0})
         Me.NumericUpDown1.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
         Me.NumericUpDown1.Name = "NumericUpDown1"
@@ -148,11 +149,23 @@ Partial Class Config
         Me.NumericUpDown1.TabIndex = 34
         Me.NumericUpDown1.Value = Global.PACModeSLogging.My.MySettings.Default.SampleRate
         '
+        'RadioButton3
+        '
+        Me.RadioButton3.AutoSize = True
+        Me.RadioButton3.Location = New System.Drawing.Point(30, 105)
+        Me.RadioButton3.Name = "RadioButton3"
+        Me.RadioButton3.Size = New System.Drawing.Size(100, 17)
+        Me.RadioButton3.TabIndex = 39
+        Me.RadioButton3.TabStop = True
+        Me.RadioButton3.Text = "Include No-Reg"
+        Me.RadioButton3.UseVisualStyleBackColor = True
+        '
         'Config
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(284, 336)
+        Me.Controls.Add(Me.RadioButton3)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.TextBox2)
         Me.Controls.Add(Me.CheckBox1)
@@ -184,4 +197,5 @@ Partial Class Config
     Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
     Friend WithEvents Button2 As System.Windows.Forms.Button
     Friend WithEvents TextBox2 As System.Windows.Forms.TextBox
+    Friend WithEvents RadioButton3 As RadioButton
 End Class

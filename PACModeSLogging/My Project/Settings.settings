@@ -34,5 +34,8 @@
     <Setting Name="MainFormLocation" Type="System.Drawing.Point" Scope="User">
       <Value Profile="(Default)">1000, 1000</Value>
     </Setting>
+    <Setting Name="NoReg_Button" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

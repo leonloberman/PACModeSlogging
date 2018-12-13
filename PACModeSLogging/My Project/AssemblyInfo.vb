@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("PACModeSLogging")>
-<Assembly: AssemblyCopyright("Copyright Leon Loberman ©  2017")>
+<Assembly: AssemblyCopyright("Copyright Leon Loberman ©  2018")>
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.3.7.0")>
-<Assembly: AssemblyFileVersion("1.3.7.0")>
+<Assembly: AssemblyVersion("1.3.8.0")>
+<Assembly: AssemblyFileVersion("1.3.8.0")>

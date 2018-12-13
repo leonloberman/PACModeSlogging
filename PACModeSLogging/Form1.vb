@@ -175,7 +175,7 @@ Start:
                 Reg = PPbits(1)
                 PPInt = PPbits(21)
                 UT = PPbits(22)
-                If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
+                If My.Settings.NoReg_Button = False Or Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
 
                 ListRec = Reg + " - " + PPHex
 
@@ -279,6 +279,7 @@ EmptyStep:
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
+        If My.Settings.NoReg_Button = True Then GoTo No_Reg_Step
         LResponse = MsgBox("Do you want to log " & ToLogReg & Chr(32) & "?", vbOKCancel)
         If LResponse = 1 Then
             If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
@@ -314,6 +315,9 @@ EmptyStep:
             Where = My.Settings.Location
             If ToLogType.Contains("RQ") Then MDPO = "M"
             If ToLogType.Contains("Ps") Then MDPO = "P"
+            'Insert No-Reg into logllp as O'
+
+
             'Insert into logllp
             logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" & _
                 "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " & Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk" & _
@@ -331,6 +335,14 @@ EmptyStep:
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                 cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                 cmd2.ExecuteNonQuery()
+                If My.Settings.NoReg_Button = True Then
+
+
+                    logged_SQL = "INSERT INTO logllp ( ID, [when], Registration, Aircraft, Operator, Where, flag, MDPO, LOCKK)" &
+                                "3335", "& Chr(34) & tologdate & Chr(34) & " & Chr(34) & Where & Chr(34) & ", " & Chr(34) & MDPO & Chr(34) & " AS MDPO, " & Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk"
+                Dim cmd2 As New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    cmd2.ExecuteNonQuery()
+                End If
             End If
             Logged_con.Close()
             Logged_con.Dispose()

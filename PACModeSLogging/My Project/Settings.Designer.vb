@@ -158,6 +158,18 @@ Namespace My
                 Me("MainFormLocation") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property NoReg_Button() As Boolean
+            Get
+                Return CType(Me("NoReg_Button"),Boolean)
+            End Get
+            Set
+                Me("NoReg_Button") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
