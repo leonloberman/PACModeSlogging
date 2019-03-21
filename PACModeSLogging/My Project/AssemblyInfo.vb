@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("PACModeSLogging")>
-<Assembly: AssemblyCopyright("Copyright Leon Loberman ©  2018")>
+<Assembly: AssemblyCopyright("Copyright Leon Loberman ©  2019")>
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

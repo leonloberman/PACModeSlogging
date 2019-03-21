@@ -34,6 +34,7 @@ Partial Class Form1
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.Button7 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'Timer1
@@ -77,7 +78,7 @@ Partial Class Form1
         Me.Button6.BackgroundImage = Global.PACModeSLogging.My.Resources.Resources.ClearList
         Me.Button6.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.Button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button6.Location = New System.Drawing.Point(284, 3)
+        Me.Button6.Location = New System.Drawing.Point(321, 3)
         Me.Button6.Name = "Button6"
         Me.Button6.Size = New System.Drawing.Size(20, 20)
         Me.Button6.TabIndex = 28
@@ -89,7 +90,7 @@ Partial Class Form1
         Me.Button5.BackgroundImage = Global.PACModeSLogging.My.Resources.Resources._exit
         Me.Button5.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.Button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button5.Location = New System.Drawing.Point(339, 3)
+        Me.Button5.Location = New System.Drawing.Point(378, 2)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(26, 23)
         Me.Button5.TabIndex = 27
@@ -101,7 +102,7 @@ Partial Class Form1
         Me.Button2.BackgroundImage = Global.PACModeSLogging.My.Resources.Resources.Sound_off
         Me.Button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.Button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button2.Location = New System.Drawing.Point(258, 4)
+        Me.Button2.Location = New System.Drawing.Point(258, 3)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(20, 20)
         Me.Button2.TabIndex = 25
@@ -128,7 +129,7 @@ Partial Class Form1
         Me.Button1.BackgroundImage = Global.PACModeSLogging.My.Resources.Resources.Button_Close_icon
         Me.Button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.Button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.Button1.Location = New System.Drawing.Point(312, 4)
+        Me.Button1.Location = New System.Drawing.Point(350, 3)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(20, 20)
         Me.Button1.TabIndex = 1
@@ -136,13 +137,25 @@ Partial Class Form1
         Me.Button1.UseVisualStyleBackColor = False
         Me.Button1.Visible = False
         '
+        'Button7
+        '
+        Me.Button7.BackColor = System.Drawing.SystemColors.MenuHighlight
+        Me.Button7.Font = New System.Drawing.Font("Microsoft Sans Serif", 6.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button7.Location = New System.Drawing.Point(285, 2)
+        Me.Button7.Name = "Button7"
+        Me.Button7.Size = New System.Drawing.Size(30, 23)
+        Me.Button7.TabIndex = 29
+        Me.Button7.Text = "NR"
+        Me.Button7.UseVisualStyleBackColor = False
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.MenuBar
-        Me.ClientSize = New System.Drawing.Size(372, 28)
+        Me.ClientSize = New System.Drawing.Size(409, 28)
         Me.ControlBox = False
+        Me.Controls.Add(Me.Button7)
         Me.Controls.Add(Me.Button6)
         Me.Controls.Add(Me.Button5)
         Me.Controls.Add(Me.Button4)
@@ -171,5 +184,5 @@ Partial Class Form1
     Friend WithEvents Button5 As System.Windows.Forms.Button
     Friend WithEvents Button6 As System.Windows.Forms.Button
     Friend WithEvents ToolTip1 As System.Windows.Forms.ToolTip
-
+    Friend WithEvents Button7 As Button
 End Class

@@ -279,7 +279,6 @@ EmptyStep:
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
-        If My.Settings.NoReg_Button = True Then GoTo No_Reg_Step
         LResponse = MsgBox("Do you want to log " & ToLogReg & Chr(32) & "?", vbOKCancel)
         If LResponse = 1 Then
             If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
@@ -335,14 +334,7 @@ EmptyStep:
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                 cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                 cmd2.ExecuteNonQuery()
-                If My.Settings.NoReg_Button = True Then
 
-
-                    logged_SQL = "INSERT INTO logllp ( ID, [when], Registration, Aircraft, Operator, Where, flag, MDPO, LOCKK)" &
-                                "3335", "& Chr(34) & tologdate & Chr(34) & " & Chr(34) & Where & Chr(34) & ", " & Chr(34) & MDPO & Chr(34) & " AS MDPO, " & Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk"
-                Dim cmd2 As New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
-                End If
             End If
             Logged_con.Close()
             Logged_con.Dispose()
@@ -440,6 +432,13 @@ UpdBS:      CheckBusy = False
         Timer1.Stop()
         ComboBox1.Items.Clear()
         Timer1.Start()
+    End Sub
+
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+        Timer1.Stop()
+        Button3.Visible = True
+        Dim LogData As New Log_data
+        LogData.Show()
     End Sub
 End Class
 
