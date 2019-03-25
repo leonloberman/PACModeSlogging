@@ -70,15 +70,17 @@ Partial Class Log_data
         Me.TextBox1.Location = New System.Drawing.Point(137, 28)
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(100, 20)
-        Me.TextBox1.TabIndex = 5
+        Me.TextBox1.TabIndex = 1
         '
         'ComboBox1
         '
+        Me.ComboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
+        Me.ComboBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
         Me.ComboBox1.FormattingEnabled = True
         Me.ComboBox1.Location = New System.Drawing.Point(137, 88)
         Me.ComboBox1.Name = "ComboBox1"
         Me.ComboBox1.Size = New System.Drawing.Size(347, 21)
-        Me.ComboBox1.TabIndex = 6
+        Me.ComboBox1.TabIndex = 2
         '
         'ComboBox2
         '
@@ -86,7 +88,7 @@ Partial Class Log_data
         Me.ComboBox2.Location = New System.Drawing.Point(137, 154)
         Me.ComboBox2.Name = "ComboBox2"
         Me.ComboBox2.Size = New System.Drawing.Size(90, 21)
-        Me.ComboBox2.TabIndex = 7
+        Me.ComboBox2.TabIndex = 3
         '
         'ComboBox3
         '
@@ -94,7 +96,7 @@ Partial Class Log_data
         Me.ComboBox3.Location = New System.Drawing.Point(366, 155)
         Me.ComboBox3.Name = "ComboBox3"
         Me.ComboBox3.Size = New System.Drawing.Size(118, 21)
-        Me.ComboBox3.TabIndex = 8
+        Me.ComboBox3.TabIndex = 4
         '
         'Label4
         '
@@ -110,7 +112,7 @@ Partial Class Log_data
         Me.Button1.Location = New System.Drawing.Point(390, 276)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
-        Me.Button1.TabIndex = 10
+        Me.Button1.TabIndex = 7
         Me.Button1.Text = "Log"
         Me.Button1.UseVisualStyleBackColor = True
         '
@@ -119,17 +121,20 @@ Partial Class Log_data
         Me.Button2.Location = New System.Drawing.Point(161, 275)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
-        Me.Button2.TabIndex = 11
+        Me.Button2.TabIndex = 8
+        Me.Button2.TabStop = False
         Me.Button2.Text = "Cancel"
         Me.Button2.UseVisualStyleBackColor = True
         '
         'ComboBox4
         '
+        Me.ComboBox4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest
+        Me.ComboBox4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems
         Me.ComboBox4.FormattingEnabled = True
         Me.ComboBox4.Location = New System.Drawing.Point(137, 228)
         Me.ComboBox4.Name = "ComboBox4"
         Me.ComboBox4.Size = New System.Drawing.Size(347, 21)
-        Me.ComboBox4.TabIndex = 12
+        Me.ComboBox4.TabIndex = 6
         '
         'Label5
         '
@@ -145,7 +150,7 @@ Partial Class Log_data
         Me.TextBox2.Location = New System.Drawing.Point(136, 191)
         Me.TextBox2.Name = "TextBox2"
         Me.TextBox2.Size = New System.Drawing.Size(91, 20)
-        Me.TextBox2.TabIndex = 14
+        Me.TextBox2.TabIndex = 5
         '
         'Label6
         '
