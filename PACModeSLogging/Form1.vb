@@ -175,7 +175,7 @@ Start:
                 Reg = PPbits(1)
                 PPInt = PPbits(21)
                 UT = PPbits(22)
-                If My.Settings.NoReg_Button = False Or Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
+                If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
 
                 ListRec = Reg + " - " + PPHex
 

@@ -5,6 +5,7 @@ Imports System.Data.OleDb
 Public Class Log_data
 
     Private Sub no_reg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+         Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
         Dim log_dbname As String = "C:\ModeS\logged.mdb"
         Dim dt As New DataTable("dt")
         Dim dt2 As New DataTable("dt2")
@@ -94,7 +95,7 @@ Public Class Log_data
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Dim SQL As String
-        Dim DBname As String = "C:\ModeS\52_privatelogs.mdb"
+        Dim DBname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
         Dim Aircraft As String
         Dim Op As String = "Test"
         Dim tologdate = DateAndTime.Now.ToShortDateString
@@ -120,7 +121,7 @@ Public Class Log_data
         Dim logging_cmd As New OleDbCommand(SQL, logging_con)
         logging_cmd.ExecuteNonQuery()
         logging_con.Close()
-
+        Me.Close()
         'AccessSQL(SQL, DBname)
 
 
