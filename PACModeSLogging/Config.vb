@@ -55,8 +55,4 @@
         End Using
     End Sub
 
-    Private Sub RadioButton3_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton3.CheckedChanged
-        My.Settings.NoReg_Button = True
-        My.Settings.Save()
-    End Sub
 End Class
