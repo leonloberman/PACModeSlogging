@@ -100,7 +100,7 @@ Public Class Log_data
         Dim Op As String = "Test"
         Dim tologdate = DateAndTime.Now.ToShortDateString
 
-        Aircraft = ComboBox1.Text & ComboBox2.Text & ComboBox3.Text & "[" & TextBox2.Text & "]"
+        Aircraft = ComboBox1.Text & ComboBox2.Text & ComboBox3.Text & " [" & TextBox2.Text & "]"
 
         If TextBox1.TextLength = 0 Then
             MsgBox("You must enter the registration you are logging!!", vbExclamation, "Registration Check")

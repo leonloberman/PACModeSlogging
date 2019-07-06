@@ -439,6 +439,7 @@ UpdBS:      CheckBusy = False
         Button3.Visible = True
         Dim LogData As New Log_data
         LogData.Show()
+        Timer1.Start()
     End Sub
 End Class
 
