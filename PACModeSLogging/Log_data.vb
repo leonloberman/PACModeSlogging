@@ -115,7 +115,7 @@ Public Class Log_data
         logging_con.Open()
 
         SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK ) " &
-                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",' " & TextBox1.Text & "',' " & Aircraft & "',' " & ComboBox4.Text & "',' " & My.Settings.Location & "',True,'O',False);"
+                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" & ComboBox4.Text & "','" & My.Settings.Location & "',True,'O',False);"
 
 
         Dim logging_cmd As New OleDbCommand(SQL, logging_con)
