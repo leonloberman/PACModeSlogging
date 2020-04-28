@@ -67,6 +67,14 @@ Public Class Form1
     Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
 
     Dim oInput As String
+    Dim BS_id As String
+    Dim BS_Hex As String
+    Dim BS_CtryName As String
+    Dim BS_Reg As String
+    Dim BS_ICAOTypeCode As String
+    Dim BS_CN As String
+    Dim BS_FKCMXO As String
+    Dim BS_Operator As String
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
@@ -208,16 +216,24 @@ GetPPHex:       CheckBusy = False
                     dtset_con = New OleDbConnection
                     dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
 
-                    dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '" & PPHex & "';"
-                    'dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '43C76A';"
+                    'dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '" & PPHex & "';"
+                    dtset_sql = "SELECT tbldataset.ID, tbldataset.Hex, tblCountry.CountryName, tbldataset.Registration, tblSeries.code, tbldataset.CN, tbldataset.FKCMXO, PRO_tbloperator.Operator" &
+                            " FROM PRO_tbloperator RIGHT JOIN (tblSeries INNER JOIN (tblCountry RIGHT JOIN tbldataset ON tblCountry.FKcountry = tbldataset.FKcountry) ON tblSeries.FKseries = tbldataset.FKseries) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator" &
+                            " where tbldataset.hex = '" & PPHex & "';"
                     If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
                     dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
                     Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
                     dtset_rdr.Read()
                     If dtset_rdr.HasRows = False Then Continue While
-                    Tologid = dtset_rdr(0)
-                    ToLogHex = PPHex
-                    ToLogReg = dtset_rdr(1)
+                    BS_id = dtset_rdr(0)
+                    BS_Hex = dtset_rdr(1)
+                    BS_CtryName = dtset_rdr(2)
+                    BS_Reg = dtset_rdr(3)
+                    BS_ICAOTypeCode = dtset_rdr(4)
+                    BS_CN = dtset_rdr(5)
+                    BS_FKCMXO = dtset_rdr(6)
+                    BS_Operator = dtset_rdr(7)
+
                     dtset_rdr.Close()
                     dtset_con.Close()
                     dtset_con.Dispose()
@@ -225,8 +241,9 @@ GetPPHex:       CheckBusy = False
 
 
                     'Write to basestation.sqb
-                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, Registration, ModeS, FirstCreated, LastModified) Values (" & Tologid & ", " & Tologid & ", " &
-                    Chr(39) & ToLogReg & Chr(39) & ", " & Chr(39) & ToLogHex & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
+                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, FirstCreated, LastModified)" &
+                         "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
+                          Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
                     BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
 
                     Try
