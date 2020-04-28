@@ -21,6 +21,7 @@ Public Class Form1
     Dim PPType As String
     Dim PPCallsign As String
     Dim PPAll As String
+    Dim Sharers As String
 
     Dim Reg As String
     Dim ListRec As String
@@ -59,7 +60,8 @@ Public Class Form1
 
     'BaseStation definitions
     Dim BS_Con As SQLiteConnection
-    Dim BSLoc As String = My.Settings.BSLoc + "/basestation.sqb"
+    'Dim BSLoc As String = My.Settings.BSLoc + "/basestation.sqb"
+    Dim BSLoc As String = "C:/ModeS/basestation.sqb"
     Dim BS_SQL As String = "Update Aircraft set UserTag = " & """LOG""" & " WHERE Modes = "
 
     Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
@@ -141,6 +143,11 @@ Public Class Form1
 
     Public Sub RunProcess()
 
+        Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
+        Dim BS_Con As New SQLiteConnection(BS_Con_cs)
+        Dim BS_Cmd As New SQLiteCommand(BS_Con)
+        Dim BS_rdr As SQLiteDataReader
+
         Logged_con = New OleDbConnection
         Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
         dtset_con = New OleDbConnection
@@ -165,6 +172,7 @@ Start:
         i = 0
         Try
             While i < MyObject.GetallPlaneCount()
+                i += 1
                 PPHex = String.Empty
                 Reg = String.Empty
                 ListRec = String.Empty
@@ -175,84 +183,157 @@ Start:
                 Reg = PPbits(1)
                 PPInt = PPbits(21)
                 UT = PPbits(22)
-                If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
+                Sharers = PPbits(13)
 
-                ListRec = Reg + " - " + PPHex
 
-                If My.Settings.InterestedButton = False Then
-                    If UT.Contains("RQ") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.RQ)
-                                Sound.Play()
-                            End If
+                Dim CheckBusy As Boolean = False
+GetPPHex:       CheckBusy = False
+
+                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+
+                Dim BSstr As String = "Select * from Aircraft WHERE Modes = " & Chr(34) & PPHex & Chr(34) & ";"
+
+                BS_Cmd.Connection = BS_Con
+                BS_Cmd.CommandText = BSstr
+                BS_rdr = BS_Cmd.ExecuteReader()
+                BS_rdr.Read()
+                BS_rdr.Close()
+                If CInt(BS_Cmd.ExecuteScalar) = 0 Then
+
+
+                    'Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
+                    'Dim logged_cmd As New OleDbCommand
+
+
+                    dtset_con = New OleDbConnection
+                    dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+
+                    dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '" & PPHex & "';"
+                    'dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '43C76A';"
+                    If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+                    dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
+                    Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
+                    dtset_rdr.Read()
+                    If dtset_rdr.HasRows = False Then Continue While
+                    Tologid = dtset_rdr(0)
+                    ToLogHex = PPHex
+                    ToLogReg = dtset_rdr(1)
+                    dtset_rdr.Close()
+                    dtset_con.Close()
+                    dtset_con.Dispose()
+
+
+
+                    'Write to basestation.sqb
+                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, Registration, ModeS, FirstCreated, LastModified) Values (" & Tologid & ", " & Tologid & ", " &
+                    Chr(39) & ToLogReg & Chr(39) & ", " & Chr(39) & ToLogHex & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
+                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+
+                    Try
+                        BS_Cmd.ExecuteNonQuery()
+                    Catch SQLiteexception As Exception
+                        If SQLiteErrorCode.Locked Then
+                            CheckBusy = True
+                        Else
+                            CheckBusy = False
                         End If
-                    ElseIf UT.Contains("Ps") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.Ps)
-                                Sound.Play()
-                            End If
-                        End If
-                    ElseIf UT = "new" Then
-                        Logged_con.Open()
-                        logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        logged_rdr.Read()
-                        If logged_rdr.HasRows = False Then
-                            'Write hex to Unknowns table
-                            logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
-                            logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                            logged_cmd.ExecuteNonQuery()
-                        End If
-                        logged_rdr.Close()
-                        logged_cmd.Dispose()
-                        Logged_con.Close()
+                    End Try
+                    If CheckBusy = True Then
+                        GoTo GetPPHex
+
                     End If
+                Else Continue While
                 End If
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
-                If My.Settings.InterestedButton = True Then
-                    If PPInt = 1 Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                            End If
+                'End If
+
+
+
+
+
+
+            End While
+
+            BS_Con.Close()
+            BS_Con.Dispose()
+
+
+            If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
+
+            ListRec = Reg + " - " + PPHex
+
+            If My.Settings.InterestedButton = False Then
+                If UT.Contains("RQ") Then
+                    If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                        ComboBox1.Items.Add(ListRec)
+                        If Button2.Tag = "Sound" Then
+                            Sound = New System.Media.SoundPlayer(My.Resources.RQ)
+                            Sound.Play()
                         End If
-                    ElseIf UT = "new" Then
-                        Logged_con.Open()
-                        logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        logged_rdr.Read()
-                        If logged_rdr.HasRows = False Then
-                            'Write hex to Unknowns table
-                            logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
-                            logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                            logged_cmd.ExecuteNonQuery()
-                        End If
-                        logged_rdr.Close()
-                        logged_cmd.Dispose()
-                        Logged_con.Close()
                     End If
+                ElseIf UT.Contains("Ps") Then
+                    If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                        ComboBox1.Items.Add(ListRec)
+                        If Button2.Tag = "Sound" Then
+                            Sound = New System.Media.SoundPlayer(My.Resources.Ps)
+                            Sound.Play()
+                        End If
+                    End If
+                ElseIf UT = "new" Then
+                    Logged_con.Open()
+                    logged_SQL = "SELECT * From Unknowns where ModeS ="
+                    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+                    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                    logged_rdr.Read()
+                    If logged_rdr.HasRows = False Then
+                        'Write hex to Unknowns table
+                        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
+                        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                        logged_cmd.ExecuteNonQuery()
+                    End If
+                    logged_rdr.Close()
+                    logged_cmd.Dispose()
+                    Logged_con.Close()
                 End If
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
+            End If
+            PPHex = String.Empty
+            Reg = String.Empty
+            ListRec = String.Empty
+            If My.Settings.InterestedButton = True Then
+                If PPInt = 1 Then
+                    If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                        ComboBox1.Items.Add(ListRec)
+                        If Button2.Tag = "Sound" Then
+                        End If
+                    End If
+                ElseIf UT = "new" Then
+                    Logged_con.Open()
+                    logged_SQL = "SELECT * From Unknowns where ModeS ="
+                    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+                    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                    logged_rdr.Read()
+                    If logged_rdr.HasRows = False Then
+                        'Write hex to Unknowns table
+                        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
+                        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                        logged_cmd.ExecuteNonQuery()
+                    End If
+                    logged_rdr.Close()
+                    logged_cmd.Dispose()
+                    Logged_con.Close()
+                End If
+            End If
+            PPHex = String.Empty
+            Reg = String.Empty
+            ListRec = String.Empty
 
 EmptyStep:
 
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
-                i = i + 1
-            End While
+            PPHex = String.Empty
+            Reg = String.Empty
+            ListRec = String.Empty
+            i = i + 1
         Catch ex As Exception
             Timer1.Stop()
             Button1.Visible = True
@@ -264,7 +345,7 @@ EmptyStep:
 
 
     End Sub
-    
+
 
     Public Sub Combobox1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
         
