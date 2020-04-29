@@ -82,6 +82,7 @@ Public Class Form1
     Dim BS_UserTagv3 As String
     Dim BS_UserTagV1 As String
     Dim BS_Interested As String
+    Dim BS_UserInt1 As String
 
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
@@ -257,6 +258,11 @@ GetPPHex:       CheckBusy = False
                     Else BS_UserTagv3 = ""
                     End If
 
+                    If Not IsDBNull(logged_rdr(9)) Then
+                        BS_UserInt1 = logged_rdr(9)
+                    Else BS_UserInt1 = ""
+                    End If
+
                     'BS_UserTagV1 = logged_rdr(10)
 
                     'BS_UserTagv3 = "RQ" & BS_UserTagv3
@@ -313,11 +319,11 @@ GetPPHex:       CheckBusy = False
 
 
                     'Write to basestation.sqb
-                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, Interested, UserInt1, FirstCreated, LastModified)" &
+                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, Interested, UserInt1, UserString1, FirstCreated, LastModified)" &
                      "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
                       Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & Chr(39) & BS_OperatorFlagCode & Chr(39) & ", " &
-                      Chr(39) & BS_UserTagv3 & Chr(39) & ", " & Chr(39) & BS_Interested & Chr(39) & ", " & Chr(39) & BS_FKCMXO & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
-                        BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                      Chr(39) & BS_UserTagv3 & Chr(39) & ", " & Chr(39) & BS_Interested & Chr(39) & ", " & Chr(39) & BS_FKCMXO & Chr(39) & ", " & Chr(39) & BS_UserInt1 & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
+                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
 
                         Try
                             BS_Cmd.ExecuteNonQuery()
