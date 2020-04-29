@@ -75,6 +75,10 @@ Public Class Form1
     Dim BS_CN As String
     Dim BS_FKCMXO As String
     Dim BS_Operator As String
+    Dim BS_OperatorFlagCode As String
+    Dim BS_UserTagv3 As String
+    Dim BS_UserTagV1 As String
+
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
@@ -97,7 +101,7 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-       
+
         'If My.Settings.Location.Length = 0 Then
         'Me.Visible = False
         'MyConfig.Show()
@@ -116,11 +120,11 @@ Public Class Form1
 
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-    
+
         Timer1.Stop()
         Button1.Visible = False
         Button3.Visible = True
-    
+
     End Sub
 
 
@@ -143,7 +147,7 @@ Public Class Form1
         End If
         Me.StartPosition = FormStartPosition.CenterScreen
         'Me.Show()
-        
+
         RunProcess()
 
     End Sub
@@ -208,59 +212,77 @@ GetPPHex:       CheckBusy = False
                 BS_rdr.Close()
                 If CInt(BS_Cmd.ExecuteScalar) = 0 Then
 
-
-                    'Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
-                    'Dim logged_cmd As New OleDbCommand
+                    'Logged_con.ConnectionString = "provider=microsoft.jet.oledb.4.0;data source=" & log_dbname & ""
+                    Dim logged_cmd As New OleDbCommand
 
 
                     dtset_con = New OleDbConnection
-                    dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+                        dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
 
-                    'dtset_sql = "SELECT ID, Registration FROM tbldataset where Hex = '" & PPHex & "';"
-                    dtset_sql = "SELECT tbldataset.ID, tbldataset.Hex, tblCountry.CountryName, tbldataset.Registration, tblSeries.code, tbldataset.CN, tbldataset.FKCMXO, PRO_tbloperator.Operator" &
-                            " FROM PRO_tbloperator RIGHT JOIN (tblSeries INNER JOIN (tblCountry RIGHT JOIN tbldataset ON tblCountry.FKcountry = tbldataset.FKcountry) ON tblSeries.FKseries = tbldataset.FKseries) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator" &
-                            " where tbldataset.hex = '" & PPHex & "';"
-                    If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
-                    dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
-                    Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
-                    dtset_rdr.Read()
-                    If dtset_rdr.HasRows = False Then Continue While
-                    BS_id = dtset_rdr(0)
-                    BS_Hex = dtset_rdr(1)
-                    BS_CtryName = dtset_rdr(2)
-                    BS_Reg = dtset_rdr(3)
-                    BS_ICAOTypeCode = dtset_rdr(4)
-                    BS_CN = dtset_rdr(5)
-                    BS_FKCMXO = dtset_rdr(6)
-                    BS_Operator = dtset_rdr(7)
 
-                    dtset_rdr.Close()
+                    'dtset_sql = "SELECT tbldataset.ID, tbldataset.Hex, tblCountry.CountryName, tbldataset.Registration, tblSeries.code, tbldataset.CN, tbldataset.FKCMXO, PRO_tbloperator.Operator,  Str([PRO_tbloperator].[FKoperator]) AS OperatorFlagCode
+                    '   FROM PRO_tbloperator RIGHT JOIN (tblSeries INNER JOIN (tblCountry RIGHT JOIN tbldataset ON tblCountry.FKcountry = tbldataset.FKcountry) ON tblSeries.FKseries = tbldataset.FKseries) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator
+                    '   where hex = '" & PPHex & "'; "
+
+                    logged_SQL = "Select tbldataset.ID, tbldataset.Hex, tblCountry.CountryName, tbldataset.Registration, tblSeries.code, tbldataset.CN, tbldataset.FKCMXO, PRO_tbloperator.Operator, Str([PRO_tbloperator].[FKoperator]) As OperatorFlagCode, PP_SymbolsByType.UserString1_v3, PP_SymbolsByType.UserString1_v1
+                        FROM(PRO_tbloperator RIGHT JOIN (tblSeries INNER JOIN (tblCountry RIGHT JOIN tbldataset On tblCountry.FKcountry = tbldataset.FKcountry) On tblSeries.FKseries = tbldataset.FKseries) On PRO_tbloperator.FKoperator = tbldataset.FKoperator) INNER JOIN PP_SymbolsByType On tblSeries.code = PP_SymbolsByType.ICAOTypeCode
+                        Where (tbldataset.[hex]) = '" & PPHex & "'; "
+
+                    If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                    logged_rdr.Read()
+                    If logged_rdr.HasRows = False Then Continue While
+
+                    BS_id = logged_rdr(0)
+                    BS_Hex = logged_rdr(1)
+                    BS_CtryName = logged_rdr(2)
+                    BS_Reg = logged_rdr(3)
+
+                    If Not IsDBNull(logged_rdr.Item(4)) Then
+                        BS_ICAOTypeCode = logged_rdr(4)
+                    Else BS_ICAOTypeCode = "????"
+                    End If
+
+                    BS_CN = logged_rdr(5)
+                    BS_FKCMXO = logged_rdr(6)
+                    BS_Operator = logged_rdr(7)
+                    BS_OperatorFlagCode = logged_rdr(8)
+                    If Not IsDBNull(logged_rdr(9)) Then
+                        BS_UserTagv3 = logged_rdr(9)
+                    Else BS_UserTagv3 = ""
+                    End If
+
+                    'BS_UserTagV1 = logged_rdr(10)
+
+                    logged_rdr.Close()
                     dtset_con.Close()
-                    dtset_con.Dispose()
+                        dtset_con.Dispose()
 
-
+                    BS_OperatorFlagCode = "x" & LTrim([BS_OperatorFlagCode])
 
                     'Write to basestation.sqb
-                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, FirstCreated, LastModified)" &
-                         "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
-                          Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
+                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, FirstCreated, LastModified)" &
+                     "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
+                      Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & Chr(39) & BS_OperatorFlagCode & Chr(39) & ", " &
+                      Chr(39) & BS_UserTagv3 & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
                     BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
 
-                    Try
-                        BS_Cmd.ExecuteNonQuery()
-                    Catch SQLiteexception As Exception
-                        If SQLiteErrorCode.Locked Then
-                            CheckBusy = True
-                        Else
-                            CheckBusy = False
-                        End If
-                    End Try
-                    If CheckBusy = True Then
-                        GoTo GetPPHex
+                        Try
+                            BS_Cmd.ExecuteNonQuery()
+                        Catch SQLiteexception As Exception
+                            If SQLiteErrorCode.Locked Then
+                                CheckBusy = True
+                            Else
+                                CheckBusy = False
+                            End If
+                        End Try
+                        If CheckBusy = True Then
+                            GoTo GetPPHex
 
+                        End If
+                    Else Continue While
                     End If
-                Else Continue While
-                End If
                 'End If
 
 
