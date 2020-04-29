@@ -36,6 +36,9 @@ Public Class Form1
     Dim log_dbname As String = "C:\ModeS\logged.mdb"
 
     Dim logged_cmd As New OleDbCommand(logged_SQL, Logged_con)
+    Dim logged2_cmd As New OleDbCommand(logged_SQL, Logged_con)
+    Dim logged2_SQL As String
+
 
     'GFIA database definitions
     Dim dtset_con As OleDbConnection
@@ -256,9 +259,7 @@ GetPPHex:       CheckBusy = False
 
                     'BS_UserTagV1 = logged_rdr(10)
 
-                    logged_rdr.Close()
-                    dtset_con.Close()
-                        dtset_con.Dispose()
+                    'BS_UserTagv3 = "RQ" & BS_UserTagv3
 
                     BS_OperatorFlagCode = "x" & LTrim([BS_OperatorFlagCode])
 
@@ -267,12 +268,56 @@ GetPPHex:       CheckBusy = False
                     Else BS_Interested = False
                     End If
 
+                    'logged2_SQL = "SELECT DISTINCT logLLp.Registration, tbldataset.ID, tbldataset.Hex
+                    '                FROM (logLLp INNER JOIN tblOperatorHistory ON logLLp.ID = tblOperatorHistory.ID)
+                    'INNER JOIN tbldataset ON (logLLp.ID = tbldataset.ID)
+                    'Where (tbldataset.[hex]) = '" & PPHex & "'; "
+
+                    logged2_SQL = "Select DISTINCT logLLp.Registration,  logLLp.ID As AircraftID, tbldataset.Hex
+                      FROM ((logLLp INNER JOIN tblOperatorHistory On logLLp.ID = tblOperatorHistory.ID) INNER JOIN tbldataset On logLLp.ID = tbldataset.ID)
+                                             WHERE logLLp.Registration In (Select tblOperatorHistory.previous from tblOperatorHistory) 
+                        AND (tbldataset.[hex]) = '" & PPHex & "';"
+
+                    logged2_cmd = New OleDbCommand(logged2_SQL, Logged_con)
+                    Dim logged2_rdr As OleDbDataReader = logged2_cmd.ExecuteReader()
+                    logged2_rdr.Read()
+                    If logged2_rdr.HasRows = True Then
+                        BS_UserTagv3 = "Ps" & BS_UserTagv3
+                    End If
+
+                    logged2_SQL = "Select DISTINCT logLLp.Registration,  logLLp.ID As AircraftID, tbldataset.Hex
+                      FROM ((logLLp INNER JOIN tblOperatorHistory On logLLp.ID = tblOperatorHistory.ID) INNER JOIN tbldataset On logLLp.ID = tbldataset.ID)
+                                             WHERE logLLp.Registration In (Select tblOperatorHistory.previous from tblOperatorHistory) 
+                        AND (tbldataset.[hex]) = '" & PPHex & "';"
+
+                    logged2_cmd = New OleDbCommand(logged2_SQL, Logged_con)
+                    logged2_rdr.Read()
+                    If logged2_rdr.HasRows = False Then
+                        BS_UserTagv3 = "RQ" & BS_UserTagv3
+                    End If
+
+                    logged2_SQL = "Select DISTINCT logLLp.Registration,  logLLp.ID As AircraftID, tbldataset.Hex
+                      FROM logLLp INNER JOIN tbldataset On logLLp.ID = tbldataset.ID
+                        AND (tbldataset.[hex]) = '" & PPHex & "';"
+
+                    'If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                    logged2_cmd = New OleDbCommand(logged2_SQL, Logged_con)
+                    logged2_rdr.Read()
+                    If logged2_rdr.HasRows = False Then
+                        BS_UserTagv3 = logged_rdr(9)
+                    End If
+                    logged_rdr.Close()
+                    logged2_rdr.Close()
+
+
+
+
                     'Write to basestation.sqb
                     BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, Interested, UserInt1, FirstCreated, LastModified)" &
                      "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
                       Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & Chr(39) & BS_OperatorFlagCode & Chr(39) & ", " &
                       Chr(39) & BS_UserTagv3 & Chr(39) & ", " & Chr(39) & BS_Interested & Chr(39) & ", " & Chr(39) & BS_FKCMXO & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
-                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                        BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
 
                         Try
                             BS_Cmd.ExecuteNonQuery()
