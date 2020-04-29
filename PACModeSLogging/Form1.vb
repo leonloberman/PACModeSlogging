@@ -78,6 +78,7 @@ Public Class Form1
     Dim BS_OperatorFlagCode As String
     Dim BS_UserTagv3 As String
     Dim BS_UserTagV1 As String
+    Dim BS_Interested As String
 
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
@@ -261,11 +262,16 @@ GetPPHex:       CheckBusy = False
 
                     BS_OperatorFlagCode = "x" & LTrim([BS_OperatorFlagCode])
 
+                    If BS_FKCMXO = "502" Then
+                        BS_Interested = True
+                    Else BS_Interested = False
+                    End If
+
                     'Write to basestation.sqb
-                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, FirstCreated, LastModified)" &
+                    BS_SQL = "INSERT INTO Aircraft (RowID, AircraftID, ModeS, ModeSCountry, Registration, ICAOTypeCode, SerialNo, RegisteredOwners, OperatorFlagCode, UserTag, Interested, UserInt1, FirstCreated, LastModified)" &
                      "Values (" & BS_id & ", " & BS_id & ", " & Chr(39) & BS_Hex & Chr(39) & ", " & Chr(39) & BS_CtryName & Chr(39) & ", " & Chr(39) & BS_Reg & Chr(39) & ", " &
                       Chr(39) & BS_ICAOTypeCode & Chr(39) & ", " & Chr(39) & BS_CN & Chr(39) & ", " & Chr(39) & BS_Operator & Chr(39) & ", " & Chr(39) & BS_OperatorFlagCode & Chr(39) & ", " &
-                      Chr(39) & BS_UserTagv3 & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
+                      Chr(39) & BS_UserTagv3 & Chr(39) & ", " & Chr(39) & BS_Interested & Chr(39) & ", " & Chr(39) & BS_FKCMXO & Chr(39) & ", " & "DateTime('now'), DateTime('now'));"
                     BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
 
                         Try
