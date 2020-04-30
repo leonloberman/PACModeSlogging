@@ -1,6 +1,6 @@
 ﻿Public Class Config
 
-    Private Sub Config_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub config_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If My.Settings.InterestedButton = False Then
             RadioButton2.Checked = True
         ElseIf My.Settings.InterestedButton = True Then
