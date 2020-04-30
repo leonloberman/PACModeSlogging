@@ -3,7 +3,6 @@ Imports System.Data
 Imports System.Data.OleDb
 Imports System.Data.SQLite
 
-
 Public Class Form1
     'Declare the variables
     Dim drag As Boolean
@@ -84,6 +83,10 @@ Public Class Form1
     Dim BS_Interested As String
     Dim BS_UserInt1 As String
 
+    Dim ComboBoxReg As String
+    Dim ComboBoxHex As String
+    Dim ComboBoxUT As String
+
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
@@ -163,11 +166,12 @@ Public Class Form1
         Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
         Dim BS_Con As New SQLiteConnection(BS_Con_cs)
         Dim BS_Cmd As New SQLiteCommand(BS_Con)
+        Dim BS_cmd2 As New SQLiteCommand(BS_Con)
         Dim BS_rdr As SQLiteDataReader
-
-        Logged_con = New OleDbConnection
+        Dim BS_rdr2 As SQLiteDataReader
+        Dim Logged_con = New OleDbConnection
         Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
-        dtset_con = New OleDbConnection
+        Dim dtset_con = New OleDbConnection
         dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
 
 Start:
@@ -220,7 +224,7 @@ GetPPHex:       CheckBusy = False
 
 
                     dtset_con = New OleDbConnection
-                        dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+                    dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
 
 
                     'dtset_sql = "SELECT tbldataset.ID, tbldataset.Hex, tblCountry.CountryName, tbldataset.Registration, tblSeries.code, tbldataset.CN, tbldataset.FKCMXO, PRO_tbloperator.Operator,  Str([PRO_tbloperator].[FKoperator]) AS OperatorFlagCode
@@ -324,102 +328,129 @@ BS_execute1:        Try
                         BS_Cmd.ExecuteNonQuery()
                     Catch SQLiteexception As Exception
                         If SQLiteErrorCode.Locked Then
-                                CheckBusy = True
-                            Else
-                                CheckBusy = False
-                            End If
-                        End Try
-                        If CheckBusy = True Then
+                            CheckBusy = True
+                        Else
+                            CheckBusy = False
+                        End If
+                    End Try
+                    If CheckBusy = True Then
                         GoTo BS_execute1
 
                     End If
-                    Else Continue While
-                    End If
-
-
-                If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then Continue While
-
-                ListRec = Reg + " - " + PPHex
-
-                If My.Settings.InterestedButton = False Then
-                    If BS_UserTagv3.Contains("RQ") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.RQ)
-                                Sound.Play()
-                            End If
-                        End If
-                    ElseIf BS_UserTagv3.Contains("Ps") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.Ps)
-                                Sound.Play()
-                            End If
-                        End If
-                        'ElseIf BS_UserTagv3 = "new" Then
-                        '    Logged_con.Open()
-                        '    logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        '    logged_rdr.Read()
-                        '    If logged_rdr.HasRows = False Then
-                        '        'Write hex to Unknowns table
-                        '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
-                        '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '        logged_cmd.ExecuteNonQuery()
-                        '    End If
-                        '    logged_rdr.Close()
-                        '    logged_cmd.Dispose()
-                        '    Logged_con.Close()
-                    End If
+                Else Continue While
                 End If
 
+                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
 
-                PPHex = String.Empty
-            Reg = String.Empty
-            ListRec = String.Empty
-            If My.Settings.InterestedButton = True Then
-                If PPInt = 1 Then
-                    If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                        ComboBox1.Items.Add(ListRec)
-                        If Button2.Tag = "Sound" Then
+                Dim C As Integer
+                Dim RecCount As Integer
+
+                C = 0
+                BSstr = "Select COUNT(*) from Aircraft WHERE UserTag LIKE 'Ps%' or 'RQ%';"
+                BS_cmd2 = New SQLiteCommand(BSstr, BS_Con)
+                BS_rdr2 = BS_cmd2.ExecuteReader()
+                BS_rdr2.Read()
+                RecCount = BS_rdr2(0)
+
+
+                While C < RecCount
+
+                    BSstr = "Select ModeS, Registration, UserTag from Aircraft WHERE UserTag LIKE 'Ps%' or 'RQ%';"
+
+                        BS_cmd2 = New SQLiteCommand(BSstr, BS_Con)
+                        BS_rdr2 = BS_cmd2.ExecuteReader()
+                        BS_rdr2.Read()
+                        If BS_rdr2.HasRows = True Then
+                            ComboBoxReg = BS_rdr2(1)
+                            ComboBoxHex = BS_rdr2(0)
+                            ComboBoxUT = BS_rdr2(2)
                         End If
-                    End If
-                        'ElseIf BS_UserTagv3 = "new" Then
-                        '    Logged_con.Open()
-                        '    logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        '    logged_rdr.Read()
-                        '    If logged_rdr.HasRows = False Then
-                        '        'Write hex to Unknowns table
-                        '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
-                        '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '        logged_cmd.ExecuteNonQuery()
-                        '    End If
-                        '    logged_rdr.Close()
-                        '    logged_cmd.Dispose()
-                        '    Logged_con.Close()
-                    End If
-            End If
-            PPHex = String.Empty
-            Reg = String.Empty
-                ListRec = String.Empty
+
+                        ListRec = ComboBoxReg + " - " + ComboBoxHex
+
+                        If My.Settings.InterestedButton = False Then
+                            If ComboBoxUT.Contains("RQ") Then
+                                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                    ComboBox1.Items.Add(ListRec)
+                                    If Button2.Tag = "Sound" Then
+                                        Sound = New System.Media.SoundPlayer(My.Resources.RQ)
+                                        Sound.Play()
+                                    End If
+                                End If
+                            ElseIf ComboBoxUT.Contains("Ps") Then
+                                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                    ComboBox1.Items.Add(ListRec)
+                                    If Button2.Tag = "Sound" Then
+                                        Sound = New System.Media.SoundPlayer(My.Resources.Ps)
+                                        Sound.Play()
+                                    End If
+                                End If
+                                'ElseIf BS_UserTagv3 = "new" Then
+                                '    Logged_con.Open()
+                                '    logged_SQL = "SELECT * From Unknowns where ModeS ="
+                                '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+                                '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                                '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                                '    logged_rdr.Read()
+                                '    If logged_rdr.HasRows = False Then
+                                '        'Write hex to Unknowns table
+                                '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
+                                '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                                '        logged_cmd.ExecuteNonQuery()
+                                '    End If
+                                '    logged_rdr.Close()
+                                '    logged_cmd.Dispose()
+                                '    Logged_con.Close()
+                            End If
+                        End If
+
+
+                        PPHex = String.Empty
+                        Reg = String.Empty
+                        ListRec = String.Empty
+                        If My.Settings.InterestedButton = True Then
+                            If PPInt = 1 Then
+                                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                    ComboBox1.Items.Add(ListRec)
+                                    If Button2.Tag = "Sound" Then
+                                    End If
+                                End If
+                                'ElseIf BS_UserTagv3 = "new" Then
+                                '    Logged_con.Open()
+                                '    logged_SQL = "SELECT * From Unknowns where ModeS ="
+                                '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+                                '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                                '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                                '    logged_rdr.Read()
+                                '    If logged_rdr.HasRows = False Then
+                                '        'Write hex to Unknowns table
+                                '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
+                                '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                                '        logged_cmd.ExecuteNonQuery()
+                                '    End If
+                                '    logged_rdr.Close()
+                                '    logged_cmd.Dispose()
+                                '    Logged_con.Close()
+                            End If
+                        End If
+                        PPHex = String.Empty
+                        Reg = String.Empty
+                        ListRec = String.Empty
+
 
 
 
 
 EmptyStep:
 
-            PPHex = String.Empty
-            Reg = String.Empty
-            ListRec = String.Empty
+                        PPHex = String.Empty
+                        Reg = String.Empty
+                        ListRec = String.Empty
+                    C = C + 1
 
-            End While
+                    BS_rdr2.Close()
+                    End While
+                    End While
 
             BS_Con.Close()
             BS_Con.Dispose()
@@ -428,6 +459,7 @@ EmptyStep:
             Button1.Visible = True
             MsgBox(ex.ToString)
         End Try
+
 
         Logged_con.Close()
         dtset_con.Close()
