@@ -5,12 +5,23 @@ Imports System.Data.OleDb
 Public Class Log_data
 
     Private Sub no_reg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
         Dim log_dbname As String = "C:\ModeS\logged.mdb"
         Dim dt As New DataTable("dt")
         Dim dt2 As New DataTable("dt2")
         Dim no_reg_SQL As String = "SELECT tblManufacturer.UID, tblManufacturer.Builder FROM tblManufacturer where Builder <> '-' OR Builder <> ''
                                     ORDER BY tblManufacturer.Builder;"
+
+        If Form1.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+
+            TextBox3.Visible = False
+            Label7.Visible = False
+        Else
+            TextBox3.Visible = True
+            Label7.Visible = True
+        End If
+
+
+
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
                 Using no_reg_adapter As New OleDbDataAdapter(no_reg_cmd)
@@ -95,9 +106,8 @@ Public Class Log_data
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Dim SQL As String
-        Dim DBname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
+        Dim DBname As String = "C:\DataAir\MyLogs\privatelogs.mdb"
         Dim Aircraft As String
-        Dim Op As String = "Test"
         Dim tologdate = DateAndTime.Now.ToShortDateString
 
         Aircraft = ComboBox1.Text & ComboBox2.Text & ComboBox3.Text & " [" & TextBox2.Text & "]"
@@ -114,9 +124,25 @@ Public Class Log_data
 
         logging_con.Open()
 
-        SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK, Notes ) " &
+        If Form1.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+
+            'Insert into logllp without Notes field
+
+            SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK) " &
                 "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" &
-                ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False, '" & RichTextBox1.Text & "'" & ");"
+                ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False);"
+
+        Else
+
+            'Insert into logllp with Notes field
+
+            SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK, Notes ) " &
+                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" &
+                ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False, '" & TextBox3.Text & "'" & ");"
+
+
+        End If
+
 
 
         Dim logging_cmd As New OleDbCommand(SQL, logging_con)

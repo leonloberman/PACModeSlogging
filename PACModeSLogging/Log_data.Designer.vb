@@ -37,7 +37,7 @@ Partial Class Log_data
         Me.TextBox2 = New System.Windows.Forms.TextBox()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
-        Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
+        Me.TextBox3 = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'Label1
@@ -172,20 +172,20 @@ Partial Class Log_data
         Me.Label7.TabIndex = 16
         Me.Label7.Text = "Notes"
         '
-        'RichTextBox1
+        'TextBox3
         '
-        Me.RichTextBox1.Location = New System.Drawing.Point(137, 277)
-        Me.RichTextBox1.Name = "RichTextBox1"
-        Me.RichTextBox1.Size = New System.Drawing.Size(347, 56)
-        Me.RichTextBox1.TabIndex = 17
-        Me.RichTextBox1.Text = ""
+        Me.TextBox3.Location = New System.Drawing.Point(136, 293)
+        Me.TextBox3.Multiline = True
+        Me.TextBox3.Name = "TextBox3"
+        Me.TextBox3.Size = New System.Drawing.Size(348, 60)
+        Me.TextBox3.TabIndex = 17
         '
         'Log_data
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(522, 447)
-        Me.Controls.Add(Me.RichTextBox1)
+        Me.Controls.Add(Me.TextBox3)
         Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.TextBox2)
@@ -223,5 +223,5 @@ Partial Class Log_data
     Friend WithEvents TextBox2 As TextBox
     Friend WithEvents Label6 As Label
     Friend WithEvents Label7 As Label
-    Friend WithEvents RichTextBox1 As RichTextBox
+    Friend WithEvents TextBox3 As TextBox
 End Class
