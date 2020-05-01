@@ -91,7 +91,7 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-       
+
         'If My.Settings.Location.Length = 0 Then
         'Me.Visible = False
         'MyConfig.Show()
@@ -110,11 +110,11 @@ Public Class Form1
 
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-    
+
         Timer1.Stop()
         Button1.Visible = False
         Button3.Visible = True
-    
+
     End Sub
 
 
@@ -137,7 +137,7 @@ Public Class Form1
         End If
         Me.StartPosition = FormStartPosition.CenterScreen
         'Me.Show()
-        
+
         RunProcess()
 
     End Sub
@@ -329,7 +329,7 @@ EmptyStep:
 
         dtset_con = New OleDbConnection
         dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
-       
+
         Timer1.Stop()
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
@@ -345,36 +345,36 @@ EmptyStep:
         If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
         If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
         dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
-            dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
-            dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-            dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
-            Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
-            dtset_rdr.Read()
-            Tologid = dtset_rdr(0)
-            ToLogHex = dtset_rdr(1)
-            ToLogMil = dtset_rdr(2)
-            dtset_rdr.Close()
-            dtset_con.Close()
-            dtset_con.Dispose()
+        dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
+        dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+        dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
+        Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
+        dtset_rdr.Read()
+        Tologid = dtset_rdr(0)
+        ToLogHex = dtset_rdr(1)
+        ToLogMil = dtset_rdr(2)
+        dtset_rdr.Close()
+        dtset_con.Close()
+        dtset_con.Dispose()
 
-            Dim BSstr As String = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-            Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
-            Dim BS_Con As New SQLiteConnection(BS_Con_cs)
-            Dim BS_Cmd As New SQLiteCommand(BS_Con)
-            Dim BS_rdr As SQLiteDataReader
-            BS_Con.Open()
+        Dim BSstr As String = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+        Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
+        Dim BS_Con As New SQLiteConnection(BS_Con_cs)
+        Dim BS_Cmd As New SQLiteCommand(BS_Con)
+        Dim BS_rdr As SQLiteDataReader
+        BS_Con.Open()
 
-            BS_Cmd.Connection = BS_Con
-            BS_Cmd.CommandText = BSstr
-            BS_rdr = BS_Cmd.ExecuteReader()
-            BS_rdr.Read()
-            ToLogType = BS_rdr(0)
-            BS_rdr.Close()
-            BS_Con.Close()
-            tologdate = DateAndTime.Now.ToShortDateString
-            Where = My.Settings.Location
-            If ToLogType.Contains("RQ") Then MDPO = "M"
-            If ToLogType.Contains("Ps") Then MDPO = "P"
+        BS_Cmd.Connection = BS_Con
+        BS_Cmd.CommandText = BSstr
+        BS_rdr = BS_Cmd.ExecuteReader()
+        BS_rdr.Read()
+        ToLogType = BS_rdr(0)
+        BS_rdr.Close()
+        BS_Con.Close()
+        tologdate = DateAndTime.Now.ToShortDateString
+        Where = My.Settings.Location
+        If ToLogType.Contains("RQ") Then MDPO = "M"
+        If ToLogType.Contains("Ps") Then MDPO = "P"
 
 
 
