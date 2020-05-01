@@ -5,7 +5,7 @@ Imports System.Data.OleDb
 Public Class Log_data
 
     Private Sub no_reg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-         Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
+        Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
         Dim log_dbname As String = "C:\ModeS\logged.mdb"
         Dim dt As New DataTable("dt")
         Dim dt2 As New DataTable("dt2")
@@ -114,8 +114,9 @@ Public Class Log_data
 
         logging_con.Open()
 
-        SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK ) " &
-                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" & ComboBox4.Text & "','" & My.Settings.Location & "',True,'O',False);"
+        SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK, Notes ) " &
+                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" &
+                ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False, '" & RichTextBox1.Text & "'" & ");"
 
 
         Dim logging_cmd As New OleDbCommand(SQL, logging_con)
@@ -138,4 +139,5 @@ Public Class Log_data
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Me.Close()
     End Sub
+
 End Class

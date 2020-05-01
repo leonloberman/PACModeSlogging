@@ -36,6 +36,8 @@ Partial Class Log_data
         Me.Label5 = New System.Windows.Forms.Label()
         Me.TextBox2 = New System.Windows.Forms.TextBox()
         Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
         Me.SuspendLayout()
         '
         'Label1
@@ -109,7 +111,7 @@ Partial Class Log_data
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(390, 276)
+        Me.Button1.Location = New System.Drawing.Point(386, 379)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 7
@@ -118,7 +120,7 @@ Partial Class Log_data
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(161, 275)
+        Me.Button2.Location = New System.Drawing.Point(152, 379)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 8
@@ -161,11 +163,30 @@ Partial Class Log_data
         Me.Label6.TabIndex = 15
         Me.Label6.Text = "MSN"
         '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(45, 293)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(35, 13)
+        Me.Label7.TabIndex = 16
+        Me.Label7.Text = "Notes"
+        '
+        'RichTextBox1
+        '
+        Me.RichTextBox1.Location = New System.Drawing.Point(137, 277)
+        Me.RichTextBox1.Name = "RichTextBox1"
+        Me.RichTextBox1.Size = New System.Drawing.Size(347, 56)
+        Me.RichTextBox1.TabIndex = 17
+        Me.RichTextBox1.Text = ""
+        '
         'Log_data
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(522, 334)
+        Me.ClientSize = New System.Drawing.Size(522, 447)
+        Me.Controls.Add(Me.RichTextBox1)
+        Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.TextBox2)
         Me.Controls.Add(Me.Label5)
@@ -201,4 +222,6 @@ Partial Class Log_data
     Friend WithEvents Label5 As Label
     Friend WithEvents TextBox2 As TextBox
     Friend WithEvents Label6 As Label
+    Friend WithEvents Label7 As Label
+    Friend WithEvents RichTextBox1 As RichTextBox
 End Class

@@ -32,6 +32,9 @@ Public Class Form1
     Dim logged_SQL As String = "Select ID, registration from logllp;"
     Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
     'Dim Logllp_dbname As String = "C:\ModeS\privatelogs.mdb"
+    Dim Logllp_con = New OleDbConnection
+
+
     Dim log_dbname As String = "C:\ModeS\logged.mdb"
 
     Dim logged_cmd As New OleDbCommand(logged_SQL, Logged_con)
@@ -45,8 +48,8 @@ Public Class Form1
 
     Dim Sound As New System.Media.SoundPlayer()
 
-    Dim ToLogReg As String
-    Dim ToLogHex As String
+    Public ToLogReg As String
+    Public ToLogHex As String
     Dim ToLogType As String
     Dim Tologid As String
     Dim tologdate As String
@@ -65,6 +68,7 @@ Public Class Form1
     Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
 
     Dim oInput As String
+    Public LogText As String
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
@@ -264,13 +268,64 @@ EmptyStep:
 
 
     End Sub
-    
 
+
+    ''' <summary>
+    ''' Checks to see if a field exists in table or not.
+    ''' </summary>
+    ''' <param name="tblName">Table name to check in</param>
+    ''' <param name="fldName">Field name to check</param>
+    ''' <param name="cnnStr">Connection String to connect to</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function DoesFieldExist(ByVal tblName As String,
+                               ByVal fldName As String,
+                               ByVal cnnStr As String) As Boolean
+        ' For Access Connection String,
+        ' use "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" &
+        ' accessFilePathAndName
+
+        ' Open connection to the database
+        Dim dbConn As New OleDbConnection(cnnStr)
+        dbConn.Open()
+        Dim dbTbl As New DataTable
+
+        ' Get the table definition loaded in a table adapter
+        Dim strSql As String = "Select TOP 1 * from " & tblName
+        Dim dbAdapater As New OleDbDataAdapter(strSql, dbConn)
+        dbAdapater.Fill(dbTbl)
+
+        ' Get the index of the field name
+        Dim i As Integer = dbTbl.Columns.IndexOf(fldName)
+
+        If i = -1 Then
+            'Field is missing
+            DoesFieldExist = False
+        Else
+            'Field is there
+            DoesFieldExist = True
+        End If
+
+        dbTbl.Dispose()
+        dbConn.Close()
+        dbConn.Dispose()
+    End Function
     Public Sub Combobox1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
-        
-        Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
+
+
+        Try
+            Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
+
+        Catch OledbConnection As Exception
+        End Try
         Dim logged_cmd As New OleDbCommand
 
+        Try
+            Logllp_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & Logllp_dbname & ""
+
+        Catch OledbConnection As Exception
+        End Try
+        Dim cmd2 As New OleDbCommand
 
         dtset_con = New OleDbConnection
         dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
@@ -279,11 +334,17 @@ EmptyStep:
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
-        LResponse = MsgBox("Do you want to log " & ToLogReg & Chr(32) & "?", vbOKCancel)
-        If LResponse = 1 Then
-            If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
-            dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
+        'LResponse = MsgBox("Do you want to log " & ToLogReg & Chr(32) & "?", vbOKCancel)
+
+        'If LResponse = 1 Then
+
+        If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+        If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+        If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
+        If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
+        If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
+        If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+        dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
             dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
             dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
             dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
@@ -314,81 +375,111 @@ EmptyStep:
             Where = My.Settings.Location
             If ToLogType.Contains("RQ") Then MDPO = "M"
             If ToLogType.Contains("Ps") Then MDPO = "P"
-            'Insert No-Reg into logllp as O'
 
 
-            'Insert into logllp
-            logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" & _
-                "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " & Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk" & _
-                " FROM PRO_tbloperator RIGHT JOIN (tblVariant INNER JOIN (tblmodel INNER JOIN (tblManufacturer INNER JOIN tbldataset ON tblManufacturer.UID = tbldataset.UID) ON (tblManufacturer.UID = tblmodel.UID)" & _
-                " AND (tblmodel.FKmodel = tbldataset.FKmodel)) ON tblVariant.FKvariant = tbldataset.FKvariant) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator WHERE (((tbldataset.ID)=" & Tologid & "));"
-            Dim cmd2 As New OleDb.OleDbCommand(logged_SQL, Logged_con)
+
+        If DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+
+
+            'Insert into logllp without Notes field
+            logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" &
+        "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " & Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk" &
+        " FROM PRO_tbloperator RIGHT JOIN (tblVariant INNER JOIN (tblmodel INNER JOIN (tblManufacturer INNER JOIN tbldataset ON tblManufacturer.UID = tbldataset.UID) ON (tblManufacturer.UID = tblmodel.UID)" &
+        " AND (tblmodel.FKmodel = tbldataset.FKmodel)) ON tblVariant.FKvariant = tbldataset.FKvariant) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator WHERE (((tbldataset.ID)=" & Tologid & "));"
+            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
             cmd2.ExecuteNonQuery()
-            If ToLogMil = 502 Then
-                'Insert into loglls
-                logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" & _
-                            " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) & _
-                            " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" & _
-                            " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" & _
-                            " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" & _
-                            " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+
+        Else
+            Dim LogNote As New Notes
+            LogNote.ShowDialog()
+
+            If LogNote.Canx = 0 Then
+
+                LogText = LogNote.Passvalue
+
+
+                'Insert into logllp with Notes field
+                logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" &
+            "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
+            Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+            " FROM PRO_tbloperator RIGHT JOIN (tblVariant INNER JOIN (tblmodel INNER JOIN (tblManufacturer INNER JOIN tbldataset ON tblManufacturer.UID = tbldataset.UID) ON (tblManufacturer.UID = tblmodel.UID)" &
+            " AND (tblmodel.FKmodel = tbldataset.FKmodel)) ON tblVariant.FKvariant = tbldataset.FKvariant) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator WHERE (((tbldataset.ID)=" & Tologid & "));"
                 cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                 cmd2.ExecuteNonQuery()
 
-            End If
-            Logged_con.Close()
-            Logged_con.Dispose()
+                If ToLogMil = 502 Then
+                    'Insert into loglls
+                    logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                            " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
+                            " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
+                            " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                            " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                            " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    cmd2.ExecuteNonQuery()
 
-            'Update BaseStation UserTag
-            BS_Con.Open()
-            Dim CheckBusy As Boolean = False
-UpdBS:      CheckBusy = False
-            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-            BS_SQL = "SELECT * FROM sqlite_master"
-            Try
-                BS_Cmd.ExecuteNonQuery()
-            Catch SQLiteexception As Exception
-                If SQLiteErrorCode.Locked Then
-                    CheckBusy = True
-                Else
-                    CheckBusy = False
+
                 End If
-            End Try
-            If CheckBusy = True Then
-                GoTo UpdBS
-            Else
+
+                Logged_con.Close()
+                Logged_con.Dispose()
+
+                'Update BaseStation UserTag
+                BS_Con.Open()
+                Dim CheckBusy As Boolean = False
+UpdBS:          CheckBusy = False
+                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                BS_SQL = "SELECT * FROM sqlite_master"
                 Try
-                    Dim BS_SQL2 As String
-                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                    Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-                    BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
-                Catch SQLITEexception As Exception
+                Catch SQLiteexception As Exception
                     If SQLiteErrorCode.Locked Then
                         CheckBusy = True
-                        GoTo UpdBS
                     Else
                         CheckBusy = False
                     End If
                 End Try
-                BS_Con.Close()
-                BS_Con.Dispose()
-                ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                If CheckBusy = True Then
+                    GoTo UpdBS
+                Else
+                    Try
+                        Dim BS_SQL2 As String
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
+                        BS_Cmd.ExecuteNonQuery()
+                    Catch SQLITEexception As Exception
+                        If SQLiteErrorCode.Locked Then
+                            CheckBusy = True
+                            GoTo UpdBS
+                        Else
+                            CheckBusy = False
+                        End If
+                    End Try
+                    BS_Con.Close()
+                    BS_Con.Dispose()
+                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                    ComboBox1.Refresh()
+                End If
+            Else
                 ComboBox1.Refresh()
             End If
+            Timer1.Start()
+            If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
+                For Each ObjProcess As Process In Process.GetProcessesByName("BaseStation.exe")
+                    AppActivate(ObjProcess.Id)
+                    SendKeys.SendWait("{F5}")
+                Next
+                For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter.exe")
+                    AppActivate(ObjProcess.Id)
+                    SendKeys.Send("^(Q)")
+                Next
+            End If
+            Logged_con.Close()
+            Logged_con.Dispose()
+            Logllp_con.Close()
+            Logllp_con.Dispose()
         End If
-        Timer1.Start()
-        If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
-            For Each ObjProcess As Process In Process.GetProcessesByName("BaseStation.exe")
-                AppActivate(ObjProcess.Id)
-                SendKeys.SendWait("{F5}")
-            Next
-            For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter.exe")
-                AppActivate(ObjProcess.Id)
-                SendKeys.Send("^(Q)")
-            Next
-        End If
-
     End Sub
 
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
