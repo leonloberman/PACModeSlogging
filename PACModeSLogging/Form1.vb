@@ -450,8 +450,8 @@ UpdBS1:         CheckBusy = False
                             CheckBusy = False
                         End If
                     End Try
-                    'ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-                    'ComboBox1.Refresh()
+                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                    ComboBox1.Refresh()
                     BS_Con.Close()
                     BS_Con.Dispose()
                 End If
@@ -574,8 +574,8 @@ UpdBS2:         CheckBusy = False
                     End Try
                     BS_Con.Close()
                     BS_Con.Dispose()
-                    'ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-                    'ComboBox1.Refresh()
+                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                    ComboBox1.Refresh()
                 End If
 
 
@@ -597,9 +597,6 @@ UpdBS2:         CheckBusy = False
                 SendKeys.Send("^(Q)")
             Next
         End If
-
-        ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-        ComboBox1.Refresh()
 
 
         Logged_con.Close()

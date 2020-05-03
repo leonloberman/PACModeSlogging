@@ -150,12 +150,6 @@
       <DependentUpon>Form1.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Notes.Designer.vb">
-      <DependentUpon>Notes.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Notes.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Log_data.Designer.vb">
       <DependentUpon>Log_data.vb</DependentUpon>
     </Compile>
@@ -177,6 +171,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Notes.Designer.vb">
+      <DependentUpon>Notes.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Notes.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Settings.vb" />
     <Compile Include="SQLforAccess.vb" />
   </ItemGroup>
@@ -187,9 +187,6 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Notes.resx">
-      <DependentUpon>Notes.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Log_data.resx">
       <DependentUpon>Log_data.vb</DependentUpon>
     </EmbeddedResource>
@@ -198,6 +195,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notes.resx">
+      <DependentUpon>Notes.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
