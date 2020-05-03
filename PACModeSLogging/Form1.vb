@@ -71,6 +71,9 @@ Public Class Form1
     Public LogText As String
     Public NewDB As String
 
+    Dim LoggedTag As String
+    Dim SymbolCode As String
+
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
             drag = True 'Sets the variable drag to true.
@@ -313,7 +316,6 @@ EmptyStep:
     End Function
     Public Sub Combobox1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
 
-
         Try
             Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
 
@@ -372,7 +374,7 @@ EmptyStep:
                 dtset_con.Close()
                 dtset_con.Dispose()
 
-                Dim BSstr As String = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                Dim BSstr As String = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
                 Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
                 Dim BS_Con As New SQLiteConnection(BS_Con_cs)
                 Dim BS_Cmd As New SQLiteCommand(BS_Con)
@@ -384,6 +386,8 @@ EmptyStep:
                 BS_rdr = BS_Cmd.ExecuteReader()
                 BS_rdr.Read()
                 ToLogType = BS_rdr(0)
+                SymbolCode = BS_rdr(1)
+                LoggedTag = "'LOG" & SymbolCode & "'"
                 BS_rdr.Close()
                 BS_Con.Close()
                 tologdate = DateAndTime.Now.ToShortDateString
@@ -432,7 +436,7 @@ UpdBS1:         CheckBusy = False
                 Else
                     Try
                         Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = 'LOG', LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & LoggedTag & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
                 Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
                         '        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
                         'Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
@@ -484,7 +488,7 @@ UpdBS1:         CheckBusy = False
             dtset_con.Close()
             dtset_con.Dispose()
 
-            Dim BSstr As String = "Select UserTag from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+            Dim BSstr As String = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
             Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
             Dim BS_Con As New SQLiteConnection(BS_Con_cs)
             Dim BS_Cmd As New SQLiteCommand(BS_Con)
@@ -496,6 +500,8 @@ UpdBS1:         CheckBusy = False
             BS_rdr = BS_Cmd.ExecuteReader()
             BS_rdr.Read()
             ToLogType = BS_rdr(0)
+            SymbolCode = BS_rdr(1)
+            LoggedTag = "'LOG" & SymbolCode & "'"
             BS_rdr.Close()
             BS_Con.Close()
             tologdate = DateAndTime.Now.ToShortDateString
@@ -554,7 +560,7 @@ UpdBS2:         CheckBusy = False
                 Else
                     Try
                         Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = 'LOG', LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & LoggedTag & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
                 Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
                         BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                         BS_Cmd.ExecuteNonQuery()
