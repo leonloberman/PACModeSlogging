@@ -114,7 +114,7 @@ Partial Class Log_data
         Me.Button1.Location = New System.Drawing.Point(386, 379)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
-        Me.Button1.TabIndex = 7
+        Me.Button1.TabIndex = 8
         Me.Button1.Text = "Log"
         Me.Button1.UseVisualStyleBackColor = True
         '
@@ -123,7 +123,7 @@ Partial Class Log_data
         Me.Button2.Location = New System.Drawing.Point(152, 379)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
-        Me.Button2.TabIndex = 8
+        Me.Button2.TabIndex = 9
         Me.Button2.TabStop = False
         Me.Button2.Text = "Cancel"
         Me.Button2.UseVisualStyleBackColor = True
@@ -178,7 +178,7 @@ Partial Class Log_data
         Me.TextBox3.Multiline = True
         Me.TextBox3.Name = "TextBox3"
         Me.TextBox3.Size = New System.Drawing.Size(348, 60)
-        Me.TextBox3.TabIndex = 17
+        Me.TextBox3.TabIndex = 7
         '
         'Log_data
         '
