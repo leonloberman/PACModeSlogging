@@ -72,7 +72,13 @@ Public Class Form1
     Public NewDB As String
 
     Dim LoggedTag As String
-    Dim SymbolCode As String
+    Dim SymbolCode As String = ""
+
+    Dim ToLogUnit As String = " "
+    Dim ToLogaCcode As String = " "
+    Dim ToLogNotes As String = " "
+    Dim ToLogOther As String = " "
+
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
@@ -386,8 +392,12 @@ EmptyStep:
                 BS_rdr = BS_Cmd.ExecuteReader()
                 BS_rdr.Read()
                 ToLogType = BS_rdr(0)
-                SymbolCode = BS_rdr(1)
-                LoggedTag = "'LOG" & SymbolCode & "'"
+                If IsDBNull(BS_rdr(1)) Then
+                    LoggedTag = "'LOG'"
+                Else
+                    'SymbolCode = BS_rdr(1)
+                    LoggedTag = "'LOG" & BS_rdr(1) & "'"
+                End If
                 BS_rdr.Close()
                 BS_Con.Close()
                 tologdate = DateAndTime.Now.ToShortDateString
@@ -404,15 +414,56 @@ EmptyStep:
                 cmd2.ExecuteNonQuery()
 
                 If ToLogMil = 502 Then
-                    'Insert into loglls
-                    logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                            " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
+
+                    'Check for mil records
+                    logged_SQL = " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
                             " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
                             " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
                             " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
+
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
+                    cmd2_rdr.Read()
+                    If IsDBNull(cmd2_rdr(0)) Then
+                        'Do nothing
+                    Else
+                        If IsDBNull(cmd2_rdr(1)) Then
+                            'Do nothing
+                        Else
+                            ToLogUnit = cmd2_rdr(1)
+                        End If
+                        If IsDBNull(cmd2_rdr(2)) Then
+                            'Do nothing
+                        Else
+                            ToLogaCcode = cmd2_rdr(2)
+                        End If
+                        If IsDBNull(cmd2_rdr(3)) Then
+                            'Do nothing
+                        Else
+                            ToLogNotes = cmd2_rdr(3)
+                        End If
+                        If IsDBNull(cmd2_rdr(4)) Then
+                            'Do nothing
+                        Else
+                            ToLogOther = cmd2_rdr(4)
+                        End If
+                        'Insert into loglls
+                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                            " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
+                        Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
+                        Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
+
+                        'logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                        '    " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
+                        '    " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
+                        '    " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                        '    " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                        '    " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
+                    End If
 
                 End If
 
@@ -500,8 +551,12 @@ UpdBS1:         CheckBusy = False
             BS_rdr = BS_Cmd.ExecuteReader()
             BS_rdr.Read()
             ToLogType = BS_rdr(0)
-            SymbolCode = BS_rdr(1)
-            LoggedTag = "'LOG" & SymbolCode & "'"
+            If IsDBNull(BS_rdr(1)) Then
+                LoggedTag = "'LOG'"
+            Else
+                'SymbolCode = BS_rdr(1)
+                LoggedTag = "'LOG" & BS_rdr(1) & "'"
+            End If
             BS_rdr.Close()
             BS_Con.Close()
             tologdate = DateAndTime.Now.ToShortDateString
@@ -517,7 +572,6 @@ UpdBS1:         CheckBusy = False
 
                 LogText = LogNote.Passvalue
 
-
                 'Insert into logllp with Notes field
                 logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" &
             "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
@@ -528,20 +582,61 @@ UpdBS1:         CheckBusy = False
                 cmd2.ExecuteNonQuery()
 
                 If ToLogMil = 502 Then
-                    'Insert into loglls
-                    logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                            " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
-                            " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
+
+                    'Check for mil records
+                    logged_SQL = " SELECT tbldataset.ID, tblUnits.unit+' '+tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
                             " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
                             " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
+
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
+                    cmd2_rdr.Read()
+                    If IsDBNull(cmd2_rdr(0)) Then
+                        'Do nothing
+                    Else
+                        If IsDBNull(cmd2_rdr(1)) Then
+                            'Do nothing
+                        Else
+                            ToLogUnit = cmd2_rdr(1)
+                        End If
+                        If IsDBNull(cmd2_rdr(2)) Then
+                            'Do nothing
+                        Else
+                            ToLogaCcode = cmd2_rdr(2)
+                        End If
+                        If IsDBNull(cmd2_rdr(3)) Then
+                            'Do nothing
+                        Else
+                            ToLogNotes = cmd2_rdr(3)
+                        End If
+                        If IsDBNull(cmd2_rdr(4)) Then
+                            'Do nothing
+                        Else
+                            ToLogOther = cmd2_rdr(4)
+                        End If
+
+                        'Insert into loglls
+                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                            " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
+                        Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
+                        Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
+
+                        'logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                        '    " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
+                        '    " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
+                        '    " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                        '    " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                        '    " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
+                    End If
 
                 End If
 
-                'Update BaseStation UserTag
-                BS_Con.Open()
+                    'Update BaseStation UserTag
+                    BS_Con.Open()
                 Dim CheckBusy As Boolean = False
 UpdBS2:         CheckBusy = False
                 BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
