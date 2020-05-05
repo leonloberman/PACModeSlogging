@@ -62,7 +62,7 @@ Public Class Form1
 
     'BaseStation definitions
     Dim BS_Con As SQLiteConnection
-    Dim BSLoc As String = My.Settings.BSLoc + "/basestation.sqb"
+    Dim BSLoc As String = My.Settings.BSLoc + "\basestation.sqb"
     Dim BS_SQL As String = "Update Aircraft set UserTag = " & """LOG""" & " WHERE Modes = "
 
     Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
@@ -102,10 +102,9 @@ Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'If My.Settings.Location.Length = 0 Then
-        'Me.Visible = False
-        'MyConfig.Show()
-        'End If
+        If My.Settings.Location = "<enter your location for logging>" Then
+            Config.Show()
+        End If
         If My.Settings.Sounds Then
             Button2.BackgroundImage = My.Resources.Sound_on
             Button2.Tag = "Sound"
@@ -130,9 +129,8 @@ Public Class Form1
 
 
     Public Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-
-        If My.Settings.Location.Length = 0 Then
-            MsgBox("You must enter the location you are logging at!!", vbExclamation, "Location Check")
+        If My.Settings.BSLoc = " " Or My.Settings.Location = "<enter your location for logging>" Then
+            MsgBox("Please configure the application parameters for basestation.sqb and your logging location", vbExclamation, "Settings Check")
             Dim MyConfig As New Config
             MyConfig.Show()
             Button3.Visible = True
@@ -422,12 +420,15 @@ EmptyStep:
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
 
-                    Dim cmd2_rdr As OleDbDataReader
-                    cmd2_rdr = cmd2.ExecuteReader()
-                    cmd2_rdr.Read()
-                    If IsDBNull(cmd2_rdr(0)) Then
+                    If cmd2.ExecuteNonQuery() > 0 Then
                         'Do nothing
                     Else
+
+                        Dim cmd2_rdr As OleDbDataReader
+
+                        cmd2_rdr = cmd2.ExecuteReader()
+                        cmd2_rdr.Read()
+
                         If IsDBNull(cmd2_rdr(1)) Then
                             'Do nothing
                         Else
@@ -448,22 +449,15 @@ EmptyStep:
                         Else
                             ToLogOther = cmd2_rdr(4)
                         End If
+
                         'Insert into loglls
                         logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-
-                        'logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                        '    " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
-                        '    " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
-                        '    " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
-                        '    " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
-                        '    " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                         cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                         cmd2.ExecuteNonQuery()
                     End If
-
                 End If
 
                 'Update BaseStation UserTag
@@ -488,8 +482,6 @@ UpdBS1:         CheckBusy = False
                         Dim BS_SQL2 As String
                         BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & LoggedTag & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
                 Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-                        '        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = ifnull(UserString1," & Chr(34) & Chr(32) & Chr(34) & "), LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                        'Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
                         BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                         BS_Cmd.ExecuteNonQuery()
                     Catch SQLITEexception As Exception
@@ -507,15 +499,7 @@ UpdBS1:         CheckBusy = False
                 End If
 
 
-                'ElseIf LResponse <> 1 Then
-                'LResponse = MsgBox("Do you want to carry on?", vbOKOnly)
-                'If LResponse = 1 Then
-                '    ComboBox1.Items.Clear()
-                'End If
-                'ComboBox1.Refresh()
             End If
-
-
 
         ElseIf NewDB = "Yes" Then
 
@@ -589,12 +573,15 @@ UpdBS1:         CheckBusy = False
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
 
-                    Dim cmd2_rdr As OleDbDataReader
-                    cmd2_rdr = cmd2.ExecuteReader()
-                    cmd2_rdr.Read()
-                    If IsDBNull(cmd2_rdr(0)) Then
+                    If cmd2.ExecuteNonQuery() > 0 Then
                         'Do nothing
                     Else
+
+                        Dim cmd2_rdr As OleDbDataReader
+
+                        cmd2_rdr = cmd2.ExecuteReader()
+                        cmd2_rdr.Read()
+
                         If IsDBNull(cmd2_rdr(1)) Then
                             'Do nothing
                         Else
@@ -621,21 +608,14 @@ UpdBS1:         CheckBusy = False
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-
-                        'logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                        '    " SELECT tbldataset.ID, " & Chr(34) & tologdate & Chr(34) & ", tblUnits.unit+" & Chr(34) & Chr(32) & Chr(34) &
-                        '    " &tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
-                        '    " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
-                        '    " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
-                        '    " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                         cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                         cmd2.ExecuteNonQuery()
                     End If
-
                 End If
 
-                    'Update BaseStation UserTag
-                    BS_Con.Open()
+
+                'Update BaseStation UserTag
+                BS_Con.Open()
                 Dim CheckBusy As Boolean = False
 UpdBS2:         CheckBusy = False
                 BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
@@ -671,10 +651,6 @@ UpdBS2:         CheckBusy = False
                     ComboBox1.Items.Remove(ComboBox1.SelectedItem)
                     ComboBox1.Refresh()
                 End If
-
-
-                'ElseIf lognote.Canx = 1 Then
-                '    ComboBox1.Refresh()
             End If
         End If
 

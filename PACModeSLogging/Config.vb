@@ -1,6 +1,9 @@
 ﻿Public Class Config
 
     Private Sub Config_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Me.CenterToParent()
+
         If My.Settings.InterestedButton = False Then
             RadioButton2.Checked = True
         ElseIf My.Settings.InterestedButton = True Then

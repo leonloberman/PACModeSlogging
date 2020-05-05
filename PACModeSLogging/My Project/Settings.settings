@@ -20,7 +20,7 @@
       <Value Profile="(Default)">Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\dtset.mdb</Value>
     </Setting>
     <Setting Name="Sounds" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="logllp" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;enter logllp location&gt;</Value>
