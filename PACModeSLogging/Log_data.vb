@@ -4,14 +4,14 @@ Imports System.Data.OleDb
 
 Public Class Log_data
 
-    Private Sub no_reg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Sub No_reg_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Dim log_dbname As String = "C:\ModeS\logged.mdb"
         Dim dt As New DataTable("dt")
         Dim dt2 As New DataTable("dt2")
         Dim no_reg_SQL As String = "SELECT tblManufacturer.UID, tblManufacturer.Builder FROM tblManufacturer where Builder <> '-' OR Builder <> ''
                                     ORDER BY tblManufacturer.Builder;"
 
-        If Form1.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+        If PACModeSLogging.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
 
             TextBox3.Visible = False
             Label7.Visible = False
@@ -124,7 +124,7 @@ Public Class Log_data
 
         logging_con.Open()
 
-        If Form1.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+        If PACModeSLogging.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
 
             'Insert into logllp without Notes field
 

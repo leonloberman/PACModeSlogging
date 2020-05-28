@@ -4,7 +4,7 @@ Imports System.Data.OleDb
 Imports System.Data.SQLite
 
 
-Public Class Form1
+Public Class PACModeSLogging
     'Declare the variables
     Dim drag As Boolean
     Dim mousex As Integer
@@ -15,11 +15,11 @@ Public Class Form1
     Dim i As Int16 = 0
     Dim PPHex As String
     Dim PPInt As String
-    Dim TempStr(3) As String
-    Dim RQ As Int16 = 0
-    Dim Interested As Int16 = 0
-    Dim PPType As String
-    Dim PPCallsign As String
+    ReadOnly TempStr(3) As String
+    ReadOnly RQ As Int16 = 0
+    ReadOnly Interested As Int16 = 0
+    ReadOnly PPType As String
+    ReadOnly PPCallsign As String
     Dim PPAll As String
 
     Dim Reg As String
@@ -30,19 +30,19 @@ Public Class Form1
     Dim Logged_con As OleDbConnection
 
     Dim logged_SQL As String = "Select ID, registration from logllp;"
-    Dim Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
+    ReadOnly Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
     'Dim Logllp_dbname As String = "C:\ModeS\privatelogs.mdb"
-    Dim Logllp_con = New OleDbConnection
+    ReadOnly Logllp_con = New OleDbConnection
 
 
-    Dim log_dbname As String = "C:\ModeS\logged.mdb"
+    ReadOnly log_dbname As String = "C:\ModeS\logged.mdb"
 
     Dim logged_cmd As New OleDbCommand(logged_SQL, Logged_con)
 
     'GFIA database definitions
     Dim dtset_con As OleDbConnection
     Dim dtset_sql As String = "SELECT ID FROM tbldataset where hex ="
-    Dim dtset As String = "C:\DataAir\dtset.mdb"
+    ReadOnly dtset As String = "C:\DataAir\dtset.mdb"
 
     Dim dtset_cmd As New OleDbCommand(dtset_sql, dtset_con)
 
@@ -61,18 +61,18 @@ Public Class Form1
 
 
     'BaseStation definitions
-    Dim BS_Con As SQLiteConnection
-    Dim BSLoc As String = My.Settings.BSLoc + "\basestation.sqb"
+    ReadOnly BS_Con As SQLiteConnection
+    ReadOnly BSLoc As String = My.Settings.BSLoc + "\basestation.sqb"
     Dim BS_SQL As String = "Update Aircraft set UserTag = " & """LOG""" & " WHERE Modes = "
 
-    Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
+    ReadOnly BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
 
-    Dim oInput As String
+    ReadOnly oInput As String
     Public LogText As String
     Public NewDB As String
 
     Dim LoggedTag As String
-    Dim SymbolCode As String = ""
+    ReadOnly SymbolCode As String = ""
 
     Dim ToLogUnit As String = " "
     Dim ToLogaCcode As String = " "
@@ -101,6 +101,22 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+#Disable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+        If My.Settings.Default.UpgradeRequired Then
+#Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+#Disable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+            My.Settings.Default.Upgrade()
+#Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+#Disable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+            My.Settings.Default.UpgradeRequired = False
+#Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+#Disable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+            My.Settings.Default.Save()
+#Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
+        End If
+
+        UpgradeCheck()
 
         If My.Settings.Location = "<enter your location for logging>" Then
             Config.Show()
@@ -152,11 +168,12 @@ Public Class Form1
 
 
     Public Sub RunProcess()
-
-        Logged_con = New OleDbConnection
-        Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
-        dtset_con = New OleDbConnection
-        dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+        Logged_con = New OleDbConnection With {
+            .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
+        }
+        dtset_con = New OleDbConnection With {
+            .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+        }
 
 Start:
 
@@ -263,7 +280,7 @@ EmptyStep:
                 PPHex = String.Empty
                 Reg = String.Empty
                 ListRec = String.Empty
-                i = i + 1
+                i += 1
             End While
         Catch ex As Exception
             Timer1.Stop()
@@ -334,15 +351,16 @@ EmptyStep:
         End Try
         Dim cmd2 As New OleDbCommand
 
-        dtset_con = New OleDbConnection
-        dtset_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+        dtset_con = New OleDbConnection With {
+            .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
+        }
 
 
 
         Timer1.Stop()
-            ToLogReg = ComboBox1.SelectedItem.ToString
-            ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
-            ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
+        ToLogReg = ComboBox1.SelectedItem.ToString
+        ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
+        ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
 
 
         If DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
@@ -671,8 +689,8 @@ UpdBS2:         CheckBusy = False
 
         Logged_con.Close()
         Logged_con.Dispose()
-            Logllp_con.Close()
-            Logllp_con.Dispose()
+        Logllp_con.Close()
+        Logllp_con.Dispose()
 
 
 

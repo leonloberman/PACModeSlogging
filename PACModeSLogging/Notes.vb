@@ -15,6 +15,6 @@
     End Sub
 
     Private Sub Notes_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Label1.Text = "You are logging " & Form1.ToLogReg & " (ModeS code " & Form1.ToLogHex & ")"
+        Label1.Text = "You are logging " & PACModeSLogging.ToLogReg & " (ModeS code " & PACModeSLogging.ToLogHex & ")"
     End Sub
 End Class

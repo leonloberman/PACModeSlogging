@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.PACModeSLogging.Form1
+            Me.MainForm = Global.PACModeSLogging.PACModeSLogging
         End Sub
     End Class
 End Namespace

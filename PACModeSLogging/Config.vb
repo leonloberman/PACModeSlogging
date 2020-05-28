@@ -14,7 +14,7 @@
         TextBox2.Text = My.Settings.BSLoc
         NumericUpDown1.Value = My.Settings.SampleRate
         If My.Settings.Sounds Then
-            Form1.Button2.Tag = "Sound"
+            PACModeSLogging.Button2.Tag = "Sound"
         End If
         If My.Settings.AlwaysOnTop = True Then
             CheckBox1.CheckState = CheckState.Checked
@@ -58,4 +58,13 @@
         End Using
     End Sub
 
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        UpgradeCheck()
+        If Newestappversion = Currentappversion Then
+            Dim UpgradeText As String = "Nothing to upgrade :-)"
+            Select Case MsgBox(UpgradeText, MsgBoxStyle.Information, "PACModeSLogging Upgrade check")
+                'Carry on
+            End Select
+        End If
+    End Sub
 End Class
