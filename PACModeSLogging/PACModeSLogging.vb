@@ -63,7 +63,8 @@ Public Class PACModeSLogging
     'BaseStation definitions
     ReadOnly BS_Con As SQLiteConnection
     ReadOnly BSLoc As String = My.Settings.BSLoc + "\basestation.sqb"
-    Dim BS_SQL As String = "Update Aircraft set UserTag = " & """LOG""" & " WHERE Modes = "
+    Dim BS_SQL As String = ""
+
 
     ReadOnly BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
 
@@ -204,7 +205,7 @@ Start:
                 Reg = PPbits(1)
                 PPInt = PPbits(21)
                 UT = PPbits(22)
-                If Reg = "<gnd>" Or Reg = "<ground>" Or UT = "Log" Then GoTo EmptyStep
+                If Reg = "<gnd>" Or Reg = "<ground>" Or UT.Contains("LOG") Then GoTo EmptyStep
 
                 ListRec = Reg + " - " + PPHex
 
@@ -409,10 +410,10 @@ EmptyStep:
                 BS_rdr.Read()
                 ToLogType = BS_rdr(0)
                 If IsDBNull(BS_rdr(1)) Then
-                    LoggedTag = "'LOG'"
+                    LoggedTag = "LOG"
                 Else
                     'SymbolCode = BS_rdr(1)
-                    LoggedTag = "'LOG" & BS_rdr(1) & "'"
+                    LoggedTag = "LOG" & BS_rdr(1)
                 End If
                 BS_rdr.Close()
                 BS_Con.Close()
@@ -447,22 +448,22 @@ EmptyStep:
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
-                        If IsDBNull(cmd2_rdr(1)) Then
+                        If IsDBNull(cmd2_rdr(1)) Or (cmd2_rdr(1) = " ") Then
                             'Do nothing
                         Else
                             ToLogUnit = cmd2_rdr(1)
                         End If
-                        If IsDBNull(cmd2_rdr(2)) Then
+                        If IsDBNull(cmd2_rdr(2)) Or (cmd2_rdr(2) = " ") Then
                             'Do nothing
                         Else
                             ToLogaCcode = cmd2_rdr(2)
                         End If
-                        If IsDBNull(cmd2_rdr(3)) Then
+                        If IsDBNull(cmd2_rdr(3)) Or (cmd2_rdr(3) = " ") Then
                             'Do nothing
                         Else
                             ToLogNotes = cmd2_rdr(3)
                         End If
-                        If IsDBNull(cmd2_rdr(4)) Then
+                        If IsDBNull(cmd2_rdr(4)) Or (cmd2_rdr(4) = " ") Then
                             'Do nothing
                         Else
                             ToLogOther = cmd2_rdr(4)
@@ -498,8 +499,9 @@ UpdBS1:         CheckBusy = False
                 Else
                     Try
                         Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & LoggedTag & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+
                         BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                         BS_Cmd.ExecuteNonQuery()
                     Catch SQLITEexception As Exception
@@ -553,10 +555,10 @@ UpdBS1:         CheckBusy = False
             BS_rdr.Read()
             ToLogType = BS_rdr(0)
             If IsDBNull(BS_rdr(1)) Then
-                LoggedTag = "'LOG'"
+                LoggedTag = "LOG"
             Else
                 'SymbolCode = BS_rdr(1)
-                LoggedTag = "'LOG" & BS_rdr(1) & "'"
+                LoggedTag = "LOG" & BS_rdr(1)
             End If
             BS_rdr.Close()
             BS_Con.Close()
@@ -600,22 +602,22 @@ UpdBS1:         CheckBusy = False
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
-                        If IsDBNull(cmd2_rdr(1)) Then
+                        If IsDBNull(cmd2_rdr(1)) Or (cmd2_rdr(1) = " ") Then
                             'Do nothing
                         Else
                             ToLogUnit = cmd2_rdr(1)
                         End If
-                        If IsDBNull(cmd2_rdr(2)) Then
+                        If IsDBNull(cmd2_rdr(2)) Or (cmd2_rdr(2) = " ") Then
                             'Do nothing
                         Else
                             ToLogaCcode = cmd2_rdr(2)
                         End If
-                        If IsDBNull(cmd2_rdr(3)) Then
+                        If IsDBNull(cmd2_rdr(3)) Or (cmd2_rdr(3) = " ") Then
                             'Do nothing
                         Else
                             ToLogNotes = cmd2_rdr(3)
                         End If
-                        If IsDBNull(cmd2_rdr(4)) Then
+                        If IsDBNull(cmd2_rdr(4)) Or (cmd2_rdr(4) = " ") Then
                             'Do nothing
                         Else
                             ToLogOther = cmd2_rdr(4)
@@ -652,8 +654,9 @@ UpdBS2:         CheckBusy = False
                 Else
                     Try
                         Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & LoggedTag & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                Chr(39) & "localtime" & Chr(39) & ") WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+
                         BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                         BS_Cmd.ExecuteNonQuery()
                     Catch SQLITEexception As Exception
