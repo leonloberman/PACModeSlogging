@@ -227,7 +227,18 @@ Start:
                             End If
                         End If
                     ElseIf UT = "new" Then
-                        Logged_con.Open()
+                        Try
+                            If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                            If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
+                            If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+                        Catch ex As Exception
+                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
+                        End Try
+
+                        'Logged_con.Open()
                         logged_SQL = "SELECT * From Unknowns where ModeS ="
                         logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
                         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
@@ -255,7 +266,17 @@ Start:
                             End If
                         End If
                     ElseIf UT = "new" Then
-                        Logged_con.Open()
+                        Try
+                            If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                            If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
+                            If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
+                            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+                        Catch ex As Exception
+                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
+                        End Try
+                        'Logged_con.Open()
                         logged_SQL = "SELECT * From Unknowns where ModeS ="
                         logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
                         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
@@ -378,12 +399,16 @@ EmptyStep:
 
             If LResponse = 1 Then
 
-                If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
-                If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
-                If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-                If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
-                If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+                Try
+                    If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+                    If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                    If Logllp_con.State = ConnectionState.Open Then Logllp_con.Close()
+                    If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
+                    If dtset_con.State = ConnectionState.Open Then dtset_con.Close()
+                    If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
+                End Try
                 dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
                 dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
                 dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
@@ -402,7 +427,14 @@ EmptyStep:
                 Dim BS_Con As New SQLiteConnection(BS_Con_cs)
                 Dim BS_Cmd As New SQLiteCommand(BS_Con)
                 Dim BS_rdr As SQLiteDataReader
-                BS_Con.Open()
+
+                Try
+                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                End Try
+                'BS_Con.Open()
 
                 BS_Cmd.Connection = BS_Con
                 BS_Cmd.CommandText = BSstr
@@ -480,7 +512,13 @@ EmptyStep:
                 End If
 
                 'Update BaseStation UserTag
-                BS_Con.Open()
+                Try
+                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                End Try
+                'BS_Con.Open()
                 Dim CheckBusy As Boolean = False
 UpdBS1:         CheckBusy = False
                 BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
@@ -523,12 +561,16 @@ UpdBS1:         CheckBusy = False
 
         ElseIf NewDB = "Yes" Then
 
-            If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
-            If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-            If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
-            If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-            If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
-            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+            Try
+                If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+                If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+                If Logllp_con.State = ConnectionState.Open Then Logllp_con.Close()
+                If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
+                If dtset_con.State = ConnectionState.Open Then dtset_con.Close()
+                If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
+            End Try
             dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
             dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " And Hex ="
             dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
@@ -547,7 +589,13 @@ UpdBS1:         CheckBusy = False
             Dim BS_Con As New SQLiteConnection(BS_Con_cs)
             Dim BS_Cmd As New SQLiteCommand(BS_Con)
             Dim BS_rdr As SQLiteDataReader
-            BS_Con.Open()
+            Try
+                If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+            End Try
+            'BS_Con.Open()
 
             BS_Cmd.Connection = BS_Con
             BS_Cmd.CommandText = BSstr
@@ -635,7 +683,13 @@ UpdBS1:         CheckBusy = False
 
 
                 'Update BaseStation UserTag
-                BS_Con.Open()
+                Try
+                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                End Try
+                'BS_Con.Open()
                 Dim CheckBusy As Boolean = False
 UpdBS2:         CheckBusy = False
                 BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
