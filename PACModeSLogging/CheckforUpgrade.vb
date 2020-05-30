@@ -44,7 +44,7 @@ Module CheckforUpgrades
 
                 Dim UpgradeText As String = "Version " & Newestappversion & " is available - do you want to upgrade now?"
                 Dim UpgradeFile As String = Replace(Newestappversion, ".", "")
-                Dim UpgradeURL As String = "https://www.gfiapac.org/members/ModeS/PACModeSLogging_v" & UpgradeFile & "_install.exe"
+                Dim UpgradeURL As String = "https://www.gfiapac.org/members/ModeS/PACModeSLogging_v" & UpgradeFile & "_Install.exe"
 
 
                 'Messaging section
