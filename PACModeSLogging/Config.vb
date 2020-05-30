@@ -49,10 +49,10 @@
         End If
     End Sub
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Dim BSLoc As String
+        'Dim BSLoc As String
         Using dialog As New FolderBrowserDialog
             If dialog.ShowDialog() <> DialogResult.OK Then Return
-            BSLoc = dialog.SelectedPath
+            'BSLoc = dialog.SelectedPath
             TextBox2.Text = dialog.SelectedPath
             My.Settings.BSLoc = dialog.SelectedPath
         End Using

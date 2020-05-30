@@ -62,7 +62,7 @@ Public Class PACModeSLogging
 
     'BaseStation definitions
     ReadOnly BS_Con As SQLiteConnection
-    ReadOnly BSLoc As String = My.Settings.BSLoc + "\basestation.sqb"
+    Dim BSLoc As String = ""
     Dim BS_SQL As String = ""
 
 
@@ -377,7 +377,7 @@ EmptyStep:
             .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
         }
 
-
+        BSLoc = My.Settings.BSLoc & "\basestation.sqb"
 
         Timer1.Stop()
         ToLogReg = ComboBox1.SelectedItem.ToString
@@ -421,6 +421,7 @@ EmptyStep:
                 dtset_rdr.Close()
                 dtset_con.Close()
                 dtset_con.Dispose()
+
 
                 Dim BSstr As String = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
                 Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
