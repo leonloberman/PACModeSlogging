@@ -434,13 +434,12 @@ EmptyStep:
                             " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
 
-                    If cmd2.ExecuteNonQuery() = 0 Then
-                        'Do nothing
-                    Else
-
-                        Dim cmd2_rdr As OleDbDataReader
-
+                    If cmd2_rdr.HasRows Then
+                        cmd2_rdr.Close()
+                        cmd2.ExecuteNonQuery()
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
@@ -605,13 +604,12 @@ UpdBS1:     CheckBusy = False
                             " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
 
-                    If cmd2.ExecuteNonQuery() = 0 Then
-                        'Do nothing
-                    Else
-
-                        Dim cmd2_rdr As OleDbDataReader
-
+                    If cmd2_rdr.HasRows Then
+                        cmd2_rdr.Close()
+                        cmd2.ExecuteNonQuery()
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
@@ -650,10 +648,10 @@ UpdBS1:     CheckBusy = False
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                            cmd2.ExecuteNonQuery()
-                        End If
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
                     End If
+                End If
                 End If
 
 
