@@ -30,21 +30,10 @@ Public Class PACModeSLogging
     Dim Logged_con As OleDbConnection
 
     Dim logged_SQL As String = "Select ID, registration from logllp;"
-    ReadOnly Logllp_dbname As String = "C:\DataAir\Mylogs\privatelogs.mdb"
-    'Dim Logllp_dbname As String = "C:\ModeS\privatelogs.mdb"
-    ReadOnly Logllp_con = New OleDbConnection
-
 
     ReadOnly log_dbname As String = "C:\ModeS\logged.mdb"
 
     Dim logged_cmd As New OleDbCommand(logged_SQL, Logged_con)
-
-    'GFIA database definitions
-    Dim dtset_con As OleDbConnection
-    Dim dtset_sql As String = "SELECT ID FROM tbldataset where hex ="
-    ReadOnly dtset As String = "C:\DataAir\dtset.mdb"
-
-    Dim dtset_cmd As New OleDbCommand(dtset_sql, dtset_con)
 
     Dim Sound As New System.Media.SoundPlayer()
 
@@ -172,9 +161,6 @@ Public Class PACModeSLogging
         Logged_con = New OleDbConnection With {
             .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
         }
-        dtset_con = New OleDbConnection With {
-            .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
-        }
 
 Start:
 
@@ -230,12 +216,8 @@ Start:
                         Try
                             If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
                             If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                            If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
-                            If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-                            If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
-                            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
                         Catch ex As Exception
-                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
+                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
                         End Try
 
                         'Logged_con.Open()
@@ -269,10 +251,6 @@ Start:
                         Try
                             If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
                             If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                            If Logllp_con.State = ConnectionState.Open Then Logged_con.Close()
-                            If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-                            If dtset_con.State = ConnectionState.Open Then Logged_con.Close()
-                            If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
                         Catch ex As Exception
                             MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
                         End Try
@@ -311,7 +289,7 @@ EmptyStep:
         End Try
 
         Logged_con.Close()
-        dtset_con.Close()
+        'dtset_con.Close()
 
 
     End Sub
@@ -366,16 +344,7 @@ EmptyStep:
         End Try
         Dim logged_cmd As New OleDbCommand
 
-        Try
-            Logllp_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & Logllp_dbname & ""
-
-        Catch OledbConnection As Exception
-        End Try
         Dim cmd2 As New OleDbCommand
-
-        dtset_con = New OleDbConnection With {
-            .ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & dtset & ""
-        }
 
         BSLoc = My.Settings.BSLoc & "\basestation.sqb"
 
@@ -385,7 +354,7 @@ EmptyStep:
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
 
 
-        If DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+        If DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\ModeS\logged.mdb") = False Then
 
             NewDB = "No"
         Else
@@ -402,25 +371,19 @@ EmptyStep:
                 Try
                     If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
                     If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                    If Logllp_con.State = ConnectionState.Open Then Logllp_con.Close()
-                    If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-                    If dtset_con.State = ConnectionState.Open Then dtset_con.Close()
-                    If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
                 Catch ex As Exception
                     MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
                 End Try
-                dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
-                dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
-                dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-                dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
-                Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
-                dtset_rdr.Read()
-                Tologid = dtset_rdr(0)
-                ToLogHex = dtset_rdr(1)
-                ToLogMil = dtset_rdr(2)
-                dtset_rdr.Close()
-                dtset_con.Close()
-                dtset_con.Dispose()
+                logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
+                logged_SQL = logged_SQL & Chr(34) & ToLogReg & Chr(34) & " and Hex ="
+                logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+                Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+                Logged_rdr.Read()
+                Tologid = Logged_rdr(0)
+                ToLogHex = Logged_rdr(1)
+                ToLogMil = Logged_rdr(2)
+                Logged_rdr.Close()
 
 
                 Dim BSstr As String = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
@@ -481,36 +444,45 @@ EmptyStep:
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
-                        If IsDBNull(cmd2_rdr(1)) Or (cmd2_rdr(1) = " ") Then
-                            'Do nothing
+                        If Not IsDBNull(cmd2_rdr(1)) Then
+                            If (cmd2_rdr(1) <> " ") Then
+                                ToLogUnit = cmd2_rdr(1)
+                            End If
                         Else
-                            ToLogUnit = cmd2_rdr(1)
+                            'Do Nothing
                         End If
-                        If IsDBNull(cmd2_rdr(2)) Or (cmd2_rdr(2) = " ") Then
-                            'Do nothing
+                        If Not IsDBNull(cmd2_rdr(2)) Then
+                            If (cmd2_rdr(2) <> " ") Then
+                                ToLogaCcode = cmd2_rdr(2)
+                            End If
                         Else
-                            ToLogaCcode = cmd2_rdr(2)
-                        End If
-                        If IsDBNull(cmd2_rdr(3)) Or (cmd2_rdr(3) = " ") Then
                             'Do nothing
-                        Else
-                            ToLogNotes = cmd2_rdr(3)
                         End If
-                        If IsDBNull(cmd2_rdr(4)) Or (cmd2_rdr(4) = " ") Then
-                            'Do nothing
-                        Else
-                            ToLogOther = cmd2_rdr(4)
-                        End If
+                        If Not IsDBNull(cmd2_rdr(3)) Then
+                            If (cmd2_rdr(3) <> " ") Then
+                                ToLogNotes = cmd2_rdr(3)
+                            Else
+                                'Do Nothing
+                            End If
+                            If Not IsDBNull(cmd2_rdr(4)) Then
+                                If (cmd2_rdr(4) <> " ") Then
+                                    ToLogOther = cmd2_rdr(4)
+                                Else
+                                    'Do nothing 
+                                End If
+                            End If
 
-                        'Insert into loglls
-                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                            'Insert into loglls
+                            logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        cmd2.ExecuteNonQuery()
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+                        End If
                     End If
                 End If
+
 
                 'Update BaseStation UserTag
                 Try
@@ -565,25 +537,19 @@ UpdBS1:         CheckBusy = False
             Try
                 If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
                 If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                If Logllp_con.State = ConnectionState.Open Then Logllp_con.Close()
-                If Logllp_con.State = ConnectionState.Closed Then Logllp_con.Open()
-                If dtset_con.State = ConnectionState.Open Then dtset_con.Close()
-                If dtset_con.State = ConnectionState.Closed Then dtset_con.Open()
             Catch ex As Exception
                 MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
             End Try
-            dtset_sql = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
-            dtset_sql = dtset_sql & Chr(34) & ToLogReg & Chr(34) & " And Hex ="
-            dtset_sql = dtset_sql & Chr(34) & ToLogHex & Chr(34) & Chr(59)
-            dtset_cmd = New OleDbCommand(dtset_sql, dtset_con)
-            Dim dtset_rdr As OleDbDataReader = dtset_cmd.ExecuteReader()
-            dtset_rdr.Read()
-            Tologid = dtset_rdr(0)
-            ToLogHex = dtset_rdr(1)
-            ToLogMil = dtset_rdr(2)
-            dtset_rdr.Close()
-            dtset_con.Close()
-            dtset_con.Dispose()
+            logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
+            logged_SQL = logged_SQL & Chr(34) & ToLogReg & Chr(34) & " And Hex ="
+            logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+            logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+            Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+            Logged_rdr.Read()
+            Tologid = Logged_rdr(0)
+            ToLogHex = Logged_rdr(1)
+            ToLogMil = Logged_rdr(2)
+            Logged_rdr.Close()
 
             Dim BSstr As String = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
             Dim BS_Con_cs As String = "Provider=System.Data.SQLite;Data Source=" & BSLoc & ";Pooling=False;Max Pool Size=100;"
@@ -651,36 +617,45 @@ UpdBS1:         CheckBusy = False
                         cmd2_rdr = cmd2.ExecuteReader()
                         cmd2_rdr.Read()
 
-                        If IsDBNull(cmd2_rdr(1)) Or (cmd2_rdr(1) = " ") Then
-                            'Do nothing
+                        If Not IsDBNull(cmd2_rdr(1)) Then
+                            If (cmd2_rdr(1) <> " ") Then
+                                ToLogUnit = cmd2_rdr(1)
+                            End If
                         Else
-                            ToLogUnit = cmd2_rdr(1)
+                            'Do Nothing
                         End If
-                        If IsDBNull(cmd2_rdr(2)) Or (cmd2_rdr(2) = " ") Then
-                            'Do nothing
+                        If Not IsDBNull(cmd2_rdr(2)) Then
+                            If (cmd2_rdr(2) <> " ") Then
+                                ToLogaCcode = cmd2_rdr(2)
+                            End If
                         Else
-                            ToLogaCcode = cmd2_rdr(2)
-                        End If
-                        If IsDBNull(cmd2_rdr(3)) Or (cmd2_rdr(3) = " ") Then
                             'Do nothing
-                        Else
-                            ToLogNotes = cmd2_rdr(3)
                         End If
-                        If IsDBNull(cmd2_rdr(4)) Or (cmd2_rdr(4) = " ") Then
-                            'Do nothing
-                        Else
-                            ToLogOther = cmd2_rdr(4)
-                        End If
+                        If Not IsDBNull(cmd2_rdr(3)) Then
+                            If (cmd2_rdr(3) <> " ") Then
+                                ToLogNotes = cmd2_rdr(3)
+                            Else
+                                'Do Nothing
+                            End If
+                            If Not IsDBNull(cmd2_rdr(4)) Then
+                                If (cmd2_rdr(4) <> " ") Then
+                                    ToLogOther = cmd2_rdr(4)
+                                Else
+                                    'Do nothing 
+                                End If
+                            End If
 
-                        'Insert into loglls
-                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                            'Insert into loglls
+                            logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        cmd2.ExecuteNonQuery()
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+                        End If
                     End If
                 End If
+
 
 
                 'Update BaseStation UserTag
@@ -730,7 +705,7 @@ UpdBS2:         CheckBusy = False
             End If
         End If
 
-        Timer1.Start()
+        'Timer1.Start()
 
 
         If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
@@ -747,8 +722,9 @@ UpdBS2:         CheckBusy = False
 
         Logged_con.Close()
         Logged_con.Dispose()
-        Logllp_con.Close()
-        Logllp_con.Dispose()
+
+        Timer1.Dispose()
+        Timer1.Start()
 
 
 
