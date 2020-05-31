@@ -435,7 +435,7 @@ EmptyStep:
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
 
-                    If cmd2.ExecuteNonQuery() > 0 Then
+                    If cmd2.ExecuteNonQuery() = 0 Then
                         'Do nothing
                     Else
 
@@ -606,7 +606,7 @@ UpdBS1:     CheckBusy = False
                             " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
 
-                    If cmd2.ExecuteNonQuery() > 0 Then
+                    If cmd2.ExecuteNonQuery() = 0 Then
                         'Do nothing
                     Else
 
