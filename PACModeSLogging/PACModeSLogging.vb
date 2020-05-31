@@ -481,53 +481,54 @@ EmptyStep:
                         cmd2.ExecuteNonQuery()
                     End If
                 End If
-            End If
 
 
-            'Update BaseStation UserTag
-            Try
-                If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
-                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
-            Catch ex As Exception
-                MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
-            End Try
-            'BS_Con.Open()
-            Dim CheckBusy As Boolean = False
-UpdBS1:     CheckBusy = False
-            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-            BS_SQL = "SELECT * FROM sqlite_master"
-            Try
-                BS_Cmd.ExecuteNonQuery()
-            Catch SQLiteexception As Exception
-                If SQLiteErrorCode.Locked Then
-                    CheckBusy = True
-                Else
-                    CheckBusy = False
-                End If
-            End Try
-            If CheckBusy = True Then
-                GoTo UpdBS1
-            Else
+                'Update BaseStation UserTag
                 Try
-                    Dim BS_SQL2 As String
-                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-
-                    BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
+                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                End Try
+                'BS_Con.Open()
+                Dim CheckBusy As Boolean = False
+UpdBS1:         CheckBusy = False
+                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                BS_SQL = "SELECT * FROM sqlite_master"
+                Try
                     BS_Cmd.ExecuteNonQuery()
-                Catch SQLITEexception As Exception
+                Catch SQLiteexception As Exception
                     If SQLiteErrorCode.Locked Then
                         CheckBusy = True
-                        GoTo UpdBS1
                     Else
                         CheckBusy = False
                     End If
                 End Try
-                ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-                ComboBox1.Refresh()
-                BS_Con.Close()
-                BS_Con.Dispose()
+                If CheckBusy = True Then
+                    GoTo UpdBS1
+                Else
+                    Try
+                        Dim BS_SQL2 As String
+                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                    Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+
+                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
+                        BS_Cmd.ExecuteNonQuery()
+                    Catch SQLITEexception As Exception
+                        If SQLiteErrorCode.Locked Then
+                            CheckBusy = True
+                            GoTo UpdBS1
+                        Else
+                            CheckBusy = False
+                        End If
+                    End Try
+                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                    ComboBox1.Refresh()
+                    BS_Con.Close()
+                    BS_Con.Dispose()
+                End If
             End If
+
 
         ElseIf NewDB = "Yes" Then
 
