@@ -55,7 +55,7 @@ Public Class PACModeSLogging
     Dim BS_SQL As String = ""
 
 
-    ReadOnly BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
+    Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
 
     ReadOnly oInput As String
     Public LogText As String
@@ -471,65 +471,63 @@ EmptyStep:
                                     'Do nothing 
                                 End If
                             End If
+                        End If
 
-                            'Insert into loglls
-                            logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                        'Insert into loglls
+                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                            cmd2.ExecuteNonQuery()
-                        End If
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
                     End If
                 End If
+            End If
 
 
-                'Update BaseStation UserTag
+            'Update BaseStation UserTag
+            Try
+                If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+            End Try
+            'BS_Con.Open()
+            Dim CheckBusy As Boolean = False
+UpdBS1:     CheckBusy = False
+            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+            BS_SQL = "SELECT * FROM sqlite_master"
+            Try
+                BS_Cmd.ExecuteNonQuery()
+            Catch SQLiteexception As Exception
+                If SQLiteErrorCode.Locked Then
+                    CheckBusy = True
+                Else
+                    CheckBusy = False
+                End If
+            End Try
+            If CheckBusy = True Then
+                GoTo UpdBS1
+            Else
                 Try
-                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
-                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
-                Catch ex As Exception
-                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
-                End Try
-                'BS_Con.Open()
-                Dim CheckBusy As Boolean = False
-UpdBS1:         CheckBusy = False
-                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-                BS_SQL = "SELECT * FROM sqlite_master"
-                Try
+                    Dim BS_SQL2 As String
+                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+
+                    BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
-                Catch SQLiteexception As Exception
+                Catch SQLITEexception As Exception
                     If SQLiteErrorCode.Locked Then
                         CheckBusy = True
+                        GoTo UpdBS1
                     Else
                         CheckBusy = False
                     End If
                 End Try
-                If CheckBusy = True Then
-                    GoTo UpdBS1
-                Else
-                    Try
-                        Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-
-                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
-                        BS_Cmd.ExecuteNonQuery()
-                    Catch SQLITEexception As Exception
-                        If SQLiteErrorCode.Locked Then
-                            CheckBusy = True
-                            GoTo UpdBS1
-                        Else
-                            CheckBusy = False
-                        End If
-                    End Try
-                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-                    ComboBox1.Refresh()
-                    BS_Con.Close()
-                    BS_Con.Dispose()
-                End If
-
-
+                ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                ComboBox1.Refresh()
+                BS_Con.Close()
+                BS_Con.Dispose()
             End If
 
         ElseIf NewDB = "Yes" Then
@@ -644,9 +642,11 @@ UpdBS1:         CheckBusy = False
                                     'Do nothing 
                                 End If
                             End If
+                        End If
 
-                            'Insert into loglls
-                            logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+
+                        'Insert into loglls
+                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
                             " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
                         Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
                         Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
@@ -703,7 +703,6 @@ UpdBS2:         CheckBusy = False
                     ComboBox1.Refresh()
                 End If
             End If
-        End If
 
         'Timer1.Start()
 
