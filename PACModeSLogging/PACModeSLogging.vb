@@ -1,6 +1,4 @@
-﻿Imports System
-Imports System.Data
-Imports System.Data.OleDb
+﻿Imports System.Data.OleDb
 Imports System.Data.SQLite
 
 
@@ -55,7 +53,9 @@ Public Class PACModeSLogging
     Dim BS_SQL As String = ""
 
 
+#Disable Warning IDE0044 ' Add readonly modifier
     Dim BS_Cmd As New SQLiteCommand(BS_SQL, BS_Con)
+#Enable Warning IDE0044 ' Add readonly modifier
 
     ReadOnly oInput As String
     Public LogText As String
