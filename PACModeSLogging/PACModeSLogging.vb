@@ -8,7 +8,7 @@ Public Class PACModeSLogging
     Dim mousex As Integer
     Dim mousey As Integer
 
-    Dim MyObject
+    Dim MyObject As Object
     Dim UT As String
     Dim i As Int16 = 0
     Dim PPHex As String
@@ -174,7 +174,7 @@ Start:
             Exit Sub
         End Try
 
-        Timer1.Interval = My.Settings.SampleRate * 1000
+        Timer1.Interval = CInt(My.Settings.SampleRate * 1000)
         Timer1.Start()
         Dim cancel As Boolean = False
 
