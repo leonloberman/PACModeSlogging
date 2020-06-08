@@ -66,8 +66,10 @@ Public Class PACModeSLogging
 
     Dim ToLogUnit As String = " "
     Dim ToLogaCcode As String = " "
-    Dim ToLogNotes As String = " "
+    Dim ToLogacName As String = " "
     Dim ToLogOther As String = " "
+    Dim ToLogNotes As String = " "
+
 
 
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
@@ -430,12 +432,12 @@ EmptyStep:
 
                     'Check for mil records
                     logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
-                            " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
-                            " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
-                            " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    Dim cmd2_rdr As OleDbDataReader
-                    cmd2_rdr = cmd2.ExecuteReader()
+                                " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                                " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                                " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        Dim cmd2_rdr As OleDbDataReader
+                        cmd2_rdr = cmd2.ExecuteReader()
 
                     If cmd2_rdr.HasRows Then
                         cmd2_rdr.Close()
@@ -472,19 +474,21 @@ EmptyStep:
                             End If
                         End If
 
+
                         'Insert into loglls
                         logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                            " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
-                        Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
-                        Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
+                                    " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
+                                Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
+                                Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
                         cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                         cmd2.ExecuteNonQuery()
+
                     End If
                 End If
 
 
-                'Update BaseStation UserTag
-                Try
+                    'Update BaseStation UserTag
+                    Try
                     If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
                     If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
                 Catch ex As Exception
@@ -580,7 +584,6 @@ UpdBS1:         CheckBusy = False
             If ToLogType.Contains("RQ") Then MDPO = "M"
             If ToLogType.Contains("Ps") Then MDPO = "P"
 
-
             Dim LogNote As New Notes
             LogNote.ShowDialog()
 
@@ -630,6 +633,7 @@ UpdBS1:         CheckBusy = False
                         End If
                         If Not IsDBNull(cmd2_rdr(3)) Then
                             If (cmd2_rdr(3) <> " ") Then
+                                ToLogacName = cmd2_rdr(3)
                                 ToLogNotes = cmd2_rdr(3)
                             Else
                                 'Do Nothing
@@ -643,17 +647,26 @@ UpdBS1:         CheckBusy = False
                             End If
                         End If
 
+                        If DoesFieldExist("logllp", "logunit", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\ModeS\logged.mdb") = False Then
 
-                        'Insert into loglls
-                        logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
-                            " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
-                        Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
-                        Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        cmd2.ExecuteNonQuery()
+                            'Insert into loglls
+                            logged_SQL = "INSERT INTO logLLs ( ID, [when], logunit, [loga/c code], notes, other )" &
+                                " VALUES (" & Tologid & Chr(44) & Chr(32) & Chr(34) & tologdate & Chr(34) & Chr(44) &
+                            Chr(32) & Chr(34) & ToLogUnit & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogaCcode & Chr(34) &
+                            Chr(44) & Chr(32) & Chr(34) & ToLogNotes & Chr(34) & Chr(44) & Chr(32) & Chr(34) & ToLogOther & Chr(34) & ");"
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+
+                        Else
+                            'Insert into logllp
+                            logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
+                                " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+                        End If
                     End If
                 End If
-                End If
+            End If
 
 
 
