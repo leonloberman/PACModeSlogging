@@ -58,13 +58,4 @@
         End Using
     End Sub
 
-    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        'UpgradeCheck()
-        If Newestappversion = Currentappversion Then
-            Dim UpgradeText As String = "Nothing to upgrade :-)"
-            Select Case MsgBox(UpgradeText, MsgBoxStyle.Information, "PACModeSLogging Upgrade check")
-                'Carry on
-            End Select
-        End If
-    End Sub
 End Class

@@ -115,7 +115,7 @@ Public Class PACModeSLogging
         'AutoUpdater.ReportErrors = True
         AutoUpdater.ShowSkipButton = False
         'AutoUpdater.Mandatory = True
-        AutoUpdater.Synchronous = True
+        'AutoUpdater.Synchronous = True
         AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
 
         If My.Settings.Location = "<enter your location for logging>" Then
