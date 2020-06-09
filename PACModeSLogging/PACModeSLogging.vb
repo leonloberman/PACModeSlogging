@@ -1,6 +1,7 @@
 ﻿Imports System.Data.OleDb
 Imports System.Data.SQLite
-
+Imports System.Net
+Imports AutoUpdaterDotNET
 
 Public Class PACModeSLogging
     'Declare the variables
@@ -108,7 +109,14 @@ Public Class PACModeSLogging
 #Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
         End If
 
-        UpgradeCheck()
+        'Application Upgrade Check
+        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
+        AutoUpdater.BasicAuthXML = BasicAuthentication
+        'AutoUpdater.ReportErrors = True
+        AutoUpdater.ShowSkipButton = False
+        'AutoUpdater.Mandatory = True
+        AutoUpdater.Synchronous = True
+        AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
 
         If My.Settings.Location = "<enter your location for logging>" Then
             Config.Show()
@@ -121,7 +129,7 @@ Public Class PACModeSLogging
             Button2.Tag = "NoSound"
         End If
 
-        RunProcess()
+        'RunProcess()
 
     End Sub
 
@@ -435,9 +443,9 @@ EmptyStep:
                                 " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
                                 " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                                 " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        Dim cmd2_rdr As OleDbDataReader
-                        cmd2_rdr = cmd2.ExecuteReader()
+                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
 
                     If cmd2_rdr.HasRows Then
                         cmd2_rdr.Close()
@@ -487,8 +495,8 @@ EmptyStep:
                 End If
 
 
-                    'Update BaseStation UserTag
-                    Try
+                'Update BaseStation UserTag
+                Try
                     If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
                     If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
                 Catch ex As Exception
@@ -670,51 +678,51 @@ UpdBS1:         CheckBusy = False
 
 
 
-                'Update BaseStation UserTag
+            'Update BaseStation UserTag
+            Try
+                If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+            Catch ex As Exception
+                MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+            End Try
+            'BS_Con.Open()
+            Dim CheckBusy As Boolean = False
+UpdBS2:     CheckBusy = False
+            BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+            BS_SQL = "SELECT * FROM sqlite_master"
+            Try
+                BS_Cmd.ExecuteNonQuery()
+            Catch SQLiteexception As Exception
+                If SQLiteErrorCode.Locked Then
+                    CheckBusy = True
+                Else
+                    CheckBusy = False
+                End If
+            End Try
+            If CheckBusy = True Then
+                GoTo UpdBS2
+            Else
                 Try
-                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
-                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
-                Catch ex As Exception
-                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
-                End Try
-                'BS_Con.Open()
-                Dim CheckBusy As Boolean = False
-UpdBS2:         CheckBusy = False
-                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-                BS_SQL = "SELECT * FROM sqlite_master"
-                Try
+                    Dim BS_SQL2 As String
+                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+            Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+
+                    BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
-                Catch SQLiteexception As Exception
+                Catch SQLITEexception As Exception
                     If SQLiteErrorCode.Locked Then
                         CheckBusy = True
+                        GoTo UpdBS2
                     Else
                         CheckBusy = False
                     End If
                 End Try
-                If CheckBusy = True Then
-                    GoTo UpdBS2
-                Else
-                    Try
-                        Dim BS_SQL2 As String
-                        BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-
-                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
-                        BS_Cmd.ExecuteNonQuery()
-                    Catch SQLITEexception As Exception
-                        If SQLiteErrorCode.Locked Then
-                            CheckBusy = True
-                            GoTo UpdBS2
-                        Else
-                            CheckBusy = False
-                        End If
-                    End Try
-                    BS_Con.Close()
-                    BS_Con.Dispose()
-                    ComboBox1.Items.Remove(ComboBox1.SelectedItem)
-                    ComboBox1.Refresh()
-                End If
+                BS_Con.Close()
+                BS_Con.Dispose()
+                ComboBox1.Items.Remove(ComboBox1.SelectedItem)
+                ComboBox1.Refresh()
             End If
+        End If
 
         'Timer1.Start()
 
