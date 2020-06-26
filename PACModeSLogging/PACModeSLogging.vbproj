@@ -146,7 +146,6 @@
     <Compile Include="Config.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CheckforUpgrade.vb" />
     <Compile Include="PACModeSLogging.vb">
       <SubType>Form</SubType>
     </Compile>
