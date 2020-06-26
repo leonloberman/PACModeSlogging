@@ -110,9 +110,9 @@ Public Class PACModeSLogging
         End If
 
         'Application Upgrade Check
-        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
+        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("PACModeS2020", "FkNrELRx")
         AutoUpdater.BasicAuthXML = BasicAuthentication
-        'AutoUpdater.ReportErrors = True
+        AutoUpdater.ReportErrors = True
         AutoUpdater.ShowSkipButton = False
         'AutoUpdater.Mandatory = True
         'AutoUpdater.Synchronous = True
