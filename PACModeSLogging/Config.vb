@@ -23,6 +23,11 @@ Public Class Config
         Else
             CheckBox1.CheckState = CheckState.Unchecked
         End If
+        If My.Settings.RemIntFlag = True Then
+            CheckBox2.CheckState = CheckState.Checked
+        Else
+            CheckBox2.CheckState = CheckState.Unchecked
+        End If
     End Sub
 
     Private Sub RadioButton2_clicked(sender As Object, e As EventArgs) Handles RadioButton2.Click
@@ -68,4 +73,15 @@ Public Class Config
         End Using
     End Sub
 
+    Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
+        If CheckBox2.Checked = True Then
+            My.Settings.RemIntFlag = True
+        Else
+            My.Settings.RemIntFlag = False
+        End If
+    End Sub
+
+    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
+
+    End Sub
 End Class
