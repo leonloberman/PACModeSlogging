@@ -511,9 +511,14 @@ UpdBS2:     CheckBusy = False
                 GoTo UpdBS2
             Else
                 Try
-                    Dim BS_SQL2 As String
-                BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-            Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE ) WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                Dim BS_SQL2 As String
+                If My.Settings.RemIntFlag = True Then
+                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+            Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                Else
+                    BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                End If
 
                 BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                     BS_Cmd.ExecuteNonQuery()
