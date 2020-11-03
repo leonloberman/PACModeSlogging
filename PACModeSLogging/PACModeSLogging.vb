@@ -110,13 +110,18 @@ Public Class PACModeSLogging
         End If
 
         'Application Upgrade Check
-        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("PACModeS2020", "FkNrELRx")
+        'Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pacmodes2020", "FkNrELRx")
+        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
         AutoUpdater.BasicAuthXML = BasicAuthentication
-        'AutoUpdater.ReportErrors = True
+        AutoUpdater.ReportErrors = True
         AutoUpdater.ShowSkipButton = False
         'AutoUpdater.Mandatory = True
         'AutoUpdater.Synchronous = True
         AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
+        'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
+
+        AddHandler AutoUpdater.CheckForUpdateEvent, AddressOf AutoUpdaterOnCheckForUpdateEvent
+
 
         If My.Settings.Location = "<enter your location for logging>" Then
             Config.Show()
@@ -133,6 +138,25 @@ Public Class PACModeSLogging
 
     End Sub
 
+    Private Sub AutoUpdaterOnCheckForUpdateEvent(ByVal args As UpdateInfoEventArgs)
+        If args IsNot Nothing Then
+
+            If args.IsUpdateAvailable Then
+
+                AutoUpdater.ShowUpdateForm(args)
+
+            Else
+                'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                If My.Computer.Network.Ping("www.google.com") Then
+                    'UpgradeCheck("C:\ModeS\ICAOCodes.mdb")
+                Else
+                    MsgBox("Computer is not connected to the internet.")
+                End If
+            End If
+        Else
+            MessageBox.Show("There is a problem reaching update server please check your internet connection and try again later.", "Update check failed", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+        End If
+    End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
 
