@@ -109,18 +109,25 @@ Public Class PACModeSLogging
 #Enable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
         End If
 
-        'Application Upgrade Check
-        'Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pacmodes2020", "FkNrELRx")
-        Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
-        AutoUpdater.BasicAuthXML = BasicAuthentication
-        AutoUpdater.ReportErrors = True
-        AutoUpdater.ShowSkipButton = False
-        'AutoUpdater.Mandatory = True
-        'AutoUpdater.Synchronous = True
-        AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
-        'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
+        If My.Computer.Network.IsAvailable Then
+            If My.Computer.Network.Ping("www.google.com") Then
+                'Application Upgrade Check
+                'Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pacmodes2020", "FkNrELRx")
+                Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
+                AutoUpdater.BasicAuthXML = BasicAuthentication
+                AutoUpdater.ReportErrors = True
+                AutoUpdater.ShowSkipButton = False
+                'AutoUpdater.Mandatory = True
+                'AutoUpdater.Synchronous = True
+                AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
+                'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
 
-        AddHandler AutoUpdater.CheckForUpdateEvent, AddressOf AutoUpdaterOnCheckForUpdateEvent
+                AddHandler AutoUpdater.CheckForUpdateEvent, AddressOf AutoUpdaterOnCheckForUpdateEvent
+            End If
+        Else
+            'MsgBox("Computer is not connected to the internet.")
+        End If
+
 
 
         If My.Settings.Location = "<enter your location for logging>" Then
