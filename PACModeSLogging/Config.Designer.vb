@@ -33,6 +33,7 @@ Partial Class Config
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -136,6 +137,16 @@ Partial Class Config
         Me.TextBox2.Name = "TextBox2"
         Me.TextBox2.Size = New System.Drawing.Size(260, 20)
         Me.TextBox2.TabIndex = 38
+        '
+        'CheckBox2
+        '
+        Me.CheckBox2.AutoSize = True
+        Me.CheckBox2.Location = New System.Drawing.Point(30, 110)
+        Me.CheckBox2.Name = "CheckBox2"
+        Me.CheckBox2.Size = New System.Drawing.Size(139, 17)
+        Me.CheckBox2.TabIndex = 39
+        Me.CheckBox2.Text = "Remove Interested Flag"
+        Me.CheckBox2.UseVisualStyleBackColor = True
         '
         'NumericUpDown1
         '

@@ -1,4 +1,6 @@
-﻿Public Class Config
+﻿Imports System.IO
+
+Public Class Config
 
     Private Sub Config_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -54,20 +56,32 @@
         End If
     End Sub
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        'Dim BSLoc As String
+        Dim BSLocchk As String
         Using dialog As New FolderBrowserDialog
             If dialog.ShowDialog() <> DialogResult.OK Then Return
             'BSLoc = dialog.SelectedPath
             TextBox2.Text = dialog.SelectedPath
-            My.Settings.BSLoc = dialog.SelectedPath
+            BSLocchk = Path.Combine(dialog.SelectedPath, "basestation.sqb")
+
+            If File.Exists(BSLocchk) = True Then
+                My.Settings.BSLoc = TextBox2.Text.ToString
+                Button1.Enabled = True
+            Else
+                Button1.Enabled = False
+                MsgBox("There is no basestation.sqb file in this directory", MsgBoxStyle.OkOnly)
+            End If
         End Using
     End Sub
 
     Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
-        If CheckBox2.CheckState = CheckState.Checked Then
+        If CheckBox2.Checked = True Then
             My.Settings.RemIntFlag = True
         Else
             My.Settings.RemIntFlag = False
         End If
+    End Sub
+
+    Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
+
     End Sub
 End Class
