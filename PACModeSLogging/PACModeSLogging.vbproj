@@ -240,6 +240,7 @@
   <ItemGroup>
     <Content Include="EE-Lightning-3-48px.ico" />
     <Content Include="EE-Lightning-3-48px_v2.ico" />
+    <Content Include="PACModeSLogging_changelog.htm" />
     <None Include="Resources\ClearList.png" />
     <None Include="Resources\stop-red-icon.png" />
     <None Include="Resources\start-icon.png" />
