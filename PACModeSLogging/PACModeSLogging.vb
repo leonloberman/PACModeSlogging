@@ -387,6 +387,9 @@ EmptyStep:
 
         Dim cmd2 As New OleDbCommand
 
+        Dim cmd3 As New OleDbCommand
+
+
         BSLoc = My.Settings.BSLoc & "\basestation.sqb"
 
         Timer1.Stop()
@@ -449,16 +452,49 @@ EmptyStep:
 
             LogText = LogNote.Passvalue
 
-            'Insert into logllp with Notes field
-            logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)+' '" &
-        "+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
-        Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
-        " FROM PRO_tbloperator RIGHT JOIN (tblVariant INNER JOIN (tblmodel INNER JOIN (tblManufacturer INNER JOIN tbldataset ON tblManufacturer.UID = tbldataset.UID) ON (tblManufacturer.UID = tblmodel.UID)" &
-        " AND (tblmodel.FKmodel = tbldataset.FKmodel)) ON tblVariant.FKvariant = tbldataset.FKvariant) ON PRO_tbloperator.FKoperator = tbldataset.FKoperator WHERE (((tbldataset.ID)=" & Tologid & "));"
-            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-            cmd2.ExecuteNonQuery()
+            'Get Typnames
+            Dim typename As String = ""
+            Dim TypeName_SQL As String = ""
+            TypeName_SQL = "SELECT tbldataset.ID, tblVariant.FKname AS TypeNameKey, tblNames.TypeName " &
+            " FROM (tblVariant INNER JOIN tbldataset ON tblVariant.FKvariant = tbldataset.FKvariant)" &
+            " INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname WHERE (((tbldataset.ID)=" & Tologid & "))"
+            cmd3 = New OleDb.OleDbCommand(TypeName_SQL, Logged_con)
+            Dim cmd3_rdr As OleDbDataReader
+            cmd3_rdr = cmd3.ExecuteReader()
 
+            If cmd3_rdr.HasRows = False Then
+                'Insert into logllp no typename
+                logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
+        "+' '+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
+        Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+        " FROM tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
+        " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
+        " (tblManufacturer.UID = tbldataset.UID) AND (tblmodel.FKmodel = tbldataset.FKmodel)) " &
+        "ON tblVariant.FKvariant = tbldataset.FKvariant " & "WHERE (((tbldataset.ID)=" & Tologid & "));"
+                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                cmd2.ExecuteNonQuery()
+            Else If cmd3_rdr.HasRows = True 
+                cmd3_rdr.Close()
+                cmd3.ExecuteNonQuery()
+                cmd3_rdr = cmd3.ExecuteReader()
+                cmd3_rdr.Read()
+                typename = cmd3_rdr(2)
+
+
+                'Insert into logllp with typename
+                logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
+        "+' " & typename & "'+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
+        Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+        " FROM (tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
+        " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
+        "(tblmodel.FKmodel = tbldataset.FKmodel) And (tblManufacturer.UID = tbldataset.UID)) " &
+        "ON tblVariant.FKvariant = tbldataset.FKvariant) INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname " & "WHERE (((tbldataset.ID)=" & Tologid & "));"
+                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                cmd2.ExecuteNonQuery()
+
+            End If
         End If
+
 
 
         If ToLogMil = 502 Then
