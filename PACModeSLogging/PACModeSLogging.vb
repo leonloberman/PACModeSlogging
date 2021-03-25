@@ -408,8 +408,8 @@ EmptyStep:
         logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
 
         ' **** Test Record ****
-        logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'N634JB' And Hex = 'A84D62'"
-        ToLogReg = "N634JB"
+        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'N634JB' And Hex = 'A84D62'"
+        'ToLogReg = "N634JB"
         ' ******
 
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
@@ -436,7 +436,7 @@ EmptyStep:
         BS_Cmd.Connection = BS_Con
 
         ' **** Test Record ****
-        BSstr = "Select UserTag, UserString1 from Aircraft WHERE Modes = 'A84D62'"
+        'BSstr = "Select UserTag, UserString1 from Aircraft WHERE Modes = 'A84D62'"
         ' ******
 
         BS_Cmd.CommandText = BSstr
@@ -459,7 +459,7 @@ EmptyStep:
             If ToLogType.Contains("Ps") Then MDPO = "P"
 
         ' **** Test Record ****
-        MDPO = "M"
+        'MDPO = "M"
         ' ******
 
 
@@ -563,7 +563,7 @@ EmptyStep:
 
             'Check for Fleetname and add 
             If ToLogMil <> 502 Then
-                logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,25)" &
+                logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,50)" &
                             " FROM tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID " &
                             " WHERE (tbldataset.ID)= " & Tologid
                 cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
@@ -578,7 +578,8 @@ EmptyStep:
 
                     If Not IsDBNull(cmd2_rdr(1)) Then
                         If (cmd2_rdr(1) <> " ") Then
-                            ToLogacName = cmd2_rdr(1)
+
+                            ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
                         End If
                     Else
                         'Do Nothing
@@ -595,7 +596,7 @@ EmptyStep:
             If ToLogMil = 502 Then
 
                 'Check for mil records
-                logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,25), tblChildUnit.FKtail" &
+                logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,50), tblChildUnit.FKtail" &
                                 " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
                                 " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
                                 " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
@@ -625,14 +626,15 @@ EmptyStep:
                     End If
                     If Not IsDBNull(cmd2_rdr(3)) Then
                         If (cmd2_rdr(3) <> " ") Then
-                            ToLogacName = cmd2_rdr(3)
-                            ToLogNotes = cmd2_rdr(3)
+
+                            ToLogacName = cmd2_rdr(3).Replace(Chr(34), "'")
+                            ToLogNotes = cmd2_rdr(3).Replace(Chr(34), "'")
                         Else
                             'Do Nothing
                         End If
                         If Not IsDBNull(cmd2_rdr(4)) Then
                             If (cmd2_rdr(4) <> " ") Then
-                                ToLogOther = cmd2_rdr(4)
+                                ToLogOther = cmd2_rdr(4).Replace(Chr(34), "'")
                             Else
                                 'Do nothing 
                             End If
