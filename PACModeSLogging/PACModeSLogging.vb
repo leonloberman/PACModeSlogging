@@ -47,6 +47,7 @@ Public Class PACModeSLogging
     Dim Where As String
     Dim LResponse As Integer
 
+    Dim Source As String = "PacModes v" & My.Application.Info.Version.ToString
 
     'BaseStation definitions
     ReadOnly BS_Con As SQLiteConnection
@@ -495,7 +496,7 @@ EmptyStep:
                 'Insert into logllp no typename no prefix
                 logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
     "+' '+'['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
-    Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+    Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes], " & Chr(34) & Source & Chr(34) & " AS [Source] " &
     " FROM tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
     " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
     " (tblManufacturer.UID = tbldataset.UID) AND (tblmodel.FKmodel = tbldataset.FKmodel)) " &
@@ -514,7 +515,7 @@ EmptyStep:
                 'Insert into logllp with typename no prefix
                 logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
     "+' " & typename & "'+' ['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
-    Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+    Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes], " & Chr(34) & Source & Chr(34) & " AS [Source] " &
     " FROM (tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
     " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
     "(tblmodel.FKmodel = tbldataset.FKmodel) And (tblManufacturer.UID = tbldataset.UID)) " &
@@ -528,7 +529,7 @@ EmptyStep:
                 'Insert into logllp no typename with no prefix
                 logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
         "+' '+' ['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
-        Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+        Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes], " & Chr(34) & Source & Chr(34) & " AS [Source] " &
         " FROM tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
         " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
         " (tblManufacturer.UID = tbldataset.UID) AND (tblmodel.FKmodel = tbldataset.FKmodel)) " &
@@ -552,7 +553,7 @@ EmptyStep:
                 'Insert into logllp with typename with prefix
                 logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+" & Chr(34) & Prefix & Chr(34) & "+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
             "+' " & typename & "'+' ['+[tbldataset].[cn]+']') AS Aircraft, tbldataset.Registration AS Registration, PRO_tbloperator.operator AS operator, " & Chr(34) & Where & Chr(34) & " AS [Where]," & Chr(34) & MDPO & Chr(34) & " AS MDPO, " &
-            Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes] " &
+            Chr(34) & tologdate & Chr(34) & " As [When], 0 As Lockk, " & Chr(34) & LogText & Chr(34) & " AS [Notes], " & Chr(34) & Source & Chr(34) & " AS [Source] " &
             " FROM (tblVariant INNER JOIN ((tblmodel INNER JOIN tblManufacturer ON tblmodel.UID = tblManufacturer.UID) " &
             " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
             "(tblmodel.FKmodel = tbldataset.FKmodel) And (tblManufacturer.UID = tbldataset.UID)) " &
