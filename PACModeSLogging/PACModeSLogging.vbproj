@@ -182,7 +182,6 @@
     <Compile Include="Notes.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SetTestData.vb" />
     <Compile Include="Settings.vb" />
     <Compile Include="SQLforAccess.vb" />
   </ItemGroup>
