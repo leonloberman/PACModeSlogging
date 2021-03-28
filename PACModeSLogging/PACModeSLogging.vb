@@ -408,10 +408,10 @@ EmptyStep:
             logged_SQL = logged_SQL & Chr(34) & ToLogReg & Chr(34) & " And Hex ="
         logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
 
-        ' **** Test Record ****
-        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'N634JB' And Hex = 'A84D62'"
-        'ToLogReg = "N634JB"
-        ' ******
+        '**** Test Record ****
+        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = '03-3119' And Hex = 'AE119C'"
+        'ToLogReg = "03-3119"
+        '******
 
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
             Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
@@ -437,7 +437,7 @@ EmptyStep:
         BS_Cmd.Connection = BS_Con
 
         ' **** Test Record ****
-        'BSstr = "Select UserTag, UserString1 from Aircraft WHERE Modes = 'A84D62'"
+        'BSstr = "Select UserTag, UserString1 from Aircraft WHERE Modes = 'AE119C'"
         ' ******
 
         BS_Cmd.CommandText = BSstr
@@ -579,17 +579,18 @@ EmptyStep:
 
                     If Not IsDBNull(cmd2_rdr(1)) Then
                         If (cmd2_rdr(1) <> " ") Then
-
                             ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
                         End If
+                        'Insert into logllp
+                        logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
+                        ToLogacName = String.Empty
                     Else
                         'Do Nothing
                     End If
 
-                    'Insert into logllp
-                    logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
+
                 End If
 
             End If
@@ -640,13 +641,17 @@ EmptyStep:
                                 'Do nothing 
                             End If
                         End If
+                        'Insert into logllp
+                        logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
+                                    " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        cmd2.ExecuteNonQuery()
+                        ToLogacName = String.Empty
+                        ToLogaCcode = String.Empty
+                        ToLogUnit = String.Empty
+                        ToLogOther = String.Empty
                     End If
 
-                    'Insert into logllp
-                    logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
-                                    " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
                 End If
             End If
         End If
@@ -715,6 +720,7 @@ UpdBS2:     CheckBusy = False
                 SendKeys.Send("^(Q)")
             Next
         End If
+
 
 
         Logged_con.Close()
