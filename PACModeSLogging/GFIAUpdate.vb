@@ -215,7 +215,7 @@ Module GFIAUpdate
                 End If
             End If
         End If
-        UpdateBS(ToLogHex)
+        UpdateBS(ToLogHex, ToLogReg)
     End Sub
 
 End Module

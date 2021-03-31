@@ -4,7 +4,7 @@ Module BSUpdate
 
 
 
-    Public Sub UpdateBS(ToLogHex As String)
+    Public Sub UpdateBS(ToLogHex As String, ToLogReg As String)
         'Update BaseStation UserTag
 
 
@@ -42,10 +42,6 @@ UpdBS2: CheckBusy = False
 
                 BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                 BS_Cmd.ExecuteNonQuery()
-                PACModeSLogging.ComboBox1.Items.Remove(PACModeSLogging.ComboBox1.SelectedItem)
-                PACModeSLogging.ComboBox1.Refresh()
-                MsgBox("do i get here", vbOKOnly)
-                PACModeSLogging.Timer1.Start()
             Catch SQLITEexception As Exception
                 If SQLiteErrorCode.Locked Then
                     CheckBusy = True
@@ -58,6 +54,10 @@ UpdBS2: CheckBusy = False
             BS_Con.Close()
             BS_Con.Dispose()
         End If
+        PACModeSLogging.MyObject.RefreshDatabaseInfo()
+        PACModeSLogging.ComboBox1.Items.Remove(PACModeSLogging.ToLogRec)
+        PACModeSLogging.Timer1.Start()
+        PACModeSLogging.Timer1_Tick(Nothing, Nothing)
 
     End Sub
 End Module

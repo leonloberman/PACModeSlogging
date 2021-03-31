@@ -10,7 +10,7 @@ Public Class PACModeSLogging
     Dim mousex As Integer
     Dim mousey As Integer
 
-    Dim MyObject As Object
+    Public MyObject As Object
     Dim UT As String
     Dim i As Int16 = 0
     Dim PPHex As String
@@ -35,6 +35,7 @@ Public Class PACModeSLogging
 
     Dim LResponse As Integer
 
+    Public ToLogRec As Integer
 
 
 #Disable Warning IDE0044 ' Add readonly modifier
@@ -301,29 +302,19 @@ EmptyStep:
 
         Timer1.Stop()
 
+        ToLogRec = ComboBox1.SelectedIndex()
 
         GetBSdata(ToLogHex, ToLogReg)
 
         If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
-            For Each ObjProcess As Process In Process.GetProcessesByName("BaseStation.exe")
-                AppActivate(ObjProcess.Id)
-                SendKeys.SendWait("{F5}")
-            Next
-            For Each ObjProcess As Process In Process.GetProcessesByName("PlanePlotter.exe")
-                AppActivate(ObjProcess.Id)
-                SendKeys.Send("^(Q)")
-            Next
+            MyObject.RefreshDatabaseInfo()
         End If
-
-        ComboBox1.Items.Clear()
-        Timer1.Dispose()
-        Timer1.Start()
-        Timer1_Tick(Nothing, Nothing)
-
 
     End Sub
 
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        MyObject.RefreshDatabaseInfo()
+        ComboBox1.Items.Clear()
         GetPPdata()
     End Sub
 
