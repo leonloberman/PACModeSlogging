@@ -11,17 +11,6 @@ Public Class Log_data
         Dim no_reg_SQL As String = "SELECT tblManufacturer.UID, tblManufacturer.Builder FROM tblManufacturer where Builder <> '-' OR Builder <> ''
                                     ORDER BY tblManufacturer.Builder;"
 
-        If PACModeSLogging.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
-
-            TextBox3.Visible = False
-            Label7.Visible = False
-        Else
-            TextBox3.Visible = True
-            Label7.Visible = True
-        End If
-
-
-
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
                 Using no_reg_adapter As New OleDbDataAdapter(no_reg_cmd)
@@ -124,24 +113,11 @@ Public Class Log_data
 
         logging_con.Open()
 
-        If PACModeSLogging.DoesFieldExist("logllp", "Notes", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\DataAir\MyLogs\privatelogs.mdb") = False Then
+        'Insert into logllp with Notes field
 
-            'Insert into logllp without Notes field
-
-            SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK) " &
-                "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" &
-                ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False);"
-
-        Else
-
-            'Insert into logllp with Notes field
-
-            SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK, Notes ) " &
+        SQL = "INSERT INTO logLLp ( ID, [when], Registration, Aircraft, Operator, [Where], flag, MDPO, LOCKK, Notes ) " &
                 "VALUES (3335, " & Chr(34) & tologdate & Chr(34) & ",'" & TextBox1.Text & "','" & Aircraft & "','" &
                 ComboBox4.Text & "','" & My.Settings.Location & "',True,'O', False, '" & TextBox3.Text & "'" & ");"
-
-
-        End If
 
 
 
