@@ -28,6 +28,11 @@ Public Class Config
         Else
             CheckBox2.CheckState = CheckState.Unchecked
         End If
+        If My.Settings.Autostart = True Then
+            CheckBox3.CheckState = CheckState.Checked
+        Else
+            CheckBox3.CheckState = CheckState.Unchecked
+        End If
     End Sub
 
     Private Sub RadioButton2_clicked(sender As Object, e As EventArgs) Handles RadioButton2.Click
@@ -83,5 +88,13 @@ Public Class Config
 
     Private Sub RadioButton1_CheckedChanged(sender As Object, e As EventArgs) Handles RadioButton1.CheckedChanged
 
+    End Sub
+
+    Private Sub CheckBox3_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox3.CheckedChanged
+        If CheckBox3.Checked = True Then
+            My.Settings.Autostart = True
+        Else
+            My.Settings.Autostart = False
+        End If
     End Sub
 End Class

@@ -45,21 +45,30 @@ Module GFIAGetData
         '******
 
         '**** Test Record ****
-        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'LXN90459' And Hex = '4D03D0'"
-        'ToLogReg = "LXN90459"
+        logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'LXN90459' And Hex = '4D03D0'"
+        ToLogReg = "LXN90459"
         '******
 
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
         Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
         Logged_rdr.Read()
-        If Logged_rdr.HasRows = True Then
+        If Logged_rdr.HasRows = False Then
+            Dim response As DialogResult
+            response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
+            If response = DialogResult.Yes Then
+                Logged_rdr.Close()
+
+                Dim LogOutstanding As New LogOutstanding
+                LogOutstanding.ShowDialog()
+            ElseIf response = DialogResult.No Then
+                Exit Sub
+            End If
+        ElseIf Logged_rdr.HasRows = True Then
             Tologid = Logged_rdr(0)
             ToLogHex = Logged_rdr(1)
             ToLogMil = Logged_rdr(2)
             Logged_rdr.Close()
             UpdateGFIA(ToLogReg, ToLogHex, Tologid, ToLogMil, MDPO)
-        ElseIf Logged_rdr.HasRows = False Then
-            MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA", vbOKOnly)
         End If
         Logged_con.Close()
         Logged_con.Dispose()

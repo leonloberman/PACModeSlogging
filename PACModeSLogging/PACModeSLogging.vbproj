@@ -150,6 +150,12 @@
     <Compile Include="Config.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LogOutstanding.Designer.vb">
+      <DependentUpon>LogOutstanding.vb</DependentUpon>
+    </Compile>
+    <Compile Include="LogOutstanding.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GFIAGetData.vb" />
     <Compile Include="GFIAUpdate.vb" />
     <Compile Include="PACModeSLogging.vb">
@@ -192,6 +198,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Config.resx">
       <DependentUpon>Config.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogOutstanding.resx">
+      <DependentUpon>LogOutstanding.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PACModeSLogging.resx">
       <DependentUpon>PACModeSLogging.vb</DependentUpon>

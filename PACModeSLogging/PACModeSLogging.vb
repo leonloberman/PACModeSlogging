@@ -112,6 +112,11 @@ Public Class PACModeSLogging
             Button2.Tag = "NoSound"
         End If
 
+        If My.Settings.Autostart = True Then
+            Button3.Visible = False
+            Button1.Visible = True
+            GetPPdata()
+        End If
         'RunProcess()
 
     End Sub

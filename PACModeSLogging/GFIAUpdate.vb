@@ -6,25 +6,19 @@ Module GFIAUpdate
     Dim logged_cmd As New OleDbCommand
     Dim cmd2 As New OleDbCommand
     Dim cmd3 As New OleDbCommand
-    Public tologdate As String
+    Public ToLogdate As String
     Public Where As String
-    Dim Source As String = "PacModes v" & My.Application.Info.Version.ToString
-    Dim ToLogUnit As String = " "
-    Dim ToLogaCcode As String = " "
-    Dim ToLogacName As String = " "
-    Dim ToLogOther As String = " "
-    Dim ToLogNotes As String = " "
+    Public Source As String = "PacModes v" & My.Application.Info.Version.ToString
+    Public ToLogUnit As String = " "
+    Public ToLogaCcode As String = " "
+    Public ToLogacName As String = " "
+    Public ToLogOther As String = " "
+    Public ToLogNotes As String = " "
 
 
 
 
     Public Sub UpdateGFIA(ToLogReg As String, ToLogHex As String, ToLogId As String, ToLogMil As Integer, MDPO As String)
-
-
-
-
-
-
 
 
         Dim LogNote As New Notes
