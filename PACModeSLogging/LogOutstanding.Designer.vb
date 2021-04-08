@@ -182,7 +182,7 @@ Partial Class LogOutstanding
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(185, 305)
+        Me.Button1.Location = New System.Drawing.Point(219, 305)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 17
@@ -191,7 +191,7 @@ Partial Class LogOutstanding
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(54, 305)
+        Me.Button2.Location = New System.Drawing.Point(81, 305)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 18
