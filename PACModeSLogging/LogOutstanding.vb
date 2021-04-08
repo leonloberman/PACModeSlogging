@@ -41,6 +41,7 @@ Public Class LogOutstanding
         cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
         cmd2.ExecuteNonQuery()
         Close()
+        UpdateBS(3335, PACModeSLogging.ToLogReg)
         Exit Sub
 
     End Sub
