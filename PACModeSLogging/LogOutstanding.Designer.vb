@@ -54,7 +54,7 @@ Partial Class LogOutstanding
         '
         'TextBox1
         '
-        Me.TextBox1.Location = New System.Drawing.Point(33, 121)
+        Me.TextBox1.Location = New System.Drawing.Point(160, 79)
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(100, 20)
         Me.TextBox1.TabIndex = 1
@@ -62,7 +62,7 @@ Partial Class LogOutstanding
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(33, 85)
+        Me.Label2.Location = New System.Drawing.Point(33, 83)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(63, 13)
         Me.Label2.TabIndex = 2
@@ -71,7 +71,7 @@ Partial Class LogOutstanding
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(160, 85)
+        Me.Label3.Location = New System.Drawing.Point(33, 107)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(31, 13)
         Me.Label3.TabIndex = 4
@@ -79,15 +79,15 @@ Partial Class LogOutstanding
         '
         'TextBox2
         '
-        Me.TextBox2.Location = New System.Drawing.Point(160, 121)
+        Me.TextBox2.Location = New System.Drawing.Point(160, 103)
         Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox2.Size = New System.Drawing.Size(159, 20)
         Me.TextBox2.TabIndex = 3
         '
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(286, 85)
+        Me.Label4.Location = New System.Drawing.Point(33, 130)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(48, 13)
         Me.Label4.TabIndex = 6
@@ -95,15 +95,15 @@ Partial Class LogOutstanding
         '
         'TextBox3
         '
-        Me.TextBox3.Location = New System.Drawing.Point(286, 121)
+        Me.TextBox3.Location = New System.Drawing.Point(160, 126)
         Me.TextBox3.Name = "TextBox3"
-        Me.TextBox3.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox3.Size = New System.Drawing.Size(159, 20)
         Me.TextBox3.TabIndex = 5
         '
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(413, 85)
+        Me.Label5.Location = New System.Drawing.Point(33, 153)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(61, 13)
         Me.Label5.TabIndex = 8
@@ -111,15 +111,15 @@ Partial Class LogOutstanding
         '
         'TextBox4
         '
-        Me.TextBox4.Location = New System.Drawing.Point(413, 121)
+        Me.TextBox4.Location = New System.Drawing.Point(160, 149)
         Me.TextBox4.Name = "TextBox4"
-        Me.TextBox4.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox4.Size = New System.Drawing.Size(159, 20)
         Me.TextBox4.TabIndex = 7
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(527, 85)
+        Me.Label6.Location = New System.Drawing.Point(33, 176)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(46, 13)
         Me.Label6.TabIndex = 10
@@ -127,15 +127,15 @@ Partial Class LogOutstanding
         '
         'TextBox5
         '
-        Me.TextBox5.Location = New System.Drawing.Point(527, 121)
+        Me.TextBox5.Location = New System.Drawing.Point(160, 172)
         Me.TextBox5.Name = "TextBox5"
-        Me.TextBox5.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox5.Size = New System.Drawing.Size(159, 20)
         Me.TextBox5.TabIndex = 9
         '
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(653, 85)
+        Me.Label7.Location = New System.Drawing.Point(33, 199)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(54, 13)
         Me.Label7.TabIndex = 12
@@ -143,15 +143,15 @@ Partial Class LogOutstanding
         '
         'TextBox6
         '
-        Me.TextBox6.Location = New System.Drawing.Point(653, 121)
+        Me.TextBox6.Location = New System.Drawing.Point(160, 195)
         Me.TextBox6.Name = "TextBox6"
-        Me.TextBox6.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox6.Size = New System.Drawing.Size(159, 20)
         Me.TextBox6.TabIndex = 11
         '
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(771, 85)
+        Me.Label8.Location = New System.Drawing.Point(33, 222)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(35, 13)
         Me.Label8.TabIndex = 14
@@ -159,15 +159,15 @@ Partial Class LogOutstanding
         '
         'TextBox7
         '
-        Me.TextBox7.Location = New System.Drawing.Point(771, 121)
+        Me.TextBox7.Location = New System.Drawing.Point(160, 218)
         Me.TextBox7.Name = "TextBox7"
-        Me.TextBox7.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox7.Size = New System.Drawing.Size(159, 20)
         Me.TextBox7.TabIndex = 13
         '
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(893, 85)
+        Me.Label9.Location = New System.Drawing.Point(33, 245)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(74, 13)
         Me.Label9.TabIndex = 16
@@ -175,14 +175,14 @@ Partial Class LogOutstanding
         '
         'TextBox8
         '
-        Me.TextBox8.Location = New System.Drawing.Point(893, 121)
+        Me.TextBox8.Location = New System.Drawing.Point(160, 241)
         Me.TextBox8.Name = "TextBox8"
-        Me.TextBox8.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox8.Size = New System.Drawing.Size(159, 20)
         Me.TextBox8.TabIndex = 15
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(918, 200)
+        Me.Button1.Location = New System.Drawing.Point(185, 305)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 17
@@ -191,18 +191,18 @@ Partial Class LogOutstanding
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(796, 200)
+        Me.Button2.Location = New System.Drawing.Point(54, 305)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 18
         Me.Button2.Text = "Cancel"
         Me.Button2.UseVisualStyleBackColor = True
         '
-        'Form1
+        'LogOutstanding
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1039, 249)
+        Me.ClientSize = New System.Drawing.Size(353, 340)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label9)
@@ -222,7 +222,7 @@ Partial Class LogOutstanding
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.Label1)
-        Me.Name = "Form1"
+        Me.Name = "LogOutstanding"
         Me.Text = "Form1"
         Me.ResumeLayout(False)
         Me.PerformLayout()
