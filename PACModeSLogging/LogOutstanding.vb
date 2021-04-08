@@ -28,7 +28,7 @@ Public Class LogOutstanding
         ToLogMil = 501
         MDPO = "O"
 
-        logged_SQL = "INSERT INTO logllp (ID, Registration, Aircraft, Operator, logunit, [loga/c code], acName, Marks, [Where], MDPO, [When], Lockk, Source) " &
+        logged_SQL = "INSERT INTO logllp (ID, Registration, Aircraft, Operator, logunit, [loga/c code], acName, Other, [Where], MDPO, [When], Lockk, Source) " &
         " Values(3335 , " & Chr(34) & PACModeSLogging.ToLogReg & Chr(34) & ", " & Chr(34) & ToLogType & Chr(34) & ", " & Chr(34) & ToLogOperator & Chr(34) &
         ", " & Chr(34) & ToLogMilUnit & Chr(34) & ", " & Chr(34) & ToLogAcCode & Chr(34) &
         ", " & Chr(34) & ToLogName & Chr(34) & ", " & Chr(34) & ToLogMarks & Chr(34) &
