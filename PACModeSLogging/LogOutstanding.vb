@@ -2,6 +2,10 @@
 Public Class LogOutstanding
 
     Private Sub LogOutstanding_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        'TODO: This line of code loads data into the 'LoggedDataSet.PRO_tbloperator' table. You can move, or remove it, as needed.
+        Me.PRO_tbloperatorTableAdapter.Fill(Me.LoggedDataSet.PRO_tbloperator)
+        'TODO: This line of code loads data into the 'LoggedDataSet.TypeList' table. You can move, or remove it, as needed.
+        Me.TypeListTableAdapter.Fill(Me.LoggedDataSet.TypeList)
         PACModeSLogging.ToLogReg = PACModeSLogging.ComboBox1.SelectedItem.ToString
         PACModeSLogging.ToLogReg = PACModeSLogging.ToLogReg.Remove(PACModeSLogging.ToLogReg.Length - 9)
 

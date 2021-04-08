@@ -206,6 +206,16 @@ Namespace My
                 Me("Autostart") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.ApplicationScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.SpecialSettingAttribute(Global.System.Configuration.SpecialSetting.ConnectionString),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\ModeS\logged.mdb")>  _
+        Public ReadOnly Property loggedConnectionString() As String
+            Get
+                Return CType(Me("loggedConnectionString"),String)
+            End Get
+        End Property
     End Class
 End Namespace
 

@@ -22,6 +22,7 @@ Partial Class LogOutstanding
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -41,6 +42,16 @@ Partial Class LogOutstanding
         Me.TextBox8 = New System.Windows.Forms.TextBox()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
+        Me.ListBox1 = New System.Windows.Forms.ListBox()
+        Me.LoggedDataSet = New loggedDataSet()
+        Me.TypeListBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.TypeListTableAdapter = New loggedDataSetTableAdapters.TypeListTableAdapter()
+        Me.ListBox2 = New System.Windows.Forms.ListBox()
+        Me.PROtbloperatorBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.PRO_tbloperatorTableAdapter = New loggedDataSetTableAdapters.PRO_tbloperatorTableAdapter()
+        CType(Me.LoggedDataSet, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.TypeListBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.PROtbloperatorBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Label1
@@ -79,7 +90,7 @@ Partial Class LogOutstanding
         '
         'TextBox2
         '
-        Me.TextBox2.Location = New System.Drawing.Point(160, 121)
+        Me.TextBox2.Location = New System.Drawing.Point(464, 203)
         Me.TextBox2.Name = "TextBox2"
         Me.TextBox2.Size = New System.Drawing.Size(100, 20)
         Me.TextBox2.TabIndex = 3
@@ -95,7 +106,7 @@ Partial Class LogOutstanding
         '
         'TextBox3
         '
-        Me.TextBox3.Location = New System.Drawing.Point(286, 121)
+        Me.TextBox3.Location = New System.Drawing.Point(639, 203)
         Me.TextBox3.Name = "TextBox3"
         Me.TextBox3.Size = New System.Drawing.Size(100, 20)
         Me.TextBox3.TabIndex = 5
@@ -198,11 +209,56 @@ Partial Class LogOutstanding
         Me.Button2.Text = "Cancel"
         Me.Button2.UseVisualStyleBackColor = True
         '
-        'Form1
+        'ListBox1
+        '
+        Me.ListBox1.DataSource = Me.TypeListBindingSource
+        Me.ListBox1.DisplayMember = "Types"
+        Me.ListBox1.FormattingEnabled = True
+        Me.ListBox1.Location = New System.Drawing.Point(163, 124)
+        Me.ListBox1.Name = "ListBox1"
+        Me.ListBox1.Size = New System.Drawing.Size(120, 17)
+        Me.ListBox1.TabIndex = 19
+        '
+        'LoggedDataSet
+        '
+        Me.LoggedDataSet.DataSetName = "loggedDataSet"
+        Me.LoggedDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'TypeListBindingSource
+        '
+        Me.TypeListBindingSource.DataMember = "TypeList"
+        Me.TypeListBindingSource.DataSource = Me.LoggedDataSet
+        '
+        'TypeListTableAdapter
+        '
+        Me.TypeListTableAdapter.ClearBeforeFill = True
+        '
+        'ListBox2
+        '
+        Me.ListBox2.DataSource = Me.PROtbloperatorBindingSource
+        Me.ListBox2.DisplayMember = "Operator"
+        Me.ListBox2.FormattingEnabled = True
+        Me.ListBox2.Location = New System.Drawing.Point(289, 124)
+        Me.ListBox2.Name = "ListBox2"
+        Me.ListBox2.Size = New System.Drawing.Size(120, 17)
+        Me.ListBox2.TabIndex = 20
+        '
+        'PROtbloperatorBindingSource
+        '
+        Me.PROtbloperatorBindingSource.DataMember = "PRO_tbloperator"
+        Me.PROtbloperatorBindingSource.DataSource = Me.LoggedDataSet
+        '
+        'PRO_tbloperatorTableAdapter
+        '
+        Me.PRO_tbloperatorTableAdapter.ClearBeforeFill = True
+        '
+        'LogOutstanding
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1039, 249)
+        Me.Controls.Add(Me.ListBox2)
+        Me.Controls.Add(Me.ListBox1)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label9)
@@ -222,8 +278,11 @@ Partial Class LogOutstanding
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.Label1)
-        Me.Name = "Form1"
+        Me.Name = "LogOutstanding"
         Me.Text = "Form1"
+        CType(Me.LoggedDataSet, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.TypeListBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.PROtbloperatorBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -248,4 +307,11 @@ Partial Class LogOutstanding
     Friend WithEvents TextBox8 As TextBox
     Friend WithEvents Button1 As Button
     Friend WithEvents Button2 As Button
+    Friend WithEvents ListBox1 As ListBox
+    Friend WithEvents LoggedDataSet As loggedDataSet
+    Friend WithEvents TypeListBindingSource As BindingSource
+    Friend WithEvents TypeListTableAdapter As loggedDataSetTableAdapters.TypeListTableAdapter
+    Friend WithEvents ListBox2 As ListBox
+    Friend WithEvents PROtbloperatorBindingSource As BindingSource
+    Friend WithEvents PRO_tbloperatorTableAdapter As loggedDataSetTableAdapters.PRO_tbloperatorTableAdapter
 End Class
