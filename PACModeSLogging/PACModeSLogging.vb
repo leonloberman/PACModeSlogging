@@ -177,16 +177,22 @@ Start:
 
         Try
             If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
-                Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
-                    System.Threading.Thread.Sleep(5000)
-                    response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                    If response = DialogResult.Cancel Then
-                        Close()
-                        Application.Exit()
-                        End
-                    End If
-                Loop
+                response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                If response = DialogResult.Cancel Then
+                    Close()
+                    End
+                Else
+                    Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
+                        System.Threading.Thread.Sleep(5000)
+                        response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                        If response = DialogResult.Cancel Then
+                            Close()
+                            End
+                        End If
+                    Loop
+                End If
             End If
+
             MyObject = GetObject(, "PlanePlotter.Document")
         Catch ex As Exception
             Timer1.Stop()
