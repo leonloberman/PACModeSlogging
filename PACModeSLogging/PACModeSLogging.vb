@@ -190,110 +190,118 @@ Start:
 
         i = 0
         Try
-            While i < MyObject.GetallPlaneCount()
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
-                PPAll = String.Empty
-                PPAll = MyObject.getallPlaneData(i, 98)
-                Dim PPbits() As String = Split(PPAll, ";")
-                PPHex = PPbits(0)
-                Reg = PPbits(1)
-                PPInt = PPbits(21)
-                UT = PPbits(22)
-                If Reg = "<gnd>" Or Reg = "<ground>" Or UT.Contains("LOG") Then GoTo EmptyStep
+            'While i < MyObject.GetallPlaneCount()
+            '        PPHex = String.Empty
+            '        Reg = String.Empty
+            '        ListRec = String.Empty
+            '        PPAll = String.Empty
+            '        PPAll = MyObject.getallPlaneData(i, 98)
+            '        Dim PPbits() As String = Split(PPAll, ";")
+            '        PPHex = PPbits(0)
+            '        Reg = PPbits(1)
+            '        PPInt = PPbits(21)
+            '        UT = PPbits(22)
+            '        If Reg = "<gnd>" Or Reg = "<ground>" Or UT.Contains("LOG") Then GoTo EmptyStep
 
-                ListRec = Reg + " - " + PPHex
+            '        ListRec = Reg + " - " + PPHex
 
-                If My.Settings.InterestedButton = False Then
-                    If UT.Contains("RQ") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.RQ)
-                                Sound.Play()
-                            End If
-                        End If
-                    ElseIf UT.Contains("Ps") Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                                Sound = New System.Media.SoundPlayer(My.Resources.Ps)
-                                Sound.Play()
-                            End If
-                        End If
-                        'ElseIf UT = "new" Then
-                        '    Try
-                        '        If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
-                        '        If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                        '    Catch ex As Exception
-                        '        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
-                        '    End Try
+            '        If My.Settings.InterestedButton = False Then
+            '            If UT.Contains("RQ") Then
+            '                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+            '                    ComboBox1.Items.Add(ListRec)
+            '                    If Button2.Tag = "Sound" Then
+            '                        Sound = New System.Media.SoundPlayer(My.Resources.RQ)
+            '                        Sound.Play()
+            '                    End If
+            '                End If
+            '            ElseIf UT.Contains("Ps") Then
+            '                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+            '                    ComboBox1.Items.Add(ListRec)
+            '                    If Button2.Tag = "Sound" Then
+            '                        Sound = New System.Media.SoundPlayer(My.Resources.Ps)
+            '                        Sound.Play()
+            '                    End If
+            '                End If
+            '                'ElseIf UT = "new" Then
+            '                '    Try
+            '                '        If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+            '                '        If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+            '                '    Catch ex As Exception
+            '                '        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
+            '                '    End Try
 
-                        '    'Logged_con.Open()
-                        '    logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        '    logged_rdr.Read()
-                        '    If logged_rdr.HasRows = False Then
-                        '        'Write hex to Unknowns table
-                        '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
-                        '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '        logged_cmd.ExecuteNonQuery()
-                        '    End If
-                        '    logged_rdr.Close()
-                        '    logged_cmd.Dispose()
-                        '    Logged_con.Close()
-                        'End If
-                    End If
-                    PPHex = String.Empty
-                    Reg = String.Empty
-                    ListRec = String.Empty
-                ElseIf My.Settings.InterestedButton = True Then
-                    If PPInt = 1 Then
-                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                            ComboBox1.Items.Add(ListRec)
-                            If Button2.Tag = "Sound" Then
-                            End If
-                        End If
-                        'ElseIf UT = "new" Then
-                        '    Try
-                        '        If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
-                        '        If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
-                        '    Catch ex As Exception
-                        '        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
-                        '    End Try
-                        '    'Logged_con.Open()
-                        '    logged_SQL = "SELECT * From Unknowns where ModeS ="
-                        '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
-                        '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
-                        '    logged_rdr.Read()
-                        '    If logged_rdr.HasRows = False Then
-                        '        'Write hex to Unknowns table
-                        '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
-                        '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
-                        '        logged_cmd.ExecuteNonQuery()
-                        '    End If
-                        '    logged_rdr.Close()
-                        '    logged_cmd.Dispose()
-                        '    Logged_con.Close()
-                        'End If
-                    End If
-                End If
+            '                '    'Logged_con.Open()
+            '                '    logged_SQL = "SELECT * From Unknowns where ModeS ="
+            '                '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+            '                '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+            '                '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+            '                '    logged_rdr.Read()
+            '                '    If logged_rdr.HasRows = False Then
+            '                '        'Write hex to Unknowns table
+            '                '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", " & Chr(34) & PPCallsign & Chr(34) & ", now());"
+            '                '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+            '                '        logged_cmd.ExecuteNonQuery()
+            '                '    End If
+            '                '    logged_rdr.Close()
+            '                '    logged_cmd.Dispose()
+            '                '    Logged_con.Close()
+            '                'End If
+            '            End If
+            '            PPHex = String.Empty
+            '            Reg = String.Empty
+            '            ListRec = String.Empty
+            '        ElseIf My.Settings.InterestedButton = True Then
+            '            If PPInt = 1 Then
+            '                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+            '                    ComboBox1.Items.Add(ListRec)
+            '                    If Button2.Tag = "Sound" Then
+            '                    End If
+            '                End If
+            '                'ElseIf UT = "new" Then
+            '                '    Try
+            '                '        If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
+            '                '        If Logged_con.State = ConnectionState.Closed Then Logged_con.Open()
+            '                '    Catch ex As Exception
+            '                '        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Connection Error")
+            '                '    End Try
+            '                '    'Logged_con.Open()
+            '                '    logged_SQL = "SELECT * From Unknowns where ModeS ="
+            '                '    logged_SQL = logged_SQL & Chr(34) & PPHex & Chr(34) & Chr(59)
+            '                '    logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+            '                '    Dim logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
+            '                '    logged_rdr.Read()
+            '                '    If logged_rdr.HasRows = False Then
+            '                '        'Write hex to Unknowns table
+            '                '        logged_SQL = "INSERT INTO Unknowns Values (" & Chr(34) & PPHex & Chr(34) & ", " & Chr(34) & Reg & Chr(34) & ", now());"
+            '                '        logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
+            '                '        logged_cmd.ExecuteNonQuery()
+            '                '    End If
+            '                '    logged_rdr.Close()
+            '                '    logged_cmd.Dispose()
+            '                '    Logged_con.Close()
+            '                'End If
+            '            End If
+            '        End If
 
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
+            '**** Test Data *****
+            Reg = "LXN9059"
+                PPHex = "4D03D0"
+            ListRec = Reg + " - " + PPHex
+            ComboBox1.Items.Add(ListRec)
+            '**** Test Data *****
+
+
+            PPHex = String.Empty
+            Reg = String.Empty
+            ListRec = String.Empty
 
 EmptyStep:
 
-                PPHex = String.Empty
-                Reg = String.Empty
-                ListRec = String.Empty
-                i += 1
-            End While
+            PPHex = String.Empty
+            Reg = String.Empty
+            ListRec = String.Empty
+            i += 1
+            'End While
         Catch ex As Exception
             Timer1.Stop()
             Button1.Visible = True

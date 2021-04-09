@@ -45,8 +45,8 @@ Module GFIAGetData
         '******
 
         '**** Test Record ****
-        logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'LXN90459' And Hex = '4D03D0'"
-        ToLogReg = "LXN90459"
+        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'LXN90459' And Hex = '4D03D0'"
+        'ToLogReg = "LXN90459"
         '******
 
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
@@ -60,6 +60,8 @@ Module GFIAGetData
 
                 Dim LogOutstanding As New LogOutstanding
                 LogOutstanding.ShowDialog()
+                UpdateBS(ToLogHex, ToLogReg)
+                Exit Sub
             ElseIf response = DialogResult.No Then
                 Exit Sub
             End If
