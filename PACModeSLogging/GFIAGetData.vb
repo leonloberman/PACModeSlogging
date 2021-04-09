@@ -5,6 +5,7 @@ Module GFIAGetData
     Public logged_SQL As String = "Select ID, registration from logllp;"
     ReadOnly log_dbname As String = "C:\ModeS\logged.mdb"
     Dim logged_cmd As New OleDbCommand
+    Dim logged_cmd2 As New OleDbCommand
     Public Tologid As String
     Public ToLogMil As Integer
 
@@ -44,27 +45,34 @@ Module GFIAGetData
         'ToLogReg = "03-3119"
         '******
 
-        '**** Test Record ****
-        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = 'LXN90459' And Hex = '4D03D0'"
-        'ToLogReg = "LXN90459"
-        '******
-
+        Dim response As DialogResult
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
         Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
         Logged_rdr.Read()
         If Logged_rdr.HasRows = False Then
-            Dim response As DialogResult
-            response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
-            If response = DialogResult.Yes Then
-                Logged_rdr.Close()
-
-                Dim LogOutstanding As New LogOutstanding
-                LogOutstanding.ShowDialog()
+            logged_SQL = "SELECT * From logllp where ID = 3335 AND Registration = " & Chr(34) & ToLogReg & Chr(34)
+            logged_cmd2 = New OleDbCommand(logged_SQL, Logged_con)
+            Dim Logged_rdr2 As OleDbDataReader = logged_cmd2.ExecuteReader()
+            Logged_rdr2.Read()
+            If Logged_rdr2.HasRows = True Then
+                response = MsgBox("You have already logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
+                Logged_rdr2.Close()
                 UpdateBS(ToLogHex, ToLogReg)
                 Exit Sub
-            ElseIf response = DialogResult.No Then
-                Exit Sub
+            Else
+                response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
+                If response = DialogResult.Yes Then
+                    Logged_rdr.Close()
+
+                    Dim LogOutstanding As New LogOutstanding
+                    LogOutstanding.ShowDialog()
+                    UpdateBS(ToLogHex, ToLogReg)
+                    Exit Sub
+                ElseIf response = DialogResult.No Then
+                    Exit Sub
+                End If
             End If
+
         ElseIf Logged_rdr.HasRows = True Then
             Tologid = Logged_rdr(0)
             ToLogHex = Logged_rdr(1)

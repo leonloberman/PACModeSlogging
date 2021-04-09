@@ -106,6 +106,7 @@
     <Reference Include="System.Data">
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net45\System.Data.SQLite.dll</HintPath>
     </Reference>
@@ -149,6 +150,11 @@
     </Compile>
     <Compile Include="Config.vb">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="loggedDataSet.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="LogOutstanding.Designer.vb">
       <DependentUpon>LogOutstanding.vb</DependentUpon>
@@ -219,6 +225,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="loggedDataSet.xsc">
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="loggedDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>loggedDataSet.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="loggedDataSet.xss">
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
+    </None>
     <None Include="My Project\app.manifest">
       <SubType>Designer</SubType>
     </None>
