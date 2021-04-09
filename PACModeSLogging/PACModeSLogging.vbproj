@@ -151,10 +151,10 @@
     <Compile Include="Config.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="loggedDataSet1.Designer.vb">
+    <Compile Include="loggedDataSet.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>loggedDataSet1.xsd</DependentUpon>
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="LogOutstanding.Designer.vb">
       <DependentUpon>LogOutstanding.vb</DependentUpon>
@@ -225,16 +225,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="loggedDataSet1.xsc">
-      <DependentUpon>loggedDataSet1.xsd</DependentUpon>
+    <None Include="loggedDataSet.xsc">
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
     </None>
-    <None Include="loggedDataSet1.xsd">
+    <None Include="loggedDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>loggedDataSet1.Designer.vb</LastGenOutput>
+      <LastGenOutput>loggedDataSet.Designer.vb</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="loggedDataSet1.xss">
-      <DependentUpon>loggedDataSet1.xsd</DependentUpon>
+    <None Include="loggedDataSet.xss">
+      <DependentUpon>loggedDataSet.xsd</DependentUpon>
     </None>
     <None Include="My Project\app.manifest">
       <SubType>Designer</SubType>

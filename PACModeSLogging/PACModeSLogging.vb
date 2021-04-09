@@ -188,9 +188,9 @@ Start:
         Timer1.Start()
         Dim cancel As Boolean = False
 
-        i = 0
+        'i = 0
         Try
-            'While i < MyObject.GetallPlaneCount()
+            '    While i < MyObject.GetallPlaneCount()
             '        PPHex = String.Empty
             '        Reg = String.Empty
             '        ListRec = String.Empty
@@ -285,7 +285,7 @@ Start:
 
             '**** Test Data *****
             Reg = "LXN9059"
-                PPHex = "4D03D0"
+            PPHex = "4D03D0"
             ListRec = Reg + " - " + PPHex
             ComboBox1.Items.Add(ListRec)
             '**** Test Data *****
@@ -300,7 +300,7 @@ EmptyStep:
             PPHex = String.Empty
             Reg = String.Empty
             ListRec = String.Empty
-            i += 1
+            'i += 1
             'End While
         Catch ex As Exception
             Timer1.Stop()
