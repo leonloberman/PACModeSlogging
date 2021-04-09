@@ -270,6 +270,9 @@
   <ItemGroup>
     <Content Include="EE-Lightning-3-48px.ico" />
     <Content Include="EE-Lightning-3-48px_v2.ico" />
+    <Content Include="logged.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="PACModeSLoggingVersion.xml" />
     <Content Include="PACModeSLogging_changelog.htm" />
     <None Include="Resources\ClearList.png" />
