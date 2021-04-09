@@ -117,6 +117,34 @@ Public Class PACModeSLogging
         If My.Settings.Autostart = True Then
             Button3.Visible = False
             Button1.Visible = True
+
+            Try
+                If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
+                    response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                    If response = DialogResult.Cancel Then
+                        Close()
+                        End
+                    Else
+                        Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
+                            System.Threading.Thread.Sleep(5000)
+                            response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                            If response = DialogResult.Cancel Then
+                                Close()
+                                End
+                            End If
+                        Loop
+                    End If
+                End If
+
+                MyObject = GetObject(, "PlanePlotter.Document")
+            Catch ex As Exception
+                Timer1.Stop()
+                Button1.Visible = True
+                MsgBox("PlanePlotter Not Running", MsgBoxStyle.OkOnly, "PlanePlotter Check")
+
+                Exit Sub
+            End Try
+
             GetPPdata()
         End If
         'RunProcess()
@@ -175,32 +203,6 @@ Public Class PACModeSLogging
 
 Start:
 
-        Try
-            If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
-                response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                If response = DialogResult.Cancel Then
-                    Close()
-                    End
-                Else
-                    Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
-                        System.Threading.Thread.Sleep(5000)
-                        response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                        If response = DialogResult.Cancel Then
-                            Close()
-                            End
-                        End If
-                    Loop
-                End If
-            End If
-
-            MyObject = GetObject(, "PlanePlotter.Document")
-        Catch ex As Exception
-            Timer1.Stop()
-            Button1.Visible = True
-            MsgBox("PlanePlotter Not Running", MsgBoxStyle.OkOnly, "PlanePlotter Check")
-
-            Exit Sub
-        End Try
 
         Timer1.Interval = CInt(My.Settings.SampleRate * 1000)
         Timer1.Start()
