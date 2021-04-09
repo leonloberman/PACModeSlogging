@@ -22,6 +22,8 @@ Public Class PACModeSLogging
     ReadOnly PPCallsign As String
     Dim PPAll As String
 
+    Dim response As DialogResult
+
     Dim Reg As String
     Dim ListRec As String
 
@@ -165,7 +167,6 @@ Public Class PACModeSLogging
         End If
         Me.StartPosition = FormStartPosition.CenterScreen
         'Me.Show()
-
         GetPPdata()
 
     End Sub
@@ -175,6 +176,17 @@ Public Class PACModeSLogging
 Start:
 
         Try
+            If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
+                Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
+                    System.Threading.Thread.Sleep(5000)
+                    response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                    If response = DialogResult.Cancel Then
+                        Close()
+                        Application.Exit()
+                        End
+                    End If
+                Loop
+            End If
             MyObject = GetObject(, "PlanePlotter.Document")
         Catch ex As Exception
             Timer1.Stop()
