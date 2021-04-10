@@ -11,6 +11,11 @@ Public Class Log_data
         Dim no_reg_SQL As String = "SELECT tblManufacturer.UID, tblManufacturer.Builder FROM tblManufacturer where Builder <> '-' OR Builder <> ''
                                     ORDER BY tblManufacturer.Builder;"
 
+        PACModeSLogging.ToLogReg = PACModeSLogging.ComboBox1.SelectedItem.ToString
+        PACModeSLogging.ToLogReg = PACModeSLogging.ToLogReg.Remove(PACModeSLogging.ToLogReg.Length - 9)
+
+        TextBox1.Text = PACModeSLogging.ToLogReg
+
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
                 Using no_reg_adapter As New OleDbDataAdapter(no_reg_cmd)
@@ -27,7 +32,7 @@ Public Class Log_data
         ComboBox1.DataSource = dt
 
         no_reg_SQL = "SELECT PRO_tbloperator.fkoperator, PRO_tbloperator.Operator FROM PRO_tbloperator
-                                    ORDER BY PRO_tbloperator.Operator;"
+                        WHERE PRO_tbloperator.AH = 'A' ORDER BY PRO_tbloperator.Operator;"
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
                 Using no_reg_adapter As New OleDbDataAdapter(no_reg_cmd)
