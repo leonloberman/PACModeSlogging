@@ -10,11 +10,13 @@ Public Class Log_data
         Dim dt2 As New DataTable("dt2")
         Dim no_reg_SQL As String = "SELECT tblManufacturer.UID, tblManufacturer.Builder FROM tblManufacturer where Builder <> '-' OR Builder <> ''
                                     ORDER BY tblManufacturer.Builder;"
+        'If PACModeSLogging.ComboBox1.SelectedIndex <> 0 Then
+        '    PACModeSLogging.ToLogReg = PACModeSLogging.ComboBox1.SelectedItem.ToString
+        '    PACModeSLogging.ToLogReg = PACModeSLogging.ToLogReg.Remove(PACModeSLogging.ToLogReg.Length - 9)
 
-        PACModeSLogging.ToLogReg = PACModeSLogging.ComboBox1.SelectedItem.ToString
-        PACModeSLogging.ToLogReg = PACModeSLogging.ToLogReg.Remove(PACModeSLogging.ToLogReg.Length - 9)
+        '    TextBox1.Text = PACModeSLogging.ToLogReg
+        'End If
 
-        TextBox1.Text = PACModeSLogging.ToLogReg
 
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
