@@ -136,7 +136,6 @@ Public Class PACModeSLogging
                     End If
                 End If
 
-                MyObject = GetObject(, "PlanePlotter.Document")
             Catch ex As Exception
                 Timer1.Stop()
                 Button1.Visible = True
@@ -202,6 +201,8 @@ Public Class PACModeSLogging
     Public Sub GetPPdata()
 
 Start:
+        MyObject = GetObject(, "PlanePlotter.Document")
+
         Dim RunMode As String = "Live"
 
         Timer1.Interval = CInt(My.Settings.SampleRate * 1000)
@@ -209,8 +210,9 @@ Start:
         Dim cancel As Boolean = False
 
         i = 0
-        If RunMode = "Live" Then
-            Try
+
+        Try
+            If RunMode = "Live" Then
                 While i < MyObject.GetallPlaneCount()
                     PPHex = String.Empty
                     Reg = String.Empty
@@ -315,19 +317,21 @@ EmptyStep:
                     ListRec = String.Empty
                     i += 1
                 End While
-            Catch ex As Exception
-                Timer1.Stop()
+            Else
+                '**** Test Data *****
+                Reg = "LXN9059"
+                PPHex = "4D03D0"
+                ListRec = Reg + " - " + PPHex
+                ComboBox1.Items.Add(ListRec)
+                ''**** Test Data *****
+            End If
+        Catch ex As Exception
+            Timer1.Stop()
                 Button1.Visible = True
-                MsgBox(ex.ToString)
-            End Try
-        Else
-            '**** Test Data *****
-            Reg = "LXN9059"
-            PPHex = "4D03D0"
-            ListRec = Reg + " - " + PPHex
-            ComboBox1.Items.Add(ListRec)
-            ''**** Test Data *****
-        End If
+            MsgBox(ex.ToString)
+
+        End Try
+
 
 
     End Sub
@@ -349,7 +353,7 @@ EmptyStep:
 
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         MyObject.RefreshDatabaseInfo()
-        ComboBox1.Items.Clear()
+        'ComboBox1.Items.Clear()
         GetPPdata()
     End Sub
 
