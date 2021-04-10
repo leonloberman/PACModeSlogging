@@ -320,6 +320,8 @@ Partial Public Class loggedDataSet
         
         Private columnOperator As Global.System.Data.DataColumn
         
+        Private columnFKoperator As Global.System.Data.DataColumn
+        
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
         Public Sub New()
@@ -364,6 +366,14 @@ Partial Public Class loggedDataSet
         End Property
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
+        Public ReadOnly Property FKoperatorColumn() As Global.System.Data.DataColumn
+            Get
+                Return Me.columnFKoperator
+            End Get
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0"),  _
          Global.System.ComponentModel.Browsable(false)>  _
         Public ReadOnly Property Count() As Integer
@@ -400,12 +410,18 @@ Partial Public Class loggedDataSet
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public Overloads Function AddPRO_tbloperatorRow(ByVal _Operator As String) As PRO_tbloperatorRow
+        Public Overloads Function AddPRO_tbloperatorRow(ByVal _Operator As String, ByVal FKoperator As Integer) As PRO_tbloperatorRow
             Dim rowPRO_tbloperatorRow As PRO_tbloperatorRow = CType(Me.NewRow,PRO_tbloperatorRow)
-            Dim columnValuesArray() As Object = New Object() {_Operator}
+            Dim columnValuesArray() As Object = New Object() {_Operator, FKoperator}
             rowPRO_tbloperatorRow.ItemArray = columnValuesArray
             Me.Rows.Add(rowPRO_tbloperatorRow)
             Return rowPRO_tbloperatorRow
+        End Function
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
+        Public Function FindByFKoperator(ByVal FKoperator As Integer) As PRO_tbloperatorRow
+            Return CType(Me.Rows.Find(New Object() {FKoperator}),PRO_tbloperatorRow)
         End Function
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
@@ -426,6 +442,7 @@ Partial Public Class loggedDataSet
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
         Friend Sub InitVars()
             Me.columnOperator = MyBase.Columns("Operator")
+            Me.columnFKoperator = MyBase.Columns("FKoperator")
         End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
@@ -436,7 +453,12 @@ Partial Public Class loggedDataSet
             Me.columnOperator.ExtendedProperties.Add("Generator_ColumnVarNameInTable", "columnOperator")
             Me.columnOperator.ExtendedProperties.Add("Generator_UserColumnName", "Operator")
             MyBase.Columns.Add(Me.columnOperator)
+            Me.columnFKoperator = New Global.System.Data.DataColumn("FKoperator", GetType(Integer), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnFKoperator)
+            Me.Constraints.Add(New Global.System.Data.UniqueConstraint("Constraint1", New Global.System.Data.DataColumn() {Me.columnFKoperator}, true))
             Me.columnOperator.MaxLength = 50
+            Me.columnFKoperator.AllowDBNull = false
+            Me.columnFKoperator.Unique = true
         End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
@@ -574,7 +596,7 @@ Partial Public Class loggedDataSet
     Partial Public Class TypeListDataTable
         Inherits Global.System.Data.TypedTableBase(Of TypeListRow)
         
-        Private columnTypes As Global.System.Data.DataColumn
+        Private columnAircraft As Global.System.Data.DataColumn
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
@@ -613,9 +635,9 @@ Partial Public Class loggedDataSet
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public ReadOnly Property TypesColumn() As Global.System.Data.DataColumn
+        Public ReadOnly Property AircraftColumn() As Global.System.Data.DataColumn
             Get
-                Return Me.columnTypes
+                Return Me.columnAircraft
             End Get
         End Property
         
@@ -656,9 +678,9 @@ Partial Public Class loggedDataSet
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public Overloads Function AddTypeListRow(ByVal Types As String) As TypeListRow
+        Public Overloads Function AddTypeListRow(ByVal Aircraft As String) As TypeListRow
             Dim rowTypeListRow As TypeListRow = CType(Me.NewRow,TypeListRow)
-            Dim columnValuesArray() As Object = New Object() {Types}
+            Dim columnValuesArray() As Object = New Object() {Aircraft}
             rowTypeListRow.ItemArray = columnValuesArray
             Me.Rows.Add(rowTypeListRow)
             Return rowTypeListRow
@@ -681,15 +703,15 @@ Partial Public Class loggedDataSet
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
         Friend Sub InitVars()
-            Me.columnTypes = MyBase.Columns("Types")
+            Me.columnAircraft = MyBase.Columns("Aircraft")
         End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
         Private Sub InitClass()
-            Me.columnTypes = New Global.System.Data.DataColumn("Types", GetType(String), Nothing, Global.System.Data.MappingType.Element)
-            MyBase.Columns.Add(Me.columnTypes)
-            Me.columnTypes.MaxLength = 255
+            Me.columnAircraft = New Global.System.Data.DataColumn("Aircraft", GetType(String), Nothing, Global.System.Data.MappingType.Element)
+            MyBase.Columns.Add(Me.columnAircraft)
+            Me.columnAircraft.MaxLength = 255
         End Sub
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
@@ -851,6 +873,17 @@ Partial Public Class loggedDataSet
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
+        Public Property FKoperator() As Integer
+            Get
+                Return CType(Me(Me.tablePRO_tbloperator.FKoperatorColumn),Integer)
+            End Get
+            Set
+                Me(Me.tablePRO_tbloperator.FKoperatorColumn) = value
+            End Set
+        End Property
+        
+        <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
         Public Function Is_OperatorNull() As Boolean
             Return Me.IsNull(Me.tablePRO_tbloperator.OperatorColumn)
         End Function
@@ -879,29 +912,29 @@ Partial Public Class loggedDataSet
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public Property Types() As String
+        Public Property Aircraft() As String
             Get
                 Try 
-                    Return CType(Me(Me.tableTypeList.TypesColumn),String)
+                    Return CType(Me(Me.tableTypeList.AircraftColumn),String)
                 Catch e As Global.System.InvalidCastException
-                    Throw New Global.System.Data.StrongTypingException("The value for column 'Types' in table 'TypeList' is DBNull.", e)
+                    Throw New Global.System.Data.StrongTypingException("The value for column 'Aircraft' in table 'TypeList' is DBNull.", e)
                 End Try
             End Get
             Set
-                Me(Me.tableTypeList.TypesColumn) = value
+                Me(Me.tableTypeList.AircraftColumn) = value
             End Set
         End Property
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public Function IsTypesNull() As Boolean
-            Return Me.IsNull(Me.tableTypeList.TypesColumn)
+        Public Function IsAircraftNull() As Boolean
+            Return Me.IsNull(Me.tableTypeList.AircraftColumn)
         End Function
         
         <Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")>  _
-        Public Sub SetTypesNull()
-            Me(Me.tableTypeList.TypesColumn) = Global.System.Convert.DBNull
+        Public Sub SetAircraftNull()
+            Me(Me.tableTypeList.AircraftColumn) = Global.System.Convert.DBNull
         End Sub
     End Class
     
@@ -1108,11 +1141,13 @@ Namespace loggedDataSetTableAdapters
             tableMapping.SourceTable = "Table"
             tableMapping.DataSetTable = "PRO_tbloperator"
             tableMapping.ColumnMappings.Add("Operator", "Operator")
+            tableMapping.ColumnMappings.Add("FKoperator", "FKoperator")
             Me._adapter.TableMappings.Add(tableMapping)
             Me._adapter.InsertCommand = New Global.System.Data.OleDb.OleDbCommand()
             Me._adapter.InsertCommand.Connection = Me.Connection
-            Me._adapter.InsertCommand.CommandText = "INSERT INTO `PRO_tbloperator` (`Operator`) VALUES (?)"
+            Me._adapter.InsertCommand.CommandText = "INSERT INTO `PRO_tbloperator` (`FKoperator`, `Operator`) VALUES (?, ?)"
             Me._adapter.InsertCommand.CommandType = Global.System.Data.CommandType.Text
+            Me._adapter.InsertCommand.Parameters.Add(New Global.System.Data.OleDb.OleDbParameter("FKoperator", Global.System.Data.OleDb.OleDbType.[Integer], 0, Global.System.Data.ParameterDirection.Input, CType(0,Byte), CType(0,Byte), "FKoperator", Global.System.Data.DataRowVersion.Current, false, Nothing))
             Me._adapter.InsertCommand.Parameters.Add(New Global.System.Data.OleDb.OleDbParameter("Operator", Global.System.Data.OleDb.OleDbType.VarWChar, 0, Global.System.Data.ParameterDirection.Input, CType(0,Byte), CType(0,Byte), "Operator", Global.System.Data.DataRowVersion.Current, false, Nothing))
         End Sub
         
@@ -1129,7 +1164,8 @@ Namespace loggedDataSetTableAdapters
             Me._commandCollection = New Global.System.Data.OleDb.OleDbCommand(0) {}
             Me._commandCollection(0) = New Global.System.Data.OleDb.OleDbCommand()
             Me._commandCollection(0).Connection = Me.Connection
-            Me._commandCollection(0).CommandText = "SELECT Operator FROM PRO_tbloperator"
+            Me._commandCollection(0).CommandText = "SELECT        FKoperator, Operator"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"FROM            PRO_tbloperator"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"WHERE       "& _ 
+                " (AH = 'A')"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"ORDER BY Operator"
             Me._commandCollection(0).CommandType = Global.System.Data.CommandType.Text
         End Sub
         
@@ -1189,11 +1225,12 @@ Namespace loggedDataSetTableAdapters
          Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0"),  _
          Global.System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter"),  _
          Global.System.ComponentModel.DataObjectMethodAttribute(Global.System.ComponentModel.DataObjectMethodType.Insert, true)>  _
-        Public Overloads Overridable Function Insert(ByVal _Operator As String) As Integer
+        Public Overloads Overridable Function Insert(ByVal FKoperator As Integer, ByVal _Operator As String) As Integer
+            Me.Adapter.InsertCommand.Parameters(0).Value = CType(FKoperator,Integer)
             If (_Operator Is Nothing) Then
-                Me.Adapter.InsertCommand.Parameters(0).Value = Global.System.DBNull.Value
+                Throw New Global.System.ArgumentNullException("_Operator")
             Else
-                Me.Adapter.InsertCommand.Parameters(0).Value = CType(_Operator,String)
+                Me.Adapter.InsertCommand.Parameters(1).Value = CType(_Operator,String)
             End If
             Dim previousConnectionState As Global.System.Data.ConnectionState = Me.Adapter.InsertCommand.Connection.State
             If ((Me.Adapter.InsertCommand.Connection.State And Global.System.Data.ConnectionState.Open)  _
@@ -1338,7 +1375,7 @@ Namespace loggedDataSetTableAdapters
             Dim tableMapping As Global.System.Data.Common.DataTableMapping = New Global.System.Data.Common.DataTableMapping()
             tableMapping.SourceTable = "Table"
             tableMapping.DataSetTable = "TypeList"
-            tableMapping.ColumnMappings.Add("Types", "Types")
+            tableMapping.ColumnMappings.Add("Aircraft", "Aircraft")
             Me._adapter.TableMappings.Add(tableMapping)
             Me._adapter.InsertCommand = New Global.System.Data.OleDb.OleDbCommand()
             Me._adapter.InsertCommand.Connection = Me.Connection
@@ -1360,7 +1397,11 @@ Namespace loggedDataSetTableAdapters
             Me._commandCollection = New Global.System.Data.OleDb.OleDbCommand(0) {}
             Me._commandCollection(0) = New Global.System.Data.OleDb.OleDbCommand()
             Me._commandCollection(0).Connection = Me.Connection
-            Me._commandCollection(0).CommandText = "SELECT Types FROM TypeList"
+            Me._commandCollection(0).CommandText = "SELECT DISTINCT tblManufacturer.Builder + ' ' + tblmodel.Model AS Aircraft"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"FROM "& _ 
+                "           ((tblmodel INNER JOIN"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"                         tblManufacturer ON tb"& _ 
+                "lmodel.UID = tblManufacturer.UID) INNER JOIN"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"                         tbldatase"& _ 
+                "t ON tblManufacturer.UID = tbldataset.UID AND tblmodel.FKmodel = tbldataset.FKmo"& _ 
+                "del)"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"ORDER BY tblManufacturer.Builder + ' ' + tblmodel.Model"
             Me._commandCollection(0).CommandType = Global.System.Data.CommandType.Text
         End Sub
         
