@@ -63,8 +63,8 @@ Module GFIAGetData
                 response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
                 If response = DialogResult.Yes Then
                     Logged_rdr.Close()
-                    Dim LogOutstanding As New LogOutstanding
-                    LogOutstanding.ShowDialog()
+                    Dim Log_Data As New Log_data
+                    Log_Data.ShowDialog()
                     UpdateBS(ToLogHex, ToLogReg)
                     Exit Sub
                 ElseIf response = DialogResult.No Then
