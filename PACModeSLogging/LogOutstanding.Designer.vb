@@ -188,13 +188,13 @@ Partial Class LogOutstanding
         'ComboBox1
         '
         Me.ComboBox1.DataSource = Me.TypeListBindingSource
-        Me.ComboBox1.DisplayMember = "Types"
+        Me.ComboBox1.DisplayMember = "Aircraft"
         Me.ComboBox1.FormattingEnabled = True
         Me.ComboBox1.Location = New System.Drawing.Point(160, 102)
         Me.ComboBox1.Name = "ComboBox1"
         Me.ComboBox1.Size = New System.Drawing.Size(159, 21)
         Me.ComboBox1.TabIndex = 19
-        Me.ComboBox1.ValueMember = "Types"
+        Me.ComboBox1.ValueMember = "Aircraft"
         '
         'TypeListBindingSource
         '
