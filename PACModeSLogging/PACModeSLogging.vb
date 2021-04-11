@@ -394,6 +394,7 @@ EmptyStep:
         Timer1.Stop()
         ComboBox1.Items.Clear()
         Timer1.Start()
+        Timer1_Tick(Nothing, Nothing)
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click

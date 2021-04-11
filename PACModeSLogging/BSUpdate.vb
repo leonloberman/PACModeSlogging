@@ -53,11 +53,11 @@ UpdBS2: CheckBusy = False
 
             BS_Con.Close()
             BS_Con.Dispose()
+            PACModeSLogging.MyObject.RefreshDatabaseInfo()
+            PACModeSLogging.ComboBox1.Items.RemoveAt(PACModeSLogging.ComboBox1.SelectedIndex)
+            PACModeSLogging.Timer1.Start()
+            PACModeSLogging.Timer1_Tick(Nothing, Nothing)
         End If
-        PACModeSLogging.MyObject.RefreshDatabaseInfo()
-        PACModeSLogging.ComboBox1.Items.Remove(PACModeSLogging.ToLogRec)
-        PACModeSLogging.Timer1.Start()
-        PACModeSLogging.Timer1_Tick(Nothing, Nothing)
 
     End Sub
 End Module
