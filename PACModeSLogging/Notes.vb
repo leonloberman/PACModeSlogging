@@ -4,8 +4,8 @@
     Public Canx As Integer = 0
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        Canx = 1
-        Me.Close()
+        'Canx = 1
+        'Me.Close()
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
@@ -14,7 +14,9 @@
         Me.Close()
     End Sub
 
-    Private Sub Notes_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Label1.Text = "You are logging " & PACModeSLogging.ToLogReg & " (ModeS code " & PACModeSLogging.ToLogHex & ")"
+    Private Sub Notes_Load() Handles MyBase.Load
+        Dim ToLogReg As String = PACModeSLogging.ToLogReg
+        Dim ToLogHex As String = PACModeSLogging.ToLogHex
+        Label1.Text = "You are logging " & ToLogReg & " (ModeS code " & ToLogHex & ")"
     End Sub
 End Class

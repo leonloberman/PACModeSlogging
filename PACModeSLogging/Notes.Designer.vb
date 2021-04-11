@@ -31,7 +31,8 @@ Partial Class Notes
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(287, 162)
+        Me.Button1.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me.Button1.Location = New System.Drawing.Point(363, 162)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 2
@@ -40,7 +41,8 @@ Partial Class Notes
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(434, 162)
+        Me.Button2.DialogResult = System.Windows.Forms.DialogResult.OK
+        Me.Button2.Location = New System.Drawing.Point(510, 162)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 3
@@ -52,7 +54,7 @@ Partial Class Notes
         Me.TextBox1.Location = New System.Drawing.Point(23, 90)
         Me.TextBox1.Multiline = True
         Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(486, 50)
+        Me.TextBox1.Size = New System.Drawing.Size(581, 50)
         Me.TextBox1.TabIndex = 5
         '
         'Label1
@@ -79,7 +81,7 @@ Partial Class Notes
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(521, 200)
+        Me.ClientSize = New System.Drawing.Size(629, 200)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.TextBox1)
