@@ -438,8 +438,8 @@ EmptyStep:
         logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
 
         '**** Test Record ****
-        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = '03-3119' And Hex = 'AE119C'"
-        'ToLogReg = "03-3119"
+        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = '13-5786' And Hex = 'AE5963'"
+        'ToLogReg = "13-5786"
         '******
 
         Dim response As DialogResult
@@ -485,24 +485,33 @@ EmptyStep:
                 'Get Model Prefix
                 Dim Prefix As String = ""
                 Dim Prefix_SQL As String = ""
-                Prefix_SQL = "SELECT tbldataset.ID, tbldataset.FKsp2 as PrefixText " &
+                Prefix_SQL = "SELECT tbldataset.FKsp2 as PrefixText " &
                 "FROM tbldataset WHERE (((tbldataset.ID)=" & Tologid & "))"
                 Dim cmd4 As OleDbCommand
                 cmd4 = New OleDb.OleDbCommand(Prefix_SQL, Logged_con)
                 Dim cmd4_rdr As OleDbDataReader
                 cmd4_rdr = cmd4.ExecuteReader
+                'If cmd4_rdr.HasRows = True Then
+                cmd4_rdr.Close()
+                cmd4.ExecuteNonQuery()
+                cmd4_rdr = cmd4.ExecuteReader()
+                cmd4_rdr.Read()
+                If cmd4_rdr.IsDBNull(0) = False Then
+                    Prefix = cmd4_rdr(0)
+                End If
+
 
                 'Get Typnames
                 Dim typename As String = ""
-                Dim TypeName_SQL As String = ""
-                TypeName_SQL = "SELECT tbldataset.ID, tblVariant.FKname AS TypeNameKey, tblNames.TypeName " &
+                    Dim TypeName_SQL As String = ""
+                    TypeName_SQL = "SELECT tbldataset.ID, tblVariant.FKname AS TypeNameKey, tblNames.TypeName " &
                                 " FROM (tblVariant INNER JOIN tbldataset ON tblVariant.FKvariant = tbldataset.FKvariant)" &
                                 " INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname WHERE (((tbldataset.ID)=" & Tologid & "))"
-                cmd3 = New OleDb.OleDbCommand(TypeName_SQL, Logged_con)
-                Dim cmd3_rdr As OleDbDataReader
-                cmd3_rdr = cmd3.ExecuteReader()
+                    cmd3 = New OleDb.OleDbCommand(TypeName_SQL, Logged_con)
+                    Dim cmd3_rdr As OleDbDataReader
+                    cmd3_rdr = cmd3.ExecuteReader()
 
-                If cmd3_rdr.HasRows = False Then
+                If cmd3_rdr.HasRows = False And cmd4_rdr.IsDBNull(0) = False Then
 
                     'Insert into logllp no typename no prefix
                     logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
@@ -515,7 +524,7 @@ EmptyStep:
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                     cmd2.ExecuteNonQuery()
 
-                ElseIf cmd3_rdr.HasRows = True Then
+                ElseIf cmd3_rdr.HasRows = True And cmd4_rdr.IsDBNull(0) Then
                     cmd3_rdr.Close()
                     cmd3.ExecuteNonQuery()
                     cmd3_rdr = cmd3.ExecuteReader()
@@ -533,7 +542,7 @@ EmptyStep:
                     cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                     cmd2.ExecuteNonQuery()
 
-                ElseIf cmd3_rdr.HasRows = False And cmd4_rdr(1) = "" Then
+                ElseIf cmd3_rdr.HasRows = False And cmd4_rdr.IsDBNull(0) Then
 
                     'Insert into logllp no typename with no prefix
                     logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
@@ -548,16 +557,16 @@ EmptyStep:
 
                 ElseIf cmd3_rdr.HasRows = True And cmd4_rdr.HasRows = True Then
                     cmd3_rdr.Close()
-                    cmd3.ExecuteNonQuery()
-                    cmd3_rdr = cmd3.ExecuteReader()
-                    cmd3_rdr.Read()
-                    typename = cmd3_rdr(2)
+                        cmd3.ExecuteNonQuery()
+                        cmd3_rdr = cmd3.ExecuteReader()
+                        cmd3_rdr.Read()
+                        typename = cmd3_rdr(2)
 
-                    cmd4_rdr.Close()
-                    cmd4.ExecuteNonQuery()
-                    cmd4_rdr = cmd4.ExecuteReader()
-                    cmd4_rdr.Read()
-                    Prefix = cmd4_rdr(1)
+                        cmd4_rdr.Close()
+                        cmd4.ExecuteNonQuery()
+                        cmd4_rdr = cmd4.ExecuteReader()
+                        cmd4_rdr.Read()
+                    Prefix = cmd4_rdr(0)
 
                     'Insert into logllp with typename with prefix
                     logged_SQL = "INSERT INTO logllp SELECT tbldataset.ID AS ID, ([tblManufacturer].[Builder]+' '+" & Chr(34) & Prefix & Chr(34) & "+[tblmodel].[Model]+RIGHT([tblvariant].[variant], LEN([tblvariant].[variant]) - 1)" &
@@ -567,156 +576,156 @@ EmptyStep:
                         " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
                         "(tblmodel.FKmodel = tbldataset.FKmodel) And (tblManufacturer.UID = tbldataset.UID)) " &
                         "ON tblVariant.FKvariant = tbldataset.FKvariant) INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname " & "WHERE (((tbldataset.ID)=" & Tologid & "));"
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    cmd2.ExecuteNonQuery()
-                End If
-
-                'Check for Fleetname and add
-                If ToLogMil <> 502 Then
-                    logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,50)" &
-                            " FROM tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID " &
-                            " WHERE (tbldataset.ID)= " & Tologid
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    Dim cmd2_rdr As OleDbDataReader
-                    cmd2_rdr = cmd2.ExecuteReader()
-
-                    If cmd2_rdr.HasRows Then
-                        cmd2_rdr.Close()
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
                         cmd2.ExecuteNonQuery()
-                        cmd2_rdr = cmd2.ExecuteReader()
-                        cmd2_rdr.Read()
-
-                        If Not IsDBNull(cmd2_rdr(1)) Then
-                            If (cmd2_rdr(1) <> " ") Then
-                                ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
-                            End If
-                            'Insert into logllp
-                            logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
-                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                            cmd2.ExecuteNonQuery()
-                            ToLogacName = String.Empty
-                        Else
-                            'Do Nothing
-                        End If
-
                     End If
 
-                End If
-
-                If ToLogMil = 502 Then
-
-                    'Check for mil records
-                    logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,50), tblChildUnit.FKtail" &
-                                " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
-                                " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
-                                " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
-                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                    Dim cmd2_rdr As OleDbDataReader
-                    cmd2_rdr = cmd2.ExecuteReader()
-
-                    If cmd2_rdr.HasRows Then
-                        cmd2_rdr.Close()
-                        cmd2.ExecuteNonQuery()
+                    'Check for Fleetname and add
+                    If ToLogMil <> 502 Then
+                        logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,50)" &
+                            " FROM tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID " &
+                            " WHERE (tbldataset.ID)= " & Tologid
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        Dim cmd2_rdr As OleDbDataReader
                         cmd2_rdr = cmd2.ExecuteReader()
-                        cmd2_rdr.Read()
 
-                        If Not IsDBNull(cmd2_rdr(1)) Then
-                            If (cmd2_rdr(1) <> " ") Then
-                                ToLogUnit = cmd2_rdr(1)
-                            End If
-                        Else
-                            'Do Nothing
-                        End If
-                        If Not IsDBNull(cmd2_rdr(2)) Then
-                            If (cmd2_rdr(2) <> " ") Then
-                                ToLogaCcode = cmd2_rdr(2)
-                            End If
-                        Else
-                            'Do nothing
-                        End If
-                        If Not IsDBNull(cmd2_rdr(3)) Then
-                            If (cmd2_rdr(3) <> " ") Then
+                        If cmd2_rdr.HasRows Then
+                            cmd2_rdr.Close()
+                            cmd2.ExecuteNonQuery()
+                            cmd2_rdr = cmd2.ExecuteReader()
+                            cmd2_rdr.Read()
 
-                                ToLogacName = cmd2_rdr(3).Replace(Chr(34), "'")
-                                ToLogNotes = cmd2_rdr(3).Replace(Chr(34), "'")
+                            If Not IsDBNull(cmd2_rdr(1)) Then
+                                If (cmd2_rdr(1) <> " ") Then
+                                    ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
+                                End If
+                                'Insert into logllp
+                                logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
+                                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                                cmd2.ExecuteNonQuery()
+                                ToLogacName = String.Empty
                             Else
                                 'Do Nothing
                             End If
-                            If Not IsDBNull(cmd2_rdr(4)) Then
-                                If (cmd2_rdr(4) <> " ") Then
-                                    ToLogOther = cmd2_rdr(4).Replace(Chr(34), "'")
-                                Else
-                                    'Do nothing
-                                End If
-                            End If
-                            'Insert into logllp
-                            logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
-                                    " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
-                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+
+                        End If
+
+                    End If
+
+                    If ToLogMil = 502 Then
+
+                        'Check for mil records
+                        logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,50), tblChildUnit.FKtail" &
+                                " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                                " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                                " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                        Dim cmd2_rdr As OleDbDataReader
+                        cmd2_rdr = cmd2.ExecuteReader()
+
+                        If cmd2_rdr.HasRows Then
+                            cmd2_rdr.Close()
                             cmd2.ExecuteNonQuery()
-                            ToLogacName = String.Empty
-                            ToLogaCcode = String.Empty
-                            ToLogUnit = String.Empty
-                            ToLogOther = String.Empty
+                            cmd2_rdr = cmd2.ExecuteReader()
+                            cmd2_rdr.Read()
+
+                            If Not IsDBNull(cmd2_rdr(1)) Then
+                                If (cmd2_rdr(1) <> " ") Then
+                                    ToLogUnit = cmd2_rdr(1)
+                                End If
+                            Else
+                                'Do Nothing
+                            End If
+                            If Not IsDBNull(cmd2_rdr(2)) Then
+                                If (cmd2_rdr(2) <> " ") Then
+                                    ToLogaCcode = cmd2_rdr(2)
+                                End If
+                            Else
+                                'Do nothing
+                            End If
+                            If Not IsDBNull(cmd2_rdr(3)) Then
+                                If (cmd2_rdr(3) <> " ") Then
+
+                                    ToLogacName = cmd2_rdr(3).Replace(Chr(34), "'")
+                                    ToLogNotes = cmd2_rdr(3).Replace(Chr(34), "'")
+                                Else
+                                    'Do Nothing
+                                End If
+                                If Not IsDBNull(cmd2_rdr(4)) Then
+                                    If (cmd2_rdr(4) <> " ") Then
+                                        ToLogOther = cmd2_rdr(4).Replace(Chr(34), "'")
+                                    Else
+                                        'Do nothing
+                                    End If
+                                End If
+                                'Insert into logllp
+                                logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
+                                    " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
+                                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                                cmd2.ExecuteNonQuery()
+                                ToLogacName = String.Empty
+                                ToLogaCcode = String.Empty
+                                ToLogUnit = String.Empty
+                                ToLogOther = String.Empty
+                            End If
+
                         End If
-
                     End If
-                End If
-                'UpdateBS(ToLogHex, ToLogReg)
+                    'UpdateBS(ToLogHex, ToLogReg)
 
-                Try
-                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
-                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
-                Catch ex As Exception
-                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
-                End Try
-                'BS_Con.Open()
-UpdBS2:         CheckBusy = False
-                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-                BS_SQL = "SELECT * FROM sqlite_master"
-                Try
-                    BS_Cmd.ExecuteNonQuery()
-                Catch SQLiteexception As Exception
-                    If SQLiteErrorCode.Locked Then
-                        CheckBusy = True
-                    Else
-                        CheckBusy = False
-                    End If
-                End Try
-                If CheckBusy = True Then
-                    GoTo UpdBS2
-                Else
                     Try
-                        Dim BS_SQL2 As String
-                        If My.Settings.RemIntFlag = True Then
-                            BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                            Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-                        Else
-                            BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                            Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-                        End If
-
-                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
+                        If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                        If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                    Catch ex As Exception
+                        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                    End Try
+                    'BS_Con.Open()
+UpdBS2:             CheckBusy = False
+                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                    BS_SQL = "SELECT * FROM sqlite_master"
+                    Try
                         BS_Cmd.ExecuteNonQuery()
-                    Catch SQLITEexception As Exception
+                    Catch SQLiteexception As Exception
                         If SQLiteErrorCode.Locked Then
                             CheckBusy = True
-                            GoTo UpdBS2
                         Else
                             CheckBusy = False
                         End If
                     End Try
+                    If CheckBusy = True Then
+                        GoTo UpdBS2
+                    Else
+                        Try
+                            Dim BS_SQL2 As String
+                            If My.Settings.RemIntFlag = True Then
+                                BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                            Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                            Else
+                                BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                            Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                            End If
 
-                    BS_Con.Close()
-                    BS_Con.Dispose()
-                    MyObject.RefreshDatabaseInfo()
-                    ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
-                    Timer1.Start()
-                    Timer1_Tick(Nothing, Nothing)
-                End If
+                            BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
+                            BS_Cmd.ExecuteNonQuery()
+                        Catch SQLITEexception As Exception
+                            If SQLiteErrorCode.Locked Then
+                                CheckBusy = True
+                                GoTo UpdBS2
+                            Else
+                                CheckBusy = False
+                            End If
+                        End Try
 
-            Else
-                RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                        BS_Con.Close()
+                        BS_Con.Dispose()
+                        MyObject.RefreshDatabaseInfo()
+                        ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
+                        Timer1.Start()
+                        Timer1_Tick(Nothing, Nothing)
+                    End If
+
+                Else
+                    RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 ComboBox1.SelectedIndex = -1
                 AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 Timer1.Start()
@@ -786,7 +795,7 @@ UpdBS2:         CheckBusy = False
         Button3.Visible = True
         Dim LogData As New Log_data
         LogData.Show()
-        ComboBox1.Items.Clear()
+        'ComboBox1.Items.Clear()
         Timer1.Start()
     End Sub
 
