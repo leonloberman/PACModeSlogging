@@ -99,14 +99,17 @@ Public Class PACModeSLogging
                 AutoUpdater.BasicAuthXML = BasicAuthentication
                 AutoUpdater.ReportErrors = True
                 AutoUpdater.ShowSkipButton = False
-                'AutoUpdater.Mandatory = True
+                If My.Settings.AutoUpdate = True Then
+                    AutoUpdater.Mandatory = Mode.ForcedDownload
+                End If
+
                 'AutoUpdater.Synchronous = True
-                AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
-                'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
+                'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
+                AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
 
                 AddHandler AutoUpdater.CheckForUpdateEvent, AddressOf AutoUpdaterOnCheckForUpdateEvent
-            End If
-        Else
+                End If
+            Else
             'MsgBox("Computer is not connected to the internet.")
         End If
 
