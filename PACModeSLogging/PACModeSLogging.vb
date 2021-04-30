@@ -163,9 +163,6 @@ Public Class PACModeSLogging
         If args IsNot Nothing Then
 
             If args.IsUpdateAvailable Then
-                AutoUpdater.Mandatory = True
-                AutoUpdater.Mandatory = Mode.ForcedDownload
-                AutoUpdater.UpdateFormSize = New System.Drawing.Size(800, 600)
                 AutoUpdater.ShowUpdateForm(args)
             Else
                 'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
