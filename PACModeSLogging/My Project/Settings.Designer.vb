@@ -216,6 +216,18 @@ Namespace My
                 Return CType(Me("loggedConnectionString"),String)
             End Get
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property AutoUpdate() As Boolean
+            Get
+                Return CType(Me("AutoUpdate"),Boolean)
+            End Get
+            Set
+                Me("AutoUpdate") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

@@ -75,7 +75,9 @@ Public Class PACModeSLogging
         drag = False 'Sets drag to false, so the form does not move according to the code in MouseMove
     End Sub
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+
+    Public Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
 #Disable Warning BC42025 ' Access of shared member, constant member, enum member or nested type through an instance
         If My.Settings.Default.UpgradeRequired Then
@@ -99,18 +101,24 @@ Public Class PACModeSLogging
                 AutoUpdater.BasicAuthXML = BasicAuthentication
                 AutoUpdater.ReportErrors = True
                 AutoUpdater.ShowSkipButton = False
-                AutoUpdater.Mandatory = True
-                AutoUpdater.Mandatory = Mode.ForcedDownload
-                AutoUpdater.UpdateFormSize = New System.Drawing.Size(800, 600)
+                If My.Settings.AutoUpdate = True Then
+                    AutoUpdater.Mandatory = True
+                    AutoUpdater.UpdateMode = Mode.ForcedDownload
+                End If
+
+                'AutoUpdater.UpdateFormSize = New System.Drawing.Size(800, 600)
                 'AutoUpdater.Synchronous = True
-                AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
-                'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
+                'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
+                AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
 
                 AddHandler AutoUpdater.CheckForUpdateEvent, AddressOf AutoUpdaterOnCheckForUpdateEvent
             End If
         Else
             'MsgBox("Computer is not connected to the internet.")
         End If
+
+        Me.WindowState = FormWindowState.Minimized
+
 
         If My.Settings.Location = "<enter your location for logging>" Then
             Config.Show()
@@ -126,6 +134,8 @@ Public Class PACModeSLogging
         If My.Settings.Autostart = True Then
             Button3.Visible = False
             Button1.Visible = True
+
+
 
             Try
                 If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
@@ -163,7 +173,15 @@ Public Class PACModeSLogging
         If args IsNot Nothing Then
 
             If args.IsUpdateAvailable Then
-                AutoUpdater.ShowUpdateForm(args)
+                If (AutoUpdater.Mandatory = True And AutoUpdater.UpdateMode = Mode.ForcedDownload) Then
+
+                    AutoUpdater.DownloadUpdate(args)
+                    Exit Sub
+                Else
+                    AutoUpdater.ShowUpdateForm(args)
+                End If
+                Me.WindowState = FormWindowState.Normal
+
             Else
                 'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 If My.Computer.Network.Ping("www.google.com") Then

@@ -28,14 +28,14 @@ Partial Class Config
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
-        Me.Label4 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.TextBox2 = New System.Windows.Forms.TextBox()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
-        Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.CheckBox3 = New System.Windows.Forms.CheckBox()
+        Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
+        Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -89,23 +89,15 @@ Partial Class Config
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(27, 271)
+        Me.Label3.Location = New System.Drawing.Point(27, 294)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(82, 13)
         Me.Label3.TabIndex = 31
         Me.Label3.Text = "Version Number"
         '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(132, 271)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(0, 13)
-        Me.Label4.TabIndex = 32
-        '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(222, 301)
+        Me.Button1.Location = New System.Drawing.Point(222, 326)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(50, 23)
         Me.Button1.TabIndex = 33
@@ -148,6 +140,16 @@ Partial Class Config
         Me.CheckBox2.Text = "Remove Interested Flag"
         Me.CheckBox2.UseVisualStyleBackColor = True
         '
+        'CheckBox3
+        '
+        Me.CheckBox3.AutoSize = True
+        Me.CheckBox3.Location = New System.Drawing.Point(135, 232)
+        Me.CheckBox3.Name = "CheckBox3"
+        Me.CheckBox3.Size = New System.Drawing.Size(68, 17)
+        Me.CheckBox3.TabIndex = 40
+        Me.CheckBox3.Text = "Autostart"
+        Me.CheckBox3.UseVisualStyleBackColor = True
+        '
         'NumericUpDown1
         '
         Me.NumericUpDown1.DataBindings.Add(New System.Windows.Forms.Binding("Value", Global.PACModeSLogging.My.MySettings.Default, "SampleRate", True, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged))
@@ -160,21 +162,22 @@ Partial Class Config
         Me.NumericUpDown1.TabIndex = 34
         Me.NumericUpDown1.Value = Global.PACModeSLogging.My.MySettings.Default.SampleRate
         '
-        'CheckBox3
+        'CheckBox4
         '
-        Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Location = New System.Drawing.Point(135, 232)
-        Me.CheckBox3.Name = "CheckBox3"
-        Me.CheckBox3.Size = New System.Drawing.Size(68, 17)
-        Me.CheckBox3.TabIndex = 40
-        Me.CheckBox3.Text = "Autostart"
-        Me.CheckBox3.UseVisualStyleBackColor = True
+        Me.CheckBox4.AutoSize = True
+        Me.CheckBox4.Location = New System.Drawing.Point(30, 264)
+        Me.CheckBox4.Name = "CheckBox4"
+        Me.CheckBox4.Size = New System.Drawing.Size(83, 17)
+        Me.CheckBox4.TabIndex = 41
+        Me.CheckBox4.Text = "AutoUpdate"
+        Me.CheckBox4.UseVisualStyleBackColor = True
         '
         'Config
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 336)
+        Me.ClientSize = New System.Drawing.Size(284, 375)
+        Me.Controls.Add(Me.CheckBox4)
         Me.Controls.Add(Me.CheckBox3)
         Me.Controls.Add(Me.CheckBox2)
         Me.Controls.Add(Me.Button2)
@@ -182,7 +185,6 @@ Partial Class Config
         Me.Controls.Add(Me.CheckBox1)
         Me.Controls.Add(Me.NumericUpDown1)
         Me.Controls.Add(Me.Button1)
-        Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.TextBox1)
@@ -202,7 +204,6 @@ Partial Class Config
     Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label3 As System.Windows.Forms.Label
-    Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents NumericUpDown1 As System.Windows.Forms.NumericUpDown
     Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
@@ -210,4 +211,5 @@ Partial Class Config
     Friend WithEvents TextBox2 As System.Windows.Forms.TextBox
     Friend WithEvents CheckBox2 As CheckBox
     Friend WithEvents CheckBox3 As CheckBox
+    Friend WithEvents CheckBox4 As CheckBox
 End Class

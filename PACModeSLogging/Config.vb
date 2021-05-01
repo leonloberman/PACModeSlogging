@@ -11,7 +11,7 @@ Public Class Config
         ElseIf My.Settings.InterestedButton = True Then
             RadioButton1.Checked = True
         End If
-        Label4.Text = "V" & My.Application.Info.Version.ToString
+        Label3.Text += " V" & My.Application.Info.Version.ToString
         TextBox1.Text = My.Settings.Location
         TextBox2.Text = My.Settings.BSLoc
         NumericUpDown1.Value = My.Settings.SampleRate
@@ -32,6 +32,11 @@ Public Class Config
             CheckBox3.CheckState = CheckState.Checked
         Else
             CheckBox3.CheckState = CheckState.Unchecked
+        End If
+        If My.Settings.AutoUpdate = True Then
+            CheckBox4.CheckState = CheckState.Checked
+        Else
+            CheckBox4.CheckState = CheckState.Unchecked
         End If
     End Sub
 
@@ -96,5 +101,14 @@ Public Class Config
         Else
             My.Settings.Autostart = False
         End If
+    End Sub
+
+    Private Sub CheckBox4_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox4.CheckedChanged
+        If CheckBox4.Checked = True Then
+            My.Settings.AutoUpdate = True
+        Else
+            My.Settings.AutoUpdate = False
+        End If
+
     End Sub
 End Class
