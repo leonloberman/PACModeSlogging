@@ -117,7 +117,7 @@ Public Class PACModeSLogging
             'MsgBox("Computer is not connected to the internet.")
         End If
 
-
+        Me.WindowState = FormWindowState.Minimized
 
 
         If My.Settings.Location = "<enter your location for logging>" Then
@@ -173,16 +173,14 @@ Public Class PACModeSLogging
         If args IsNot Nothing Then
 
             If args.IsUpdateAvailable Then
-
                 If (AutoUpdater.Mandatory = True And AutoUpdater.UpdateMode = Mode.ForcedDownload) Then
-                    'Me.WindowState = FormWindowState.Minimized
+
                     AutoUpdater.DownloadUpdate(args)
-                    Me.WindowState = FormWindowState.Normal
                     Exit Sub
                 Else
                     AutoUpdater.ShowUpdateForm(args)
                 End If
-
+                Me.WindowState = FormWindowState.Normal
 
             Else
                 'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
