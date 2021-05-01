@@ -99,9 +99,7 @@ Public Class PACModeSLogging
                 AutoUpdater.BasicAuthXML = BasicAuthentication
                 AutoUpdater.ReportErrors = True
                 AutoUpdater.ShowSkipButton = False
-                AutoUpdater.Mandatory = True
-                AutoUpdater.Mandatory = Mode.ForcedDownload
-                AutoUpdater.UpdateFormSize = New System.Drawing.Size(800, 600)
+                'AutoUpdater.Mandatory = True
                 'AutoUpdater.Synchronous = True
                 AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSLoggingVersion.xml")
                 'AutoUpdater.Start("https://www.gfiapac.org/ModeSVersions/PACModeSTestLoggingVersion.xml")
@@ -163,9 +161,7 @@ Public Class PACModeSLogging
         If args IsNot Nothing Then
 
             If args.IsUpdateAvailable Then
-                AutoUpdater.Mandatory = True
-                AutoUpdater.Mandatory = Mode.ForcedDownload
-                AutoUpdater.UpdateFormSize = New System.Drawing.Size(800, 600)
+
                 AutoUpdater.ShowUpdateForm(args)
             Else
                 'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
