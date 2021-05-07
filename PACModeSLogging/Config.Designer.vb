@@ -36,6 +36,8 @@ Partial Class Config
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.CheckBox3 = New System.Windows.Forms.CheckBox()
+        Me.RadioButton3 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -89,7 +91,7 @@ Partial Class Config
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(27, 271)
+        Me.Label3.Location = New System.Drawing.Point(27, 292)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(82, 13)
         Me.Label3.TabIndex = 31
@@ -98,14 +100,14 @@ Partial Class Config
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(132, 271)
+        Me.Label4.Location = New System.Drawing.Point(131, 292)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(0, 13)
         Me.Label4.TabIndex = 32
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(222, 301)
+        Me.Button1.Location = New System.Drawing.Point(222, 325)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(50, 23)
         Me.Button1.TabIndex = 33
@@ -170,11 +172,35 @@ Partial Class Config
         Me.CheckBox3.Text = "Autostart"
         Me.CheckBox3.UseVisualStyleBackColor = True
         '
+        'RadioButton3
+        '
+        Me.RadioButton3.AutoSize = True
+        Me.RadioButton3.Location = New System.Drawing.Point(30, 255)
+        Me.RadioButton3.Name = "RadioButton3"
+        Me.RadioButton3.Size = New System.Drawing.Size(82, 17)
+        Me.RadioButton3.TabIndex = 41
+        Me.RadioButton3.TabStop = True
+        Me.RadioButton3.Text = "PlanePlotter"
+        Me.RadioButton3.UseVisualStyleBackColor = True
+        '
+        'RadioButton4
+        '
+        Me.RadioButton4.AutoSize = True
+        Me.RadioButton4.Location = New System.Drawing.Point(135, 255)
+        Me.RadioButton4.Name = "RadioButton4"
+        Me.RadioButton4.Size = New System.Drawing.Size(86, 17)
+        Me.RadioButton4.TabIndex = 42
+        Me.RadioButton4.TabStop = True
+        Me.RadioButton4.Text = "Virtual Radar"
+        Me.RadioButton4.UseVisualStyleBackColor = True
+        '
         'Config
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 336)
+        Me.ClientSize = New System.Drawing.Size(284, 360)
+        Me.Controls.Add(Me.RadioButton4)
+        Me.Controls.Add(Me.RadioButton3)
         Me.Controls.Add(Me.CheckBox3)
         Me.Controls.Add(Me.CheckBox2)
         Me.Controls.Add(Me.Button2)
@@ -210,4 +236,6 @@ Partial Class Config
     Friend WithEvents TextBox2 As System.Windows.Forms.TextBox
     Friend WithEvents CheckBox2 As CheckBox
     Friend WithEvents CheckBox3 As CheckBox
+    Friend WithEvents RadioButton3 As RadioButton
+    Friend WithEvents RadioButton4 As RadioButton
 End Class

@@ -1,6 +1,11 @@
 ﻿Imports System.Data.OleDb
 Imports System.Data.SQLite
 Imports AutoUpdaterDotNET
+Imports System.Net
+Imports System.Net.Http
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+Imports System.IO
 
 Public Class PACModeSLogging
 
@@ -11,6 +16,7 @@ Public Class PACModeSLogging
     Dim mousey As Integer
 
     Public MyObject As Object
+    Public VRObject As String
     Dim UT As String
     Dim i As Int16 = 0
     Dim PPHex As String
@@ -150,8 +156,12 @@ Public Class PACModeSLogging
 
                 Exit Sub
             End Try
+            If My.Settings.PlanePlotter = True Then
+                GetPPdata()
+            Else
+                GetVRdata()
+            End If
 
-            GetPPdata()
         End If
         'RunProcess()
 
@@ -201,9 +211,147 @@ Public Class PACModeSLogging
         End If
         Me.StartPosition = FormStartPosition.CenterScreen
         'Me.Show()
-        GetPPdata()
+        If My.Settings.PlanePlotter = True Then
+            GetPPdata()
+        Else
+            GetVRdata()
+        End If
+    End Sub
+    Public Sub GetVRdata()
+        Dim Request As HttpWebRequest = System.Net.HttpWebRequest.Create("http://127.0.0.1/VirtualRadar/aircraftlist.json")
+        Dim Response As HttpWebResponse = Request.GetResponse
+        Dim Stream As Stream = Response.GetResponseStream()
+        Dim username As String = "leon-loberman"
+        Dim password As String = "*D3gDe4ft"
+        Dim localPath As String = "C:\ModeS\"
+        Dim client As New WebClient
+        Dim myCache As CredentialCache = New CredentialCache()
+
+        Dim srVR As StreamReader
+        Dim strVRData As String
+
+        Try
+            Dim strURL As String = "http://127.0.0.1/VirtualRadar/aircraftlist.json"
+
+            Dim VRreq As HttpWebRequest =
+            CType(WebRequest.Create(strURL), HttpWebRequest)
+            Dim VRresponse As HttpWebResponse =
+            CType(VRreq.GetResponse(), HttpWebResponse)
+
+            srVR = New StreamReader(VRresponse.GetResponseStream())
+
+            strVRData = srVR.ReadToEnd()
+            srVR.Close()
+
+            ComboBox1.Items.Add("VRTest")
+
+        Catch ex As WebException
+
+            MessageBox.Show("Error: " & ex.ToString())
+
+        End Try
+
+
+
+
+
+
+
+        Try
+            strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
+
+            Dim ICAOS As Object = JsonConvert.DeserializeObject(Of AcList)(strVRData)
+            Dim ICAOtoAdd As String = ICAOS("icao")
+
+            ComboBox1.Items.Add(ICAOS)
+
+        Catch ex As WebException
+
+                MessageBox.Show("Error: " & ex.ToString())
+
+            End Try
+
+
+
 
     End Sub
+
+    Public Class Feed
+        Public Property id As Integer
+        Public Property name As String
+        Public Property polarPlot As Boolean
+    End Class
+
+    Public Class AcList
+        Public Property Id As Integer
+        Public Property Rcvr As Integer
+        Public Property HasSig As Boolean
+        Public Property Icao As String
+        Public Property Bad As Boolean
+        Public Property Reg As String
+        Public Property FSeen As DateTime
+        Public Property TSecs As Integer
+        Public Property CMsgs As Integer
+        Public Property Alt As Integer
+        Public Property GAlt As Integer
+        Public Property InHg As Double
+        Public Property AltT As Integer
+        Public Property Callsign As String
+        Public Property Lat As Double
+        Public Property Longitude As Double
+        Public Property PosTime As Long
+        Public Property Mlat As Boolean
+        Public Property Tisb As Boolean
+        Public Property Spd As Double
+        Public Property Trak As Double
+        Public Property TrkH As Boolean
+        Public Property Type As String
+        Public Property Mdl As String
+        Public Property Man As String
+        Public Property CNum As String
+        Public Property From As String
+        Public Property Dest As String
+        Public Property Op As String
+        Public Property OpIcao As String
+        Public Property Sqk As String
+        Public Property Help As Boolean
+        Public Property Vsi As Integer
+        Public Property VsiT As Integer
+        Public Property WTC As Integer
+        Public Property Species As Integer
+        Public Property Engines As String
+        Public Property EngType As Integer
+        Public Property EngMount As Integer
+        Public Property Mil As Boolean
+        Public Property Cou As String
+        Public Property HasPic As Boolean
+        Public Property Interested As Boolean
+        Public Property FlightsCount As Integer
+        Public Property Gnd As Boolean
+        Public Property SpdTyp As Integer
+        Public Property CallSus As Boolean
+        Public Property Tag As String
+        Public Property Trt As Integer
+        Public Property Year As String
+    End Class
+
+    Public Class VRList
+        Public Property src As Integer
+        Public Property feeds As Feed()
+        Public Property srcFeed As Integer
+        Public Property showSil As Boolean
+        Public Property showFlg As Boolean
+        Public Property showPic As Boolean
+        Public Property flgH As Integer
+        Public Property flgW As Integer
+        Public Property acList As AcList()
+        Public Property totalAc As Integer
+        Public Property lastDv As String
+        Public Property shtTrlSec As Integer
+        Public Property stm As Long
+    End Class
+
+
 
     Public Sub GetPPdata()
 
@@ -334,7 +482,7 @@ EmptyStep:
             End If
         Catch ex As Exception
             Timer1.Stop()
-                Button1.Visible = True
+            Button1.Visible = True
             MsgBox(ex.ToString)
 
         End Try
@@ -373,8 +521,8 @@ EmptyStep:
 
         Timer1.Stop()
         ToLogReg = ComboBox1.SelectedItem.ToString
-        ToLogHex = ToLogreg.Substring(Math.Max(0, (ToLogreg.Length - 6)))
-        ToLogreg = ToLogreg.Remove(ToLogreg.Length - 9)
+        ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
+        ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
 
 
         ' **** Test Record ****
@@ -503,13 +651,13 @@ EmptyStep:
 
                 'Get Typnames
                 Dim typename As String = ""
-                    Dim TypeName_SQL As String = ""
-                    TypeName_SQL = "SELECT tbldataset.ID, tblVariant.FKname AS TypeNameKey, tblNames.TypeName " &
-                                " FROM (tblVariant INNER JOIN tbldataset ON tblVariant.FKvariant = tbldataset.FKvariant)" &
-                                " INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname WHERE (((tbldataset.ID)=" & Tologid & "))"
-                    cmd3 = New OleDb.OleDbCommand(TypeName_SQL, Logged_con)
-                    Dim cmd3_rdr As OleDbDataReader
-                    cmd3_rdr = cmd3.ExecuteReader()
+                Dim TypeName_SQL As String = ""
+                TypeName_SQL = "SELECT tbldataset.ID, tblVariant.FKname AS TypeNameKey, tblNames.TypeName " &
+                            " FROM (tblVariant INNER JOIN tbldataset ON tblVariant.FKvariant = tbldataset.FKvariant)" &
+                            " INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname WHERE (((tbldataset.ID)=" & Tologid & "))"
+                cmd3 = New OleDb.OleDbCommand(TypeName_SQL, Logged_con)
+                Dim cmd3_rdr As OleDbDataReader
+                cmd3_rdr = cmd3.ExecuteReader()
 
                 If cmd3_rdr.HasRows = False And cmd4_rdr.IsDBNull(0) = False Then
 
@@ -557,15 +705,15 @@ EmptyStep:
 
                 ElseIf cmd3_rdr.HasRows = True And cmd4_rdr.HasRows = True Then
                     cmd3_rdr.Close()
-                        cmd3.ExecuteNonQuery()
-                        cmd3_rdr = cmd3.ExecuteReader()
-                        cmd3_rdr.Read()
-                        typename = cmd3_rdr(2)
+                    cmd3.ExecuteNonQuery()
+                    cmd3_rdr = cmd3.ExecuteReader()
+                    cmd3_rdr.Read()
+                    typename = cmd3_rdr(2)
 
-                        cmd4_rdr.Close()
-                        cmd4.ExecuteNonQuery()
-                        cmd4_rdr = cmd4.ExecuteReader()
-                        cmd4_rdr.Read()
+                    cmd4_rdr.Close()
+                    cmd4.ExecuteNonQuery()
+                    cmd4_rdr = cmd4.ExecuteReader()
+                    cmd4_rdr.Read()
                     Prefix = cmd4_rdr(0)
 
                     'Insert into logllp with typename with prefix
@@ -576,156 +724,156 @@ EmptyStep:
                         " INNER JOIN (PRO_tbloperator RIGHT JOIN tbldataset ON PRO_tbloperator.FKoperator = tbldataset.FKoperator) ON " &
                         "(tblmodel.FKmodel = tbldataset.FKmodel) And (tblManufacturer.UID = tbldataset.UID)) " &
                         "ON tblVariant.FKvariant = tbldataset.FKvariant) INNER JOIN tblNames ON tblVariant.FKname = tblNames.FKname " & "WHERE (((tbldataset.ID)=" & Tologid & "));"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    cmd2.ExecuteNonQuery()
+                End If
+
+                'Check for Fleetname and add
+                If ToLogMil <> 502 Then
+                    logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,50)" &
+                        " FROM tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID " &
+                        " WHERE (tbldataset.ID)= " & Tologid
+                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
+
+                    If cmd2_rdr.HasRows Then
+                        cmd2_rdr.Close()
                         cmd2.ExecuteNonQuery()
-                    End If
-
-                    'Check for Fleetname and add
-                    If ToLogMil <> 502 Then
-                        logged_SQL = " SELECT tbldataset.ID, LEFT([PRO-Marks].FleetName,50)" &
-                            " FROM tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID " &
-                            " WHERE (tbldataset.ID)= " & Tologid
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        Dim cmd2_rdr As OleDbDataReader
                         cmd2_rdr = cmd2.ExecuteReader()
+                        cmd2_rdr.Read()
 
-                        If cmd2_rdr.HasRows Then
-                            cmd2_rdr.Close()
-                            cmd2.ExecuteNonQuery()
-                            cmd2_rdr = cmd2.ExecuteReader()
-                            cmd2_rdr.Read()
-
-                            If Not IsDBNull(cmd2_rdr(1)) Then
-                                If (cmd2_rdr(1) <> " ") Then
-                                    ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
-                                End If
-                                'Insert into logllp
-                                logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
-                                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                                cmd2.ExecuteNonQuery()
-                                ToLogacName = String.Empty
-                            Else
-                                'Do Nothing
+                        If Not IsDBNull(cmd2_rdr(1)) Then
+                            If (cmd2_rdr(1) <> " ") Then
+                                ToLogacName = cmd2_rdr(1).Replace(Chr(34), "'")
                             End If
-
+                            'Insert into logllp
+                            logged_SQL = "UPDATE logLLp SET logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & " WHERE ID = " & Tologid & ";"
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+                            ToLogacName = String.Empty
+                        Else
+                            'Do Nothing
                         End If
 
                     End If
 
-                    If ToLogMil = 502 Then
+                End If
 
-                        'Check for mil records
-                        logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,50), tblChildUnit.FKtail" &
-                                " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
-                                " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
-                                " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
-                        cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                        Dim cmd2_rdr As OleDbDataReader
+                If ToLogMil = 502 Then
+
+                    'Check for mil records
+                    logged_SQL = " SELECT tbldataset.ID, tblUnits.unit&' '&tblChildUnit.FamilyUnit AS logunit, [PRO-Marks].aCcode, LEFT([PRO-Marks].FleetName,50), tblChildUnit.FKtail" &
+                            " FROM ((tbldataset LEFT JOIN [PRO-Marks] ON tbldataset.ID = [PRO-Marks].ID) LEFT JOIN tblUnits ON tbldataset.FKParent = tblUnits.FKUnits) LEFT JOIN tblChildUnit" &
+                            " ON (tbldataset.FKChild = tblChildUnit.FKChild) AND (tbldataset.FKBaby = tblChildUnit.SubUnit)" &
+                            " WHERE (((tbldataset.ID)=" & Tologid & ") AND (tbldataset.FKChild) > 0);"
+                    cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                    Dim cmd2_rdr As OleDbDataReader
+                    cmd2_rdr = cmd2.ExecuteReader()
+
+                    If cmd2_rdr.HasRows Then
+                        cmd2_rdr.Close()
+                        cmd2.ExecuteNonQuery()
                         cmd2_rdr = cmd2.ExecuteReader()
+                        cmd2_rdr.Read()
 
-                        If cmd2_rdr.HasRows Then
-                            cmd2_rdr.Close()
-                            cmd2.ExecuteNonQuery()
-                            cmd2_rdr = cmd2.ExecuteReader()
-                            cmd2_rdr.Read()
+                        If Not IsDBNull(cmd2_rdr(1)) Then
+                            If (cmd2_rdr(1) <> " ") Then
+                                ToLogUnit = cmd2_rdr(1)
+                            End If
+                        Else
+                            'Do Nothing
+                        End If
+                        If Not IsDBNull(cmd2_rdr(2)) Then
+                            If (cmd2_rdr(2) <> " ") Then
+                                ToLogaCcode = cmd2_rdr(2)
+                            End If
+                        Else
+                            'Do nothing
+                        End If
+                        If Not IsDBNull(cmd2_rdr(3)) Then
+                            If (cmd2_rdr(3) <> " ") Then
 
-                            If Not IsDBNull(cmd2_rdr(1)) Then
-                                If (cmd2_rdr(1) <> " ") Then
-                                    ToLogUnit = cmd2_rdr(1)
-                                End If
+                                ToLogacName = cmd2_rdr(3).Replace(Chr(34), "'")
+                                ToLogNotes = cmd2_rdr(3).Replace(Chr(34), "'")
                             Else
                                 'Do Nothing
                             End If
-                            If Not IsDBNull(cmd2_rdr(2)) Then
-                                If (cmd2_rdr(2) <> " ") Then
-                                    ToLogaCcode = cmd2_rdr(2)
-                                End If
-                            Else
-                                'Do nothing
-                            End If
-                            If Not IsDBNull(cmd2_rdr(3)) Then
-                                If (cmd2_rdr(3) <> " ") Then
-
-                                    ToLogacName = cmd2_rdr(3).Replace(Chr(34), "'")
-                                    ToLogNotes = cmd2_rdr(3).Replace(Chr(34), "'")
+                            If Not IsDBNull(cmd2_rdr(4)) Then
+                                If (cmd2_rdr(4) <> " ") Then
+                                    ToLogOther = cmd2_rdr(4).Replace(Chr(34), "'")
                                 Else
-                                    'Do Nothing
+                                    'Do nothing
                                 End If
-                                If Not IsDBNull(cmd2_rdr(4)) Then
-                                    If (cmd2_rdr(4) <> " ") Then
-                                        ToLogOther = cmd2_rdr(4).Replace(Chr(34), "'")
-                                    Else
-                                        'Do nothing
-                                    End If
-                                End If
-                                'Insert into logllp
-                                logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
-                                    " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
-                                cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
-                                cmd2.ExecuteNonQuery()
-                                ToLogacName = String.Empty
-                                ToLogaCcode = String.Empty
-                                ToLogUnit = String.Empty
-                                ToLogOther = String.Empty
                             End If
-
+                            'Insert into logllp
+                            logged_SQL = "UPDATE logLLp SET logllp.logunit = " & Chr(34) & ToLogUnit & Chr(34) & ", logllp.[loga/c code] = " & Chr(34) & ToLogaCcode & Chr(34) &
+                                " , logllp.acName = " & Chr(34) & ToLogacName & Chr(34) & ", logllp.other = " & Chr(34) & ToLogOther & Chr(34) & " WHERE ID = " & Tologid & ";"
+                            cmd2 = New OleDb.OleDbCommand(logged_SQL, Logged_con)
+                            cmd2.ExecuteNonQuery()
+                            ToLogacName = String.Empty
+                            ToLogaCcode = String.Empty
+                            ToLogUnit = String.Empty
+                            ToLogOther = String.Empty
                         End If
-                    End If
-                    'UpdateBS(ToLogHex, ToLogReg)
 
+                    End If
+                End If
+                'UpdateBS(ToLogHex, ToLogReg)
+
+                Try
+                    If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                    If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                End Try
+                'BS_Con.Open()
+UpdBS2:         CheckBusy = False
+                BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                BS_SQL = "SELECT * FROM sqlite_master"
+                Try
+                    BS_Cmd.ExecuteNonQuery()
+                Catch SQLiteexception As Exception
+                    If SQLiteErrorCode.Locked Then
+                        CheckBusy = True
+                    Else
+                        CheckBusy = False
+                    End If
+                End Try
+                If CheckBusy = True Then
+                    GoTo UpdBS2
+                Else
                     Try
-                        If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
-                        If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
-                    Catch ex As Exception
-                        MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
-                    End Try
-                    'BS_Con.Open()
-UpdBS2:             CheckBusy = False
-                    BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
-                    BS_SQL = "SELECT * FROM sqlite_master"
-                    Try
+                        Dim BS_SQL2 As String
+                        If My.Settings.RemIntFlag = True Then
+                            BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                        Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                        Else
+                            BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
+                        Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
+                        End If
+
+                        BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
                         BS_Cmd.ExecuteNonQuery()
-                    Catch SQLiteexception As Exception
+                    Catch SQLITEexception As Exception
                         If SQLiteErrorCode.Locked Then
                             CheckBusy = True
+                            GoTo UpdBS2
                         Else
                             CheckBusy = False
                         End If
                     End Try
-                    If CheckBusy = True Then
-                        GoTo UpdBS2
-                    Else
-                        Try
-                            Dim BS_SQL2 As String
-                            If My.Settings.RemIntFlag = True Then
-                                BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                            Chr(39) & "localtime" & Chr(39) & "), Interested = FALSE WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-                            Else
-                                BS_SQL2 = "UPDATE AIRCRAFT SET UserTag = " & Chr(39) & LoggedTag & Chr(39) & ", LastModified = DATETIME(" & Chr(39) & "now" & Chr(39) & "," &
-                            Chr(39) & "localtime" & Chr(39) & ") WHERE ModeS = " & Chr(39) & ToLogHex & Chr(39) & ";"
-                            End If
 
-                            BS_Cmd = New SQLiteCommand(BS_SQL2, BS_Con)
-                            BS_Cmd.ExecuteNonQuery()
-                        Catch SQLITEexception As Exception
-                            If SQLiteErrorCode.Locked Then
-                                CheckBusy = True
-                                GoTo UpdBS2
-                            Else
-                                CheckBusy = False
-                            End If
-                        End Try
+                    BS_Con.Close()
+                    BS_Con.Dispose()
+                    MyObject.RefreshDatabaseInfo()
+                    ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
+                    Timer1.Start()
+                    Timer1_Tick(Nothing, Nothing)
+                End If
 
-                        BS_Con.Close()
-                        BS_Con.Dispose()
-                        MyObject.RefreshDatabaseInfo()
-                        ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
-                        Timer1.Start()
-                        Timer1_Tick(Nothing, Nothing)
-                    End If
-
-                Else
-                    RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+            Else
+                RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 ComboBox1.SelectedIndex = -1
                 AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 Timer1.Start()
@@ -745,7 +893,7 @@ UpdBS2:             CheckBusy = False
     End Sub
 
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        MyObject.RefreshDatabaseInfo()
+        'MyObject.RefreshDatabaseInfo()
         'ComboBox1.Items.Clear()
         GetPPdata()
     End Sub

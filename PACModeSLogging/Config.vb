@@ -11,6 +11,14 @@ Public Class Config
         ElseIf My.Settings.InterestedButton = True Then
             RadioButton1.Checked = True
         End If
+
+        If My.Settings.PlanePlotter = False Then
+            RadioButton4.Checked = True
+        ElseIf My.Settings.PlanePlotter = True Then
+            RadioButton3.Checked = True
+        End If
+
+
         Label4.Text = "V" & My.Application.Info.Version.ToString
         TextBox1.Text = My.Settings.Location
         TextBox2.Text = My.Settings.BSLoc
@@ -96,5 +104,15 @@ Public Class Config
         Else
             My.Settings.Autostart = False
         End If
+    End Sub
+
+    Private Sub RadioButton4_clicked(sender As Object, e As EventArgs) Handles RadioButton4.Click
+        My.Settings.PlanePlotter = False
+        My.Settings.Save()
+    End Sub
+
+    Private Sub RadioButton3_clicked(sender As Object, e As EventArgs) Handles RadioButton3.Click
+        My.Settings.PlanePlotter = True
+        My.Settings.Save()
     End Sub
 End Class
