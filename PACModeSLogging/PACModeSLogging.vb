@@ -231,7 +231,7 @@ Start:
                     Reg = PPbits(1)
                     PPInt = PPbits(21)
                     UT = PPbits(22)
-                    If Reg = "<gnd>" Or Reg = "<ground>" Or UT.Contains("LOG") Then GoTo EmptyStep
+                    If Reg = "<gnd>" Or Reg = "<ground>" Or UT.Contains("LOG") Or UT.Contains("OUT") Then GoTo EmptyStep
 
                     ListRec = Reg + " - " + PPHex
 
@@ -452,9 +452,10 @@ EmptyStep:
             Dim Logged_rdr2 As OleDbDataReader = logged_cmd2.ExecuteReader()
             Logged_rdr2.Read()
             If Logged_rdr2.HasRows = True Then
-                response = MsgBox("You have already logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
+                response = MsgBox("You have previously logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
                 Logged_rdr2.Close()
-                UpdateBS(ToLogHex, ToLogReg)
+
+                'UpdateBS(ToLogHex, ToLogReg, LoggedTag)
                 Exit Sub
             Else
                 response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
@@ -462,7 +463,28 @@ EmptyStep:
                     Logged_rdr.Close()
                     Dim Log_Data As New Log_data
                     Log_Data.ShowDialog()
-                    UpdateBS(ToLogHex, ToLogReg)
+                    If Not Log_Data.DialogResult.Cancel Then
+                        Try
+                            If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
+                            If BS_Con.State = ConnectionState.Closed Then BS_Con.Open()
+                        Catch ex As Exception
+                            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
+                        End Try
+                        BS_SQL = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
+                        BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
+                        BS_rdr = BS_Cmd.ExecuteReader()
+                        BS_rdr.Read()
+                        ToLogType = BS_rdr(0)
+                        If IsDBNull(BS_rdr(1)) Then
+                            LoggedTag = "OUT"
+                        Else
+                            'SymbolCode = BS_rdr(1)
+                            LoggedTag = "OUT" & BS_rdr(1)
+                        End If
+                        BS_rdr.Close()
+                        BS_Con.Close()
+                        UpdateBS(ToLogHex, ToLogReg, LoggedTag)
+                    End If
                     Exit Sub
                 ElseIf response = DialogResult.No Then
                     Exit Sub

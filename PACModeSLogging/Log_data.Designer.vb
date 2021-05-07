@@ -111,6 +111,7 @@ Partial Class Log_data
         '
         'Button1
         '
+        Me.Button1.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Button1.Location = New System.Drawing.Point(386, 379)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
@@ -120,6 +121,7 @@ Partial Class Log_data
         '
         'Button2
         '
+        Me.Button2.DialogResult = System.Windows.Forms.DialogResult.Cancel
         Me.Button2.Location = New System.Drawing.Point(152, 379)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)

@@ -82,7 +82,7 @@ Public Class LogOutstanding
         '****Test Data
 
         Close()
-        UpdateBS(3335, PACModeSLogging.ToLogReg)
+        UpdateBS(3335, PACModeSLogging.ToLogReg, LoggedTag)
         Exit Sub
 
     End Sub

@@ -79,9 +79,9 @@ Public Class Log_data
         Dim log_dbname As String = "C:\ModeS\logged.mdb"
         Dim dt3 As New DataTable("dt3")
         Dim fkmodel = ComboBox2.SelectedValue.ToString
-        Dim no_reg_SQL As String = "SELECT tblSeries.FKseries, tblVariant.Variant
+        Dim no_reg_SQL As String = "SELECT tblSeries.FKseries, [tblvariant].[variant]
                                     FROM tblmodel INNER JOIN (tblSeries INNER JOIN tblVariant ON tblSeries.FKseries = tblVariant.FKseries) ON tblmodel.FKmodel = tblSeries.FKModel
-                                    WHERE tblSeries.FKmodel = " & fkmodel & " ORDER BY tblSeries.Series;"
+                                    WHERE tblSeries.FKmodel = " & fkmodel & " ORDER BY tblSeries.Series"
         Using no_reg_con As New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & "")
             Using no_reg_cmd As New OleDbCommand(no_reg_SQL, no_reg_con)
                 Using no_reg_adapter As New OleDbDataAdapter(no_reg_cmd)
