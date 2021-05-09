@@ -4,7 +4,7 @@ Module BSUpdate
 
 
 
-    Public Sub UpdateBS(ToLogHex As String, ToLogReg As String)
+    Public Sub UpdateBS(ToLogHex As String, ToLogReg As String, LoggedTag As String)
         'Update BaseStation UserTag
 
 

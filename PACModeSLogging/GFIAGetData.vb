@@ -57,7 +57,7 @@ Module GFIAGetData
             If Logged_rdr2.HasRows = True Then
                 response = MsgBox("You have already logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
                 Logged_rdr2.Close()
-                UpdateBS(ToLogHex, ToLogReg)
+                UpdateBS(ToLogHex, ToLogReg, LoggedTag)
                 Exit Sub
             Else
                 response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
@@ -65,7 +65,7 @@ Module GFIAGetData
                     Logged_rdr.Close()
                     Dim Log_Data As New Log_data
                     Log_Data.ShowDialog()
-                    UpdateBS(ToLogHex, ToLogReg)
+                    UpdateBS(ToLogHex, ToLogReg, LoggedTag)
                     Exit Sub
                 ElseIf response = DialogResult.No Then
                     Exit Sub
