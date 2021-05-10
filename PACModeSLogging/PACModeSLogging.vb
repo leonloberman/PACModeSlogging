@@ -243,7 +243,7 @@ Public Class PACModeSLogging
             strVRData = srVR.ReadToEnd()
             srVR.Close()
 
-            ComboBox1.Items.Add("VRTest")
+            'ComboBox1.Items.Add("VRTest")
 
         Catch ex As WebException
 
@@ -260,14 +260,27 @@ Public Class PACModeSLogging
         Try
             strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
 
-            Dim ICAOS As Object = JsonConvert.DeserializeObject(Of AcList)(strVRData)
-            Dim ICAOtoAdd As String = ICAOS("icao")
+            Dim VRSearch As JObject = JObject.Parse(strVRData)
 
-            ComboBox1.Items.Add(ICAOS)
+            Dim postTitles = From p In VRSearch("acList") Select CStr(p("Icao"))
 
+            For Each icao In postTitles
+                ComboBox1.Items.Add(icao)
+            Next
+
+
+            'Dim results As IList(Of JToken) = VRSearch("aclist").Children.ToList()
+            'Dim searchResults As IList(Of ICAOResult) = New List(Of ICAOResult)()
+
+            'For Each result As JToken In results
+            '    Dim searchResult As ICAOResult = result.ToObject(Of ICAOResult)()
+            '    searchResults.Add(searchResult)
+
+            '    ComboBox1.Items.Add(searchResult)
+            'Next
         Catch ex As WebException
 
-                MessageBox.Show("Error: " & ex.ToString())
+                MessageBox.Show("Error:  " & ex.ToString())
 
             End Try
 
@@ -280,6 +293,11 @@ Public Class PACModeSLogging
         Public Property id As Integer
         Public Property name As String
         Public Property polarPlot As Boolean
+    End Class
+    Public Class ICAOResult
+        Public Property ICAO As String
+        'Public Property Content As String
+        'Public Property Url As String
     End Class
 
     Public Class AcList
@@ -368,7 +386,7 @@ Start:
 
         Try
             If RunMode = "Live" Then
-                While i < MyObject.GetallPlaneCount()
+                While i <MyObject.GetallPlaneCount()
                     PPHex = String.Empty
                     Reg = String.Empty
                     ListRec = String.Empty
