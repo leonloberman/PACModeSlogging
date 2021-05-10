@@ -6,6 +6,9 @@ Imports System.Net.Http
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports System.IO
+Imports System.Web.Script.Serialization
+Imports System.Text
+Imports System.Globalization
 
 Public Class PACModeSLogging
 
@@ -218,49 +221,23 @@ Public Class PACModeSLogging
         End If
     End Sub
     Public Sub GetVRdata()
-        Dim Request As HttpWebRequest = System.Net.HttpWebRequest.Create("http://127.0.0.1/VirtualRadar/aircraftlist.json")
-        Dim Response As HttpWebResponse = Request.GetResponse
-        Dim Stream As Stream = Response.GetResponseStream()
-        Dim username As String = "leon-loberman"
-        Dim password As String = "*D3gDe4ft"
-        Dim localPath As String = "C:\ModeS\"
-        Dim client As New WebClient
-        Dim myCache As CredentialCache = New CredentialCache()
 
-        Dim srVR As StreamReader
-        Dim strVRData As String
+        Dim request = CType(WebRequest.Create("http://127.0.0.1/VirtualRadar/aircraftlist.json"), HttpWebRequest)
+        request.Credentials = CredentialCache.DefaultCredentials
+        request.AutomaticDecompression = DecompressionMethods.Deflate Or DecompressionMethods.GZip
+        Dim response As WebResponse = request.GetResponse()
 
-        Try
-            Dim strURL As String = "http://127.0.0.1/VirtualRadar/aircraftlist.json"
+        Using dataStream As Stream = response.GetResponseStream()
 
-            Dim VRreq As HttpWebRequest =
-            CType(WebRequest.Create(strURL), HttpWebRequest)
-            Dim VRresponse As HttpWebResponse =
-            CType(VRreq.GetResponse(), HttpWebResponse)
+            Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
+            Dim responseFromServer As String = reader.ReadToEnd()
+            'Console.WriteLine(responseFromServer)
 
-            srVR = New StreamReader(VRresponse.GetResponseStream())
+            response.Close()
 
-            strVRData = srVR.ReadToEnd()
-            srVR.Close()
+            'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
 
-            'ComboBox1.Items.Add("VRTest")
-
-        Catch ex As WebException
-
-            MessageBox.Show("Error: " & ex.ToString())
-
-        End Try
-
-
-
-
-
-
-
-        Try
-            strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
-
-            Dim VRSearch As JObject = JObject.Parse(strVRData)
+            Dim VRSearch As JObject = JObject.Parse(responseFromServer)
 
             Dim postTitles = From p In VRSearch("acList") Select CStr(p("Icao"))
 
@@ -268,26 +245,37 @@ Public Class PACModeSLogging
                 ComboBox1.Items.Add(icao)
             Next
 
-
-            'Dim results As IList(Of JToken) = VRSearch("aclist").Children.ToList()
-            'Dim searchResults As IList(Of ICAOResult) = New List(Of ICAOResult)()
-
-            'For Each result As JToken In results
-            '    Dim searchResult As ICAOResult = result.ToObject(Of ICAOResult)()
-            '    searchResults.Add(searchResult)
-
-            '    ComboBox1.Items.Add(searchResult)
-            'Next
-        Catch ex As WebException
-
-                MessageBox.Show("Error:  " & ex.ToString())
-
-            End Try
+        End Using
 
 
 
 
     End Sub
+    Public Class Aircraft
+        Private Properties As Dictionary(Of String, String) = New Dictionary(Of String, String)()
+        Public ICAO As String
+
+
+        Public Function GetProperty(ByVal key As String) As String
+            If Properties.ContainsKey(key) Then
+                Return Properties(key)
+            Else
+                Return Nothing
+            End If
+        End Function
+
+        Public Sub AddProperty(ByVal key As String, ByVal value As String)
+            If key <> "Cot" AndAlso key <> "Stops" Then Properties.Add(key, value)
+        End Sub
+
+        Public Function GetPropertyKeys() As Dictionary(Of String, String).KeyCollection
+            Return Properties.Keys
+        End Function
+
+        Public Sub New(ByVal icao As String)
+            icao = icao
+        End Sub
+    End Class
 
     Public Class Feed
         Public Property id As Integer
@@ -386,7 +374,7 @@ Start:
 
         Try
             If RunMode = "Live" Then
-                While i <MyObject.GetallPlaneCount()
+                While i < MyObject.GetallPlaneCount()
                     PPHex = String.Empty
                     Reg = String.Empty
                     ListRec = String.Empty
