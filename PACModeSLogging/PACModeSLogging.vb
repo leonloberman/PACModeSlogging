@@ -9,6 +9,8 @@ Imports System.IO
 Imports System.Web.Script.Serialization
 Imports System.Text
 Imports System.Globalization
+Imports System.Net.Sockets
+Imports System.Reflection
 
 Public Class PACModeSLogging
 
@@ -221,7 +223,7 @@ Public Class PACModeSLogging
         End If
     End Sub
     Public Sub GetVRdata()
-
+        Timer1.Stop()
         Dim request = CType(WebRequest.Create("http://127.0.0.1/VirtualRadar/aircraftlist.json"), HttpWebRequest)
         request.Credentials = CredentialCache.DefaultCredentials
         request.AutomaticDecompression = DecompressionMethods.Deflate Or DecompressionMethods.GZip
@@ -230,63 +232,83 @@ Public Class PACModeSLogging
         Using dataStream As Stream = response.GetResponseStream()
 
             Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
-            Dim responseFromServer As String = reader.ReadToEnd()
-            'Console.WriteLine(responseFromServer)
+            Dim strVRData As String
+            strVRData = reader.ReadToEnd()
 
             response.Close()
 
             'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
 
-            Dim VRSearch As JObject = JObject.Parse(responseFromServer)
+            Dim VRData As JObject = JObject.Parse(strVRData)
 
-            Dim postTitles = From p In VRSearch("acList") Select CStr(p("Icao"))
+            Dim VR = JsonConvert.DeserializeObject(Of AcList)(strVRData)
 
-            For Each icao In postTitles
-                ComboBox1.Items.Add(icao)
+            Dim data As List(Of JToken) = VRData.Children().ToList
+
+            For Each item As JProperty In data
+                item.CreateReader()
+                Select Case item.Name
+                    Case "acList" 'each record is inside the entries array
+                        For Each Entry As JObject In item.Values
+                            If (IsNothing(Entry.Item("Reg")) = False) Then
+                                If (IsNothing(Entry.Item("Tag")) = False) Then
+                                    Dim VRTag As String = Entry("Tag").ToString
+                                    If VRTag.Contains("RQ") Or VRTag.Contains("Ps") Then
+                                        Dim VRreg As String = Entry("Reg").ToString
+                                        Dim VRIcao As String = Entry("Icao").ToString
+                                        ' you can continue listing the array items untill you reach the end of you array
+                                        ComboBox1.Items.Add(VRreg + " - " + VRIcao)
+                                    End If
+                                End If
+                            End If
+                        Next
+                End Select
             Next
+
 
         End Using
 
 
-
-
     End Sub
-    Public Class Aircraft
-        Private Properties As Dictionary(Of String, String) = New Dictionary(Of String, String)()
-        Public ICAO As String
+
+    'Public Class Aircraft
+    '    Private Properties As Dictionary(Of String, String) = New Dictionary(Of String, String)()
+    '    Public ICAO As String
+    '    Public Reg As String
 
 
-        Public Function GetProperty(ByVal key As String) As String
-            If Properties.ContainsKey(key) Then
-                Return Properties(key)
-            Else
-                Return Nothing
-            End If
-        End Function
+    '    Public Function GetProperty(ByVal key As String) As String
+    '        If Properties.ContainsKey(key) Then
+    '            Return Properties(key)
+    '        Else
+    '            Return Nothing
+    '        End If
+    '    End Function
 
-        Public Sub AddProperty(ByVal key As String, ByVal value As String)
-            If key <> "Cot" AndAlso key <> "Stops" Then Properties.Add(key, value)
-        End Sub
+    '    Public Sub AddProperty(ByVal key As String, ByVal value As String)
+    '        If key <> "Cot" AndAlso key <> "Stops" Then Properties.Add(key, value)
+    '    End Sub
 
-        Public Function GetPropertyKeys() As Dictionary(Of String, String).KeyCollection
-            Return Properties.Keys
-        End Function
+    '    Public Function GetPropertyKeys() As Dictionary(Of String, String).KeyCollection
+    '        Return Properties.Keys
+    '    End Function
 
-        Public Sub New(ByVal icao As String)
-            icao = icao
-        End Sub
-    End Class
+    '    Public Sub New(ByVal icao As String)
+    '        icao = icao
+    '    End Sub
+    'End Class
 
-    Public Class Feed
-        Public Property id As Integer
-        Public Property name As String
-        Public Property polarPlot As Boolean
-    End Class
-    Public Class ICAOResult
-        Public Property ICAO As String
-        'Public Property Content As String
-        'Public Property Url As String
-    End Class
+    'Public Class Feed
+    '    Public Property id As Integer
+    '    Public Property name As String
+    '    Public Property polarPlot As Boolean
+    'End Class
+    'Public Class VRResult
+    '    Public Property ICAO As String
+    '    Public Property Reg As String
+    '    Public Property Tag As String
+
+    'End Class
 
     Public Class AcList
         Public Property Id As Integer
@@ -341,21 +363,21 @@ Public Class PACModeSLogging
         Public Property Year As String
     End Class
 
-    Public Class VRList
-        Public Property src As Integer
-        Public Property feeds As Feed()
-        Public Property srcFeed As Integer
-        Public Property showSil As Boolean
-        Public Property showFlg As Boolean
-        Public Property showPic As Boolean
-        Public Property flgH As Integer
-        Public Property flgW As Integer
-        Public Property acList As AcList()
-        Public Property totalAc As Integer
-        Public Property lastDv As String
-        Public Property shtTrlSec As Integer
-        Public Property stm As Long
-    End Class
+    'Public Class VRList
+    '    Public Property src As Integer
+    '    Public Property feeds As Feed()
+    '    Public Property srcFeed As Integer
+    '    Public Property showSil As Boolean
+    '    Public Property showFlg As Boolean
+    '    Public Property showPic As Boolean
+    '    Public Property flgH As Integer
+    '    Public Property flgW As Integer
+    '    Public Property acList As AcList()
+    '    Public Property totalAc As Integer
+    '    Public Property lastDv As String
+    '    Public Property shtTrlSec As Integer
+    '    Public Property stm As Long
+    'End Class
 
 
 
@@ -894,13 +916,16 @@ UpdBS2:         CheckBusy = False
 
                     BS_Con.Close()
                     BS_Con.Dispose()
-                    MyObject.RefreshDatabaseInfo()
-                    ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
-                    Timer1.Start()
-                    Timer1_Tick(Nothing, Nothing)
-                End If
+                    If My.Settings.PlanePlotter = True Then
+                        MyObject.RefreshDatabaseInfo()
+                    End If
 
-            Else
+                    ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
+                        Timer1.Start()
+                        Timer1_Tick(Nothing, Nothing)
+                    End If
+
+                    Else
                 RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 ComboBox1.SelectedIndex = -1
                 AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
@@ -912,9 +937,10 @@ UpdBS2:         CheckBusy = False
             Logged_con.Dispose()
 
             If Process.GetProcessesByName("BaseStation.exe").Length >= 1 Then
-                MyObject.RefreshDatabaseInfo()
+                If My.Settings.PlanePlotter = True Then
+                    MyObject.RefreshDatabaseInfo()
+                End If
             End If
-
 
         End If
 
@@ -923,7 +949,12 @@ UpdBS2:         CheckBusy = False
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         'MyObject.RefreshDatabaseInfo()
         'ComboBox1.Items.Clear()
-        GetPPdata()
+        If My.Settings.PlanePlotter = True Then
+            GetPPdata()
+        Else
+            GetVRdata()
+        End If
+
     End Sub
 
     Private Sub ComboBox1_selected() Handles ComboBox1.DropDown
@@ -962,8 +993,17 @@ UpdBS2:         CheckBusy = False
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
         Timer1.Stop()
         ComboBox1.Items.Clear()
-        Timer1.Start()
-        Timer1_Tick(Nothing, Nothing)
+        If My.Settings.PlanePlotter = True Then
+            Timer1.Start()
+            Timer1_Tick(Nothing, Nothing)
+            GetPPdata()
+        Else
+            Timer1.Start()
+            Timer1_Tick(Nothing, Nothing)
+            GetVRdata()
+        End If
+        'Timer1.Start()
+        'Timer1_Tick(Nothing, Nothing)
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
