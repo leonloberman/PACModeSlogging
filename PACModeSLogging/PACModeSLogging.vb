@@ -136,38 +136,42 @@ Public Class PACModeSLogging
             Button3.Visible = False
             Button1.Visible = True
 
-            Try
-                If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
-                    response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                    If response = DialogResult.Cancel Then
-                        Close()
-                        End
-                    Else
-                        Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
-                            System.Threading.Thread.Sleep(5000)
-                            response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                            If response = DialogResult.Cancel Then
-                                Close()
-                                End
-                            End If
-                        Loop
-                    End If
-                End If
-
-            Catch ex As Exception
-                Timer1.Stop()
-                Button1.Visible = True
-                MsgBox("PlanePlotter Not Running", MsgBoxStyle.OkOnly, "PlanePlotter Check")
-
-                Exit Sub
-            End Try
             If My.Settings.PlanePlotter = True Then
+                Try
+                    If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
+                        response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                        If response = DialogResult.Cancel Then
+                            Close()
+                            End
+                        Else
+                            Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
+                                System.Threading.Thread.Sleep(5000)
+                                response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
+                                If response = DialogResult.Cancel Then
+                                    Close()
+                                    End
+                                End If
+                            Loop
+                        End If
+                    End If
+
+                Catch ex As Exception
+                    Timer1.Stop()
+                    Button1.Visible = True
+                    MsgBox("PlanePlotter Not Running", MsgBoxStyle.OkOnly, "PlanePlotter Check")
+
+                    Exit Sub
+                End Try
                 GetPPdata()
-            Else
-                GetVRdata()
             End If
 
+        Else
+            GetVRdata()
         End If
+
+
+
+
         'RunProcess()
 
     End Sub
@@ -257,7 +261,10 @@ Public Class PACModeSLogging
                                         Dim VRreg As String = Entry("Reg").ToString
                                         Dim VRIcao As String = Entry("Icao").ToString
                                         ' you can continue listing the array items untill you reach the end of you array
-                                        ComboBox1.Items.Add(VRreg + " - " + VRIcao)
+                                        ListRec = VRreg + " - " + VRIcao
+                                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                            ComboBox1.Items.Add(ListRec)
+                                        End If
                                     End If
                                 End If
                             End If
@@ -270,45 +277,6 @@ Public Class PACModeSLogging
 
 
     End Sub
-
-    'Public Class Aircraft
-    '    Private Properties As Dictionary(Of String, String) = New Dictionary(Of String, String)()
-    '    Public ICAO As String
-    '    Public Reg As String
-
-
-    '    Public Function GetProperty(ByVal key As String) As String
-    '        If Properties.ContainsKey(key) Then
-    '            Return Properties(key)
-    '        Else
-    '            Return Nothing
-    '        End If
-    '    End Function
-
-    '    Public Sub AddProperty(ByVal key As String, ByVal value As String)
-    '        If key <> "Cot" AndAlso key <> "Stops" Then Properties.Add(key, value)
-    '    End Sub
-
-    '    Public Function GetPropertyKeys() As Dictionary(Of String, String).KeyCollection
-    '        Return Properties.Keys
-    '    End Function
-
-    '    Public Sub New(ByVal icao As String)
-    '        icao = icao
-    '    End Sub
-    'End Class
-
-    'Public Class Feed
-    '    Public Property id As Integer
-    '    Public Property name As String
-    '    Public Property polarPlot As Boolean
-    'End Class
-    'Public Class VRResult
-    '    Public Property ICAO As String
-    '    Public Property Reg As String
-    '    Public Property Tag As String
-
-    'End Class
 
     Public Class AcList
         Public Property Id As Integer
@@ -362,24 +330,6 @@ Public Class PACModeSLogging
         Public Property Trt As Integer
         Public Property Year As String
     End Class
-
-    'Public Class VRList
-    '    Public Property src As Integer
-    '    Public Property feeds As Feed()
-    '    Public Property srcFeed As Integer
-    '    Public Property showSil As Boolean
-    '    Public Property showFlg As Boolean
-    '    Public Property showPic As Boolean
-    '    Public Property flgH As Integer
-    '    Public Property flgW As Integer
-    '    Public Property acList As AcList()
-    '    Public Property totalAc As Integer
-    '    Public Property lastDv As String
-    '    Public Property shtTrlSec As Integer
-    '    Public Property stm As Long
-    'End Class
-
-
 
     Public Sub GetPPdata()
 
