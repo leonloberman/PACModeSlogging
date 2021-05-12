@@ -137,6 +137,31 @@ Public Class PACModeSLogging
             Button1.Visible = True
 
             If My.Settings.PlanePlotter = False Then
+                Try
+                    If Process.GetProcessesByName("VirtualRadar").Length = 0 Then
+                        response = MsgBox("Waiting for Virtual Radar 360 to start", vbOKCancel)
+                        If response = DialogResult.Cancel Then
+                            Close()
+                            End
+                        Else
+                            Do Until Process.GetProcessesByName("VirtualRadar").Length > 0
+                                System.Threading.Thread.Sleep(5000)
+                                response = MsgBox("Waiting for Virtual Radar 360 to start", vbOKCancel)
+                                If response = DialogResult.Cancel Then
+                                    Close()
+                                    End
+                                End If
+                            Loop
+                        End If
+                    End If
+
+                Catch ex As Exception
+                    Timer1.Stop()
+                    Button1.Visible = True
+                    MsgBox("Virtual Radar 360 Not Running", MsgBoxStyle.OkOnly, "VirtualRadar Check")
+
+                    Exit Sub
+                End Try
                 GetVRdata()
             Else
                 Try
@@ -228,54 +253,64 @@ Public Class PACModeSLogging
         End If
     End Sub
     Public Sub GetVRdata()
-        Timer1.Stop()
+        'Timer1.Stop()
+
         Dim request = CType(WebRequest.Create("http://127.0.0.1/VirtualRadar/aircraftlist.json"), HttpWebRequest)
         request.Credentials = CredentialCache.DefaultCredentials
         request.AutomaticDecompression = DecompressionMethods.Deflate Or DecompressionMethods.GZip
-        Dim response As WebResponse = request.GetResponse()
+        Try
+            Dim response As WebResponse = request.GetResponse()
 
-        Using dataStream As Stream = response.GetResponseStream()
 
-            Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
-            Dim strVRData As String
-            strVRData = reader.ReadToEnd()
 
-            response.Close()
+            Using dataStream As Stream = response.GetResponseStream()
 
-            'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
+                Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
+                Dim strVRData As String
+                strVRData = reader.ReadToEnd()
 
-            Dim VRData As JObject = JObject.Parse(strVRData)
+                response.Close()
 
-            Dim VR = JsonConvert.DeserializeObject(Of AcList)(strVRData)
+                'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
 
-            Dim data As List(Of JToken) = VRData.Children().ToList
+                Dim VRData As JObject = JObject.Parse(strVRData)
 
-            For Each item As JProperty In data
-                item.CreateReader()
-                Select Case item.Name
-                    Case "acList" 'each record is inside the entries array
-                        For Each Entry As JObject In item.Values
-                            If (IsNothing(Entry.Item("Reg")) = False) Then
-                                If (IsNothing(Entry.Item("Tag")) = False) Then
-                                    Dim VRTag As String = Entry("Tag").ToString
-                                    If VRTag.Contains("RQ") Or VRTag.Contains("Ps") Then
-                                        Dim VRreg As String = Entry("Reg").ToString
-                                        Dim VRIcao As String = Entry("Icao").ToString
-                                        ' you can continue listing the array items untill you reach the end of you array
-                                        ListRec = VRreg + " - " + VRIcao
-                                        If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                                            ComboBox1.Items.Add(ListRec)
+                Dim VR = JsonConvert.DeserializeObject(Of AcList)(strVRData)
+
+                Dim data As List(Of JToken) = VRData.Children().ToList
+
+                For Each item As JProperty In data
+                    item.CreateReader()
+                    Select Case item.Name
+                        Case "acList" 'each record is inside the entries array
+                            For Each Entry As JObject In item.Values
+                                If (IsNothing(Entry.Item("Reg")) = False) Then
+                                    If (IsNothing(Entry.Item("Tag")) = False) Then
+                                        Dim VRTag As String = Entry("Tag").ToString
+                                        If VRTag.Contains("RQ") Or VRTag.Contains("Ps") Then
+                                            Dim VRreg As String = Entry("Reg").ToString
+                                            Dim VRIcao As String = Entry("Icao").ToString
+                                            ' you can continue listing the array items untill you reach the end of you array
+                                            ListRec = VRreg + " - " + VRIcao
+                                            If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                                ComboBox1.Items.Add(ListRec)
+                                            End If
                                         End If
                                     End If
                                 End If
-                            End If
-                        Next
-                End Select
-            Next
-
-
-        End Using
-
+                            Next
+                    End Select
+                Next
+            End Using
+        Catch ex As System.Net.WebException
+            MessageBox.Show("Virtual Radar 360 is not online - cannot get data")
+            Close()
+            End
+        Catch ex As Exception
+            MessageBox.Show("An error occurred:" & Environment.NewLine & ex.Message)
+            Close()
+            End
+        End Try
 
     End Sub
 
