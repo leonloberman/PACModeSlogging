@@ -54,8 +54,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Provider=Microsoft.Jet.OLEDB.4.0;Data Source=|DataDirectory|\logged.mdb</Value>
     </Setting>
-    <Setting Name="PlanePlotter" Roaming="true" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="PlanePlotter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VirtualRadar" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

@@ -136,7 +136,9 @@ Public Class PACModeSLogging
             Button3.Visible = False
             Button1.Visible = True
 
-            If My.Settings.PlanePlotter = True Then
+            If My.Settings.PlanePlotter = False Then
+                GetVRdata()
+            Else
                 Try
                     If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
                         response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
@@ -162,16 +164,15 @@ Public Class PACModeSLogging
 
                     Exit Sub
                 End Try
-                GetPPdata()
             End If
 
-        Else
-            GetVRdata()
-        End If
+            If My.Settings.PlanePlotter = True Then
+                    GetPPdata()
+                Else
+                    GetVRdata()
+                End If
 
-
-
-
+            End If
         'RunProcess()
 
     End Sub
