@@ -139,14 +139,14 @@ Public Class PACModeSLogging
             If My.Settings.PlanePlotter = False Then
                 Try
                     If Process.GetProcessesByName("VirtualRadar").Length = 0 Then
-                        response = MsgBox("Waiting for Virtual Radar 360 to start", vbOKCancel)
+                        response = MsgBox("Waiting for Virtual Radar to start", vbOKCancel)
                         If response = DialogResult.Cancel Then
                             Close()
                             End
                         Else
                             Do Until Process.GetProcessesByName("VirtualRadar").Length > 0
                                 System.Threading.Thread.Sleep(5000)
-                                response = MsgBox("Waiting for Virtual Radar 360 to start", vbOKCancel)
+                                response = MsgBox("Waiting for Virtual Radar to start", vbOKCancel)
                                 If response = DialogResult.Cancel Then
                                     Close()
                                     End
@@ -158,7 +158,7 @@ Public Class PACModeSLogging
                 Catch ex As Exception
                     Timer1.Stop()
                     Button1.Visible = True
-                    MsgBox("Virtual Radar 360 Not Running", MsgBoxStyle.OkOnly, "VirtualRadar Check")
+                    MsgBox("Virtual Radar Not Running", MsgBoxStyle.OkOnly, "VirtualRadar Check")
 
                     Exit Sub
                 End Try
@@ -303,7 +303,7 @@ Public Class PACModeSLogging
                 Next
             End Using
         Catch ex As System.Net.WebException
-            MessageBox.Show("Virtual Radar 360 is not online - cannot get data")
+            MessageBox.Show("Virtual Radar is not online - cannot get data")
             Close()
             End
         Catch ex As Exception
