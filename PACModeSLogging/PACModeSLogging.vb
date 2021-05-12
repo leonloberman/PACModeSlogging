@@ -303,10 +303,12 @@ Public Class PACModeSLogging
                 Next
             End Using
         Catch ex As System.Net.WebException
+            Timer1.Stop()
             MessageBox.Show("Virtual Radar is not online - cannot get data")
             Close()
             End
         Catch ex As Exception
+            Timer1.Stop()
             MessageBox.Show("An error occurred:" & Environment.NewLine & ex.Message)
             Close()
             End
