@@ -137,21 +137,26 @@ Public Class PACModeSLogging
             Button1.Visible = True
 
             If My.Settings.PlanePlotter = False Then
+                FeedCheck.Label1.Text = "Virtual Radar is not running"
                 Try
                     If Process.GetProcessesByName("VirtualRadar").Length = 0 Then
-                        response = MsgBox("Waiting for Virtual Radar to start", vbOKCancel)
-                        If response = DialogResult.Cancel Then
+                        FeedCheck.ShowDialog()
+                        If FeedCheck.DialogResult.Cancel = True Then
                             Close()
                             End
                         Else
                             Do Until Process.GetProcessesByName("VirtualRadar").Length > 0
                                 System.Threading.Thread.Sleep(5000)
-                                response = MsgBox("Waiting for Virtual Radar to start", vbOKCancel)
-                                If response = DialogResult.Cancel Then
+                                If My.Settings.PlanePlotter = False Then
+                                    FeedCheck.Label1.Text = "Virtual Radar is not running"
+                                End If
+                                FeedCheck.ShowDialog()
+                                If FeedCheck.DialogResult.Cancel = True Then
                                     Close()
                                     End
                                 End If
                             Loop
+                            GetVRdata()
                         End If
                     End If
 
@@ -162,23 +167,28 @@ Public Class PACModeSLogging
 
                     Exit Sub
                 End Try
-                GetVRdata()
+                'GetVRdata()
             Else
+                FeedCheck.Label1.Text = "PlanePlotter is not running"
                 Try
                     If Process.GetProcessesByName("PlanePlotter").Length = 0 Then
-                        response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                        If response = DialogResult.Cancel Then
+                        FeedCheck.ShowDialog()
+                        If FeedCheck.DialogResult.Cancel = True Then
                             Close()
                             End
                         Else
                             Do Until Process.GetProcessesByName("PlanePlotter").Length > 0
                                 System.Threading.Thread.Sleep(5000)
-                                response = MsgBox("Waiting for PlanePlotter to start", vbOKCancel)
-                                If response = DialogResult.Cancel Then
+                                If My.Settings.PlanePlotter = False Then
+                                    FeedCheck.Label1.Text = "PlanePlotter is not running"
+                                End If
+                                FeedCheck.ShowDialog()
+                                If FeedCheck.DialogResult.Cancel = True Then
                                     Close()
                                     End
                                 End If
                             Loop
+                            GetPPdata()
                         End If
                     End If
 

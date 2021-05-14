@@ -108,11 +108,13 @@ Public Class Config
 
     Private Sub RadioButton4_clicked(sender As Object, e As EventArgs) Handles RadioButton4.Click
         My.Settings.PlanePlotter = False
+        FeedCheck.Label1.Text = "Virtual Radar is not running"
         My.Settings.Save()
     End Sub
 
     Private Sub RadioButton3_clicked(sender As Object, e As EventArgs) Handles RadioButton3.Click
         My.Settings.PlanePlotter = True
+        FeedCheck.Label1.Text = "PlanePlotter is not running"
         My.Settings.Save()
     End Sub
 End Class
