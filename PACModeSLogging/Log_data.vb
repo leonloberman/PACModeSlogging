@@ -14,7 +14,7 @@ Public Class Log_data
         '    PACModeSLogging.ToLogReg = PACModeSLogging.ComboBox1.SelectedItem.ToString
         '    PACModeSLogging.ToLogReg = PACModeSLogging.ToLogReg.Remove(PACModeSLogging.ToLogReg.Length - 9)
 
-        '    TextBox1.Text = PACModeSLogging.ToLogReg
+        TextBox1.Text = PACModeSLogging.ToLogReg
         'End If
 
 

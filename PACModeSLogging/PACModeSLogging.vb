@@ -2,7 +2,6 @@
 Imports System.Data.SQLite
 Imports AutoUpdaterDotNET
 Imports System.Net
-Imports System.Net.Http
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
 Imports System.IO
@@ -64,8 +63,10 @@ Public Class PACModeSLogging
 
     ReadOnly oInput As String
 
+    Public TrueReg As String
+    Dim LogStep As Boolean = True
 
-
+    Dim RunMode As String = "Test"
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
             drag = True 'Sets the variable drag to true.
@@ -104,8 +105,6 @@ Public Class PACModeSLogging
 
         If My.Computer.Network.IsAvailable Then
             If My.Computer.Network.Ping("www.google.com") Then
-                'Application Upgrade Check
-                'Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pacmodes2020", "FkNrELRx")
                 Dim BasicAuthentication As BasicAuthentication = New BasicAuthentication("pad", "Blackmrs99")
                 AutoUpdater.BasicAuthXML = BasicAuthentication
                 AutoUpdater.ReportErrors = True
@@ -219,9 +218,7 @@ Public Class PACModeSLogging
 
                 AutoUpdater.ShowUpdateForm(args)
             Else
-                'MessageBox.Show("There is no update available please try again later.", "No update available", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 If My.Computer.Network.Ping("www.google.com") Then
-                    'UpgradeCheck("C:\ModeS\ICAOCodes.mdb")
                 Else
                     MsgBox("Computer is not connected to the internet.")
                 End If
@@ -269,49 +266,58 @@ Public Class PACModeSLogging
         request.Credentials = CredentialCache.DefaultCredentials
         request.AutomaticDecompression = DecompressionMethods.Deflate Or DecompressionMethods.GZip
         Try
-            Dim response As WebResponse = request.GetResponse()
+            If RunMode = "Live" Then
+                Dim response As WebResponse = request.GetResponse()
 
 
 
-            Using dataStream As Stream = response.GetResponseStream()
+                Using dataStream As Stream = response.GetResponseStream()
 
-                Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
-                Dim strVRData As String
-                strVRData = reader.ReadToEnd()
+                    Dim reader As StreamReader = New StreamReader(dataStream, Encoding.ASCII)
+                    Dim strVRData As String
+                    strVRData = reader.ReadToEnd()
 
-                response.Close()
+                    response.Close()
 
-                'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
+                    'strVRData = File.ReadAllText("D:\OneDrive\Visual Studio 2019\Projects\PACModeSLogging\PACModeSLogging\aircraftlist.json")
 
-                Dim VRData As JObject = JObject.Parse(strVRData)
+                    Dim VRData As JObject = JObject.Parse(strVRData)
 
-                Dim VR = JsonConvert.DeserializeObject(Of AcList)(strVRData)
+                    Dim VR = JsonConvert.DeserializeObject(Of AcList)(strVRData)
 
-                Dim data As List(Of JToken) = VRData.Children().ToList
+                    Dim data As List(Of JToken) = VRData.Children().ToList
 
-                For Each item As JProperty In data
-                    item.CreateReader()
-                    Select Case item.Name
-                        Case "acList" 'each record is inside the entries array
-                            For Each Entry As JObject In item.Values
-                                If (IsNothing(Entry.Item("Reg")) = False) Then
-                                    If (IsNothing(Entry.Item("Tag")) = False) Then
-                                        Dim VRTag As String = Entry("Tag").ToString
-                                        If VRTag.Contains("RQ") Or VRTag.Contains("Ps") Then
-                                            Dim VRreg As String = Entry("Reg").ToString
-                                            Dim VRIcao As String = Entry("Icao").ToString
-                                            ' you can continue listing the array items untill you reach the end of you array
-                                            ListRec = VRreg + " - " + VRIcao
-                                            If ComboBox1.Items.IndexOf(ListRec) = -1 Then
-                                                ComboBox1.Items.Add(ListRec)
+                    For Each item As JProperty In data
+                        item.CreateReader()
+                        Select Case item.Name
+                            Case "acList" 'each record is inside the entries array
+                                For Each Entry As JObject In item.Values
+                                    If (IsNothing(Entry.Item("Reg")) = False) Then
+                                        If (IsNothing(Entry.Item("Tag")) = False) Then
+                                            Dim VRTag As String = Entry("Tag").ToString
+                                            If VRTag.Contains("RQ") Or VRTag.Contains("Ps") Then
+                                                Dim VRreg As String = Entry("Reg").ToString
+                                                Dim VRIcao As String = Entry("Icao").ToString
+                                                ' you can continue listing the array items untill you reach the end of you array
+                                                ListRec = VRreg + " - " + VRIcao
+                                                If ComboBox1.Items.IndexOf(ListRec) = -1 Then
+                                                    ComboBox1.Items.Add(ListRec)
+                                                End If
                                             End If
                                         End If
                                     End If
-                                End If
-                            Next
-                    End Select
-                Next
-            End Using
+                                Next
+                        End Select
+                    Next
+                End Using
+            Else
+                '**** Test Data *****
+                Reg = "LXN90059"
+            PPHex = "4D03D0"
+            ListRec = Reg + " - " + PPHex
+            ComboBox1.Items.Add(ListRec)
+            ''**** Test Data *****
+            End If
         Catch ex As System.Net.WebException
             Timer1.Stop()
             MessageBox.Show("Virtual Radar is not online - cannot get data")
@@ -385,7 +391,6 @@ Start:  Try
 
             MyObject = GetObject(, "PlanePlotter.Document")
 
-            Dim RunMode As String = "Live"
 
             Timer1.Interval = CInt(My.Settings.SampleRate * 1000)
             Timer1.Start()
@@ -488,9 +493,9 @@ Start:  Try
                             End If
                         End If
 
-                        PPHex = String.Empty
-                        Reg = String.Empty
-                        ListRec = String.Empty
+                        'PPHex = String.Empty
+                        'Reg = String.Empty
+                        'ListRec = String.Empty
 
 EmptyStep:
 
@@ -501,7 +506,7 @@ EmptyStep:
                     End While
                 Else
                     '**** Test Data *****
-                    Reg = "LXN9059"
+                    Reg = "LXN90059"
                     PPHex = "4D03D0"
                     ListRec = Reg + " - " + PPHex
                     ComboBox1.Items.Add(ListRec)
@@ -531,8 +536,6 @@ EmptyStep:
 
         ToLogRec = ComboBox1.SelectedIndex()
 
-        'GetBSdata(ToLogHex, ToLogReg)
-
         Try
             BS_Con = New SQLiteConnection
             BS_Con.ConnectionString = "Provider=System.Data.SQLite;Data Source=" & BSLoc & "" & ";PRAGMA cache_size = -10000;"
@@ -550,18 +553,12 @@ EmptyStep:
         Catch ex As Exception
             MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
         End Try
-        'BS_Con.Open()
 
         Timer1.Stop()
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
-
-
-        ' **** Test Record ****
-        'BSstr = "Select UserTag, UserString1 from Aircraft WHERE Modes = 'AE119C'"
-        ' ******
-
+        ToLogReg = ToLogReg.TrimEnd()
 
         BS_SQL = "Select UserTag, UserString1 from Aircraft WHERE Modes = " & Chr(34) & ToLogHex & Chr(34) & Chr(59)
 
@@ -572,7 +569,6 @@ EmptyStep:
         If IsDBNull(BS_rdr(1)) Then
             LoggedTag = "LOG"
         Else
-            'SymbolCode = BS_rdr(1)
             LoggedTag = "LOG" & BS_rdr(1)
         End If
         BS_rdr.Close()
@@ -585,11 +581,6 @@ EmptyStep:
             MDPO = "P"
         End If
 
-        ' **** Test Record ****
-        'MDPO = "M"
-        ' ******#
-
-        'GetGFIAdata(MDPO, ToLogreg, ToLogHex)
         Try
             Logged_con = New OleDbConnection
             Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
@@ -601,6 +592,7 @@ EmptyStep:
         ToLogReg = ComboBox1.SelectedItem.ToString
         ToLogHex = ToLogReg.Substring(Math.Max(0, (ToLogReg.Length - 6)))
         ToLogReg = ToLogReg.Remove(ToLogReg.Length - 9)
+        ToLogReg = ToLogReg.TrimEnd()
 
         Try
             If Logged_con.State = ConnectionState.Open Then Logged_con.Close()
@@ -609,38 +601,39 @@ EmptyStep:
             MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Access Connection Error")
         End Try
 
-        'Try
-        '    Logged_con.ConnectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & log_dbname & ""
-        'Catch OledbConnection As Exception
-        'End Try
-
-        logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration ="
-        logged_SQL = logged_SQL & Chr(34) & ToLogReg & Chr(34) & " And Hex ="
+        logged_SQL = "SELECT ID, FKcmxo, Registration FROM tbldataset where Hex ="
         logged_SQL = logged_SQL & Chr(34) & ToLogHex & Chr(34) & Chr(59)
 
-        '**** Test Record ****
-        'logged_SQL = "SELECT ID, Hex, FKcmxo FROM tbldataset where Registration = '13-5786' And Hex = 'AE5963'"
-        'ToLogReg = "13-5786"
-        '******
-
-        Dim response As DialogResult
         logged_cmd = New OleDbCommand(logged_SQL, Logged_con)
         Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
         Logged_rdr.Read()
-        If Logged_rdr.HasRows = False Then
-            logged_SQL = "SELECT * From logllp where ID = 3335 AND Registration = " & Chr(34) & ToLogReg & Chr(34)
-            logged_cmd2 = New OleDbCommand(logged_SQL, Logged_con)
-            Dim Logged_rdr2 As OleDbDataReader = logged_cmd2.ExecuteReader()
-            Logged_rdr2.Read()
-            If Logged_rdr2.HasRows = True Then
-                response = MsgBox("You have previously logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
-                Logged_rdr2.Close()
-
-                'UpdateBS(ToLogHex, ToLogReg, LoggedTag)
+        TrueReg = Logged_rdr(2)
+        If TrueReg <> ToLogReg Then
+            LogStep = False
+            Dim PickReg As New PickReg
+            PickReg.ShowDialog()
+            If PickReg.DialogResult = DialogResult.Cancel Then
+                RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                ComboBox1.SelectedIndex = -1
+                AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                Timer1.Start()
+                Timer1_Tick(Nothing, Nothing)
                 Exit Sub
-            Else
-                response = MsgBox("The registration you are trying to log (" & ToLogReg & ") does not match the one in GFIA - do you wish to continue?", vbYesNo)
-                If response = DialogResult.Yes Then
+            ElseIf PickReg.DialogResult = DialogResult.Ignore Then
+                logged_SQL = "SELECT * From logllp where ID = 3335 AND Registration = " & Chr(34) & ToLogReg & Chr(34)
+                logged_cmd2 = New OleDbCommand(logged_SQL, Logged_con)
+                Dim Logged_rdr2 As OleDbDataReader = logged_cmd2.ExecuteReader()
+                Logged_rdr2.Read()
+                If Logged_rdr2.HasRows = True Then
+                    response = MsgBox("You have previously logged " & ToLogReg & " as an Outstanding record", vbOKOnly)
+                    Logged_rdr2.Close()
+                    RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                    ComboBox1.SelectedIndex = -1
+                    AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                    Timer1.Start()
+                    Timer1_Tick(Nothing, Nothing)
+                    Exit Sub
+                ElseIf PickReg.TrueReg = False Then
                     Logged_rdr.Close()
                     Dim Log_Data As New Log_data
                     Log_Data.ShowDialog()
@@ -659,7 +652,6 @@ EmptyStep:
                         If IsDBNull(BS_rdr(1)) Then
                             LoggedTag = "OUT"
                         Else
-                            'SymbolCode = BS_rdr(1)
                             LoggedTag = "OUT" & BS_rdr(1)
                         End If
                         BS_rdr.Close()
@@ -667,19 +659,28 @@ EmptyStep:
                         UpdateBS(ToLogHex, ToLogReg, LoggedTag)
                     End If
                     Exit Sub
-                ElseIf response = DialogResult.No Then
-                    Exit Sub
+                End If
+
+            ElseIf PickReg.DialogResult = DialogResult.OK Then
+                ToLogReg = TrueReg
+                    LogStep = True
+                    If ToLogType.Contains("RQ") Then
+                        MDPO = "M"
+                    ElseIf ToLogType.Contains("Ps") Then
+                        MDPO = "P"
+                    ElseIf ToLogType.Contains("LOG") Then
+                        MDPO = "D"
+                    ElseIf ToLogType.Contains("OUT") Then
+                        MDPO = "O"
+                    End If
                 End If
             End If
 
-        ElseIf Logged_rdr.HasRows = True Then
+        If LogStep = True Then
             Tologid = Logged_rdr(0)
-            ToLogHex = Logged_rdr(1)
-            ToLogMil = Logged_rdr(2)
+            ToLogMil = Logged_rdr(1)
             Logged_rdr.Close()
-            'UpdateGFIA(ToLogReg, ToLogHex, Tologid, ToLogMil, MDPO)
             Dim LogNote As New Notes
-            'LogNote.ShowDialog()
 
             If LogNote.ShowDialog = DialogResult.OK Then
 
@@ -694,7 +695,6 @@ EmptyStep:
                 cmd4 = New OleDb.OleDbCommand(Prefix_SQL, Logged_con)
                 Dim cmd4_rdr As OleDbDataReader
                 cmd4_rdr = cmd4.ExecuteReader
-                'If cmd4_rdr.HasRows = True Then
                 cmd4_rdr.Close()
                 cmd4.ExecuteNonQuery()
                 cmd4_rdr = cmd4.ExecuteReader()
@@ -874,7 +874,6 @@ EmptyStep:
 
                     End If
                 End If
-                'UpdateBS(ToLogHex, ToLogReg)
 
                 Try
                     If BS_Con.State = ConnectionState.Open Then BS_Con.Close()
@@ -882,7 +881,6 @@ EmptyStep:
                 Catch ex As Exception
                     MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Basestation Connection Error")
                 End Try
-                'BS_Con.Open()
 UpdBS2:         CheckBusy = False
                 BS_Cmd = New SQLiteCommand(BS_SQL, BS_Con)
                 BS_SQL = "SELECT * FROM sqlite_master"
@@ -926,11 +924,11 @@ UpdBS2:         CheckBusy = False
                     End If
 
                     ComboBox1.Items.RemoveAt(ComboBox1.SelectedIndex)
-                        Timer1.Start()
-                        Timer1_Tick(Nothing, Nothing)
-                    End If
+                    Timer1.Start()
+                    Timer1_Tick(Nothing, Nothing)
+                End If
 
-                    Else
+            Else
                 RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
                 ComboBox1.SelectedIndex = -1
                 AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
@@ -952,8 +950,6 @@ UpdBS2:         CheckBusy = False
     End Sub
 
     Public Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        'MyObject.RefreshDatabaseInfo()
-        'ComboBox1.Items.Clear()
         If My.Settings.PlanePlotter = True Then
             GetPPdata()
         Else
@@ -1007,8 +1003,6 @@ UpdBS2:         CheckBusy = False
             Timer1_Tick(Nothing, Nothing)
             GetVRdata()
         End If
-        'Timer1.Start()
-        'Timer1_Tick(Nothing, Nothing)
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
@@ -1016,7 +1010,6 @@ UpdBS2:         CheckBusy = False
         Button3.Visible = True
         Dim LogData As New Log_data
         LogData.Show()
-        'ComboBox1.Items.Clear()
         Timer1.Start()
     End Sub
 

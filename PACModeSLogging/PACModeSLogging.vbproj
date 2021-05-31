@@ -38,7 +38,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\X86\Debug\1.4.0.0\</OutputPath>
+    <OutputPath>bin\X86\Debug\1.4.1.0\</OutputPath>
     <DocumentationFile>PACModeSLogging.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
@@ -49,7 +49,7 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\X86\Release\1.4.0.0\</OutputPath>
+    <OutputPath>bin\X86\Release\1.4.1.0\</OutputPath>
     <DocumentationFile>PACModeSLogging.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
@@ -209,6 +209,12 @@
     <Compile Include="Notes.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PickReg.Designer.vb">
+      <DependentUpon>PickReg.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PickReg.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Settings.vb" />
     <Compile Include="SQLforAccess.vb" />
   </ItemGroup>
@@ -236,6 +242,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notes.resx">
       <DependentUpon>Notes.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PickReg.resx">
+      <DependentUpon>PickReg.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
