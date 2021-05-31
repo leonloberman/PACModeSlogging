@@ -66,7 +66,7 @@ Public Class PACModeSLogging
     Public TrueReg As String
     Dim LogStep As Boolean = True
 
-    Dim RunMode As String = "Test"
+    Dim RunMode As String = "Live"
     Private Sub Form1_MouseDown(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles Me.MouseDown, MyBase.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Left Then
             drag = True 'Sets the variable drag to true.
@@ -608,6 +608,7 @@ EmptyStep:
         Dim Logged_rdr As OleDbDataReader = logged_cmd.ExecuteReader()
         Logged_rdr.Read()
         TrueReg = Logged_rdr(2)
+        Tologid = Logged_rdr(0)
         If TrueReg <> ToLogReg Then
             LogStep = False
             Dim PickReg As New PickReg
@@ -663,7 +664,24 @@ EmptyStep:
 
             ElseIf PickReg.DialogResult = DialogResult.OK Then
                 ToLogReg = TrueReg
-                    LogStep = True
+                LogStep = True
+                Dim ToLogdate2 As String = Now.ToString("MM-dd-yyyy")
+                logged_SQL = "SELECT * From logllp where ID = " & Tologid &
+                    " AND Registration = " & Chr(34) & ToLogReg & Chr(34) &
+                    " AND [when] = " & Chr(35) & ToLogdate2 & Chr(35)
+                logged_cmd2 = New OleDbCommand(logged_SQL, Logged_con)
+                Dim Logged_rdr2 As OleDbDataReader = logged_cmd2.ExecuteReader()
+                Logged_rdr2.Read()
+                If Logged_rdr2.HasRows = True Then
+                    response = MsgBox("You have already logged " & ToLogReg & " today", vbOKOnly)
+                    Logged_rdr2.Close()
+                    RemoveHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                    ComboBox1.SelectedIndex = -1
+                    AddHandler ComboBox1.SelectedIndexChanged, AddressOf Combobox1_SelectedIndexChanged
+                    Timer1.Start()
+                    Timer1_Tick(Nothing, Nothing)
+                    Exit Sub
+                Else
                     If ToLogType.Contains("RQ") Then
                         MDPO = "M"
                     ElseIf ToLogType.Contains("Ps") Then
@@ -675,6 +693,7 @@ EmptyStep:
                     End If
                 End If
             End If
+        End If
 
         If LogStep = True Then
             Tologid = Logged_rdr(0)
